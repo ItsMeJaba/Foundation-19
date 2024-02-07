@@ -62,7 +62,7 @@
 		"????", //Name (Should not be the scp desg, more like what it can be described as to viewers)
 		SCP_EUCLID, //Obj Class
 		"096", //Numerical Designation
-		SCP_MEMETIC|SCP_DISABLED //096 is disabled until traits are ported in as that is neccesary for it to pathfind through doors.
+		SCP_MEMETIC //SCP_DISABLED - 096 is disabled until traits are ported in as that is neccesary for it to pathfind through doors.
 	)
 
 	SCP.memeticFlags = MINSPECT|MPHOTO|MCAMERA
