@@ -15884,12 +15884,6 @@
 /obj/structure/table/standard,
 /turf/simulated/floor/tiled/monotile,
 /area/site53/llcz/scp513)
-"aWq" = (
-/obj/effect/floor_decal/industrial/fire{
-	dir = 1
-	},
-/turf/simulated/floor/wood,
-/area/site53/ulcz/scp2427_3)
 "aWr" = (
 /obj/structure/table/standard,
 /obj/item/paper_bin,
@@ -36605,6 +36599,13 @@
 /obj/item/folder,
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/ulcz/office)
+"tAC" = (
+/obj/effect/paint_stripe/red,
+/obj/structure/disposalpipe/segment{
+	dir = 4
+	},
+/turf/simulated/wall/titanium,
+/area/site53/ulcz/scp2427_3)
 "tBJ" = (
 /obj/structure/catwalk,
 /obj/structure/cable/cyan{
@@ -79121,12 +79122,12 @@ azA
 azA
 azA
 azA
-bIm
-bIm
-bIm
-bIm
-bIm
-bIm
+azA
+azA
+azA
+azA
+azA
+azA
 tNk
 aKN
 xNg
@@ -79377,14 +79378,14 @@ azA
 azA
 azA
 azA
+azA
 bIm
 bIm
-xDM
-ljc
-xGw
-mLD
-icV
-crW
+bIm
+bIm
+bIm
+bIm
+tAC
 ybV
 aVl
 aKM
@@ -79635,13 +79636,13 @@ azA
 azA
 azA
 bIm
-oBp
-dOs
-hzp
-hzp
-hzp
-ube
 bIm
+xDM
+ljc
+xGw
+mLD
+icV
+crW
 bIm
 bIm
 bIm
@@ -79892,12 +79893,12 @@ azA
 azA
 azA
 bIm
-qvi
+oBp
+dOs
 hzp
 hzp
 hzp
-hzp
-wip
+ube
 bIm
 hGF
 mBn
@@ -80149,12 +80150,12 @@ azA
 azA
 azA
 bIm
-aWq
+qvi
 hzp
 hzp
 hzp
 hzp
-ube
+wip
 bIm
 chW
 chW
@@ -80663,12 +80664,12 @@ azA
 azA
 azA
 bIm
-aWq
+qvi
 hzp
 hzp
 hzp
 hzp
-ube
+wip
 bIm
 lMF
 lMF
@@ -80920,12 +80921,12 @@ azA
 azA
 azA
 bIm
-qvi
+eXV
+hRZ
 hzp
 hzp
 hzp
-hzp
-wip
+mOX
 bIm
 xDp
 fte
@@ -81177,12 +81178,12 @@ azA
 azA
 azA
 bIm
-eXV
-hRZ
-hzp
-hzp
-hzp
-mOX
+bIm
+ffJ
+gxR
+mwm
+gxR
+qro
 bIm
 bIm
 nNV
@@ -81433,13 +81434,13 @@ azA
 azA
 azA
 azA
+azA
 bIm
 bIm
-ffJ
-gxR
-mwm
-gxR
-qro
+bIm
+bIm
+bIm
+bIm
 bIm
 xjn
 hAR
@@ -81691,12 +81692,12 @@ azA
 azA
 azA
 azA
-bIm
-bIm
-bIm
-bIm
-bIm
-bIm
+azA
+azA
+azA
+azA
+azA
+azA
 bIm
 nOJ
 sJk
