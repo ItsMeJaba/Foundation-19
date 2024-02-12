@@ -239,7 +239,7 @@
 	Used for pointing at something
 */
 /mob/proc/AltMiddleClickOn(atom/A)
-	pointed(A)
+	face_direction(A)
 	return
 
 /*
