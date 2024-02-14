@@ -236,7 +236,7 @@
 
 /*
 	Middle-Alt click
-	Used for pointing at something
+	Used for face direction at something
 */
 /mob/proc/AltMiddleClickOn(atom/A)
 	face_direction(A)
