@@ -141,7 +141,7 @@
 	for(var/obj/machinery/light/M in get_area_all_atoms(/area/site53))
 		if (M.current_mode == "emergency_lighting")
 			M.set_emergency_lighting(FALSE)
-			playsound(M, 'sounds/machines/lightson.ogg', 20, 0)
+			playsound(M, 'sounds/machines/lightson.ogg', 40, 0)
 
 
 /decl/security_level/proc/switching_up_to()
