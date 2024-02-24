@@ -50,6 +50,10 @@
 	icon_state = "post"
 	cuttable = FALSE
 
+/obj/structure/fence/New(newloc, material_key = DEFAULT_FURNITURE_MATERIAL)
+	material = material_key // Converted to datum in initialize().
+	..(newloc)
+
 /obj/structure/fence/cut/medium
 	icon_state = "straight_cut2"
 	hole_size = MEDIUM_HOLE
