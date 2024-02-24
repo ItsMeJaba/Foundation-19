@@ -406,3 +406,49 @@
 /obj/structure/bed/chair/pew/left/mahogany
 	color = WOOD_COLOR_RICH
 	pew_material = MATERIAL_MAHOGANY
+
+// Sofas
+
+/obj/structure/bed/chair/sofa
+	name = "sofa"
+	icon_state = "leather_sofa_middle"
+	base_icon = "leather_sofa_middle"
+	buckle_movable = FALSE
+	color = null
+
+/obj/structure/bed/chair/sofa/New(newloc, newmaterial = DEFAULT_FURNITURE_MATERIAL)
+	..(newloc, newmaterial, MATERIAL_LEATHER_GENERIC)
+
+/obj/structure/bed/chair/sofa/on_update_icon()
+	.=..()
+	color = null
+
+/obj/structure/bed/chair/sofa/left
+	icon_state = "leather_sofa_left"
+	base_icon = "leather_sofa_left"
+
+/obj/structure/bed/chair/sofa/right
+	icon_state = "leather_sofa_right"
+	base_icon = "leather_sofa_right"
+
+/obj/structure/bed/chair/sofa/corner
+	icon_state = "leather_sofa_corner"
+	base_icon = "lether_sofa_corner"
+
+/obj/structure/bed/chair/sofa/corp
+	name = "sofa"
+	desc = "Soft and cushy."
+	icon_state = "corp_sofamiddle"
+	base_icon = "corp_sofamiddle"
+
+/obj/structure/bed/chair/sofa/corp/left
+	icon_state = "corp_sofaend_left"
+	base_icon = "corp_sofaend_left"
+
+/obj/structure/bed/chair/sofa/corp/right
+	icon_state = "corp_sofaend_right"
+	base_icon = "corp_sofa_right"
+
+/obj/structure/bed/chair/sofa/corp/corner
+	icon_state = "corp_sofacorner"
+	base_icon = "corp_sofacorner"
