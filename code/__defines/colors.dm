@@ -120,6 +120,12 @@
 #define COMMS_COLOR_LCZ        "#b8a058"
 #define COMMS_COLOR_ECZ        "#545c68"
 
+#define COLOR_MONOTILE		   "#545c68"
+#define COLOR_TILE_GRAY		   "#444547"
+#define COLOR_TILE_DARK_GRAY   "#404040"
+#define COLOR_FLOORTILE_GRAY   "#a3a2a0"
+#define COLOR_WARNING		   "#D2D53D"
+
 #define WOOD_COLOR_GENERIC     "#d5a66e"
 #define WOOD_COLOR_RICH        "#792f27"
 #define WOOD_COLOR_PALE        "#d2bc9d"
