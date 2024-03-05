@@ -61,7 +61,7 @@
 	},
 /area/map_template/ninja_dojo/dojo)
 "am" = (
-/obj/structure/closet/medical_wall{
+/obj/structure/closet/wall/medical{
 	pixel_y = 32
 	},
 /obj/item/tank/anesthetic,

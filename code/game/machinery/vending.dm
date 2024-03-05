@@ -960,14 +960,35 @@
 					/obj/item/device/transfer_valve = 6,/obj/item/device/assembly/timer = 6,/obj/item/device/assembly/signaller = 6,
 					/obj/item/device/assembly/prox_sensor = 6,/obj/item/device/assembly/igniter = 6)
 
-/obj/machinery/vending/wallmed1
+/obj/machinery/vending/wallmed
+	name = "\improper NanoMed Mini"
+	desc = "A wall-mounted version of the NanoMed, containing only vital first aid equipment."
+	product_ads = "Go save some lives!;The best stuff for your medbay.;Only the finest tools.;Natural chemicals!;This stuff saves lives.;Don't you want some?"
+	icon_state = "wallmed"
+	icon_deny = "wallmed-deny"
+	icon_vend = "wallmed-vend"
+	density = FALSE //It is wall-mounted, and thus, not dense. --Superxpdude
+	base_type = /obj/machinery/vending/wallmed
+	products = list(
+		/obj/item/reagent_containers/hypospray/autoinjector = 5,
+		/obj/item/stack/medical/bruise_pack = 4,
+		/obj/item/stack/medical/ointment = 4,
+		/obj/item/storage/med_pouch/trauma,
+		/obj/item/storage/med_pouch/burn,
+		/obj/item/storage/med_pouch/oxyloss,
+		/obj/item/storage/med_pouch/toxin,
+		/obj/item/storage/med_pouch/radiation
+		)
+	contraband = list(/obj/item/reagent_containers/pill/tox = 3, /obj/item/reagent_containers/hypospray/autoinjector/pain = 2)
+
+/obj/machinery/vending/wallmed/light
 	name = "\improper NanoMed"
 	desc = "A wall-mounted version of the NanoMed."
 	product_ads = "Go save some lives!;The best stuff for your medbay.;Only the finest tools.;Natural chemicals!;This stuff saves lives.;Don't you want some?"
 	icon_state = "wallmed"
 	icon_deny = "wallmed-deny"
 	icon_vend = "wallmed-vend"
-	base_type = /obj/machinery/vending/wallmed1
+	base_type = /obj/machinery/vending/wallmed/light
 	density = FALSE //It is wall-mounted, and thus, not dense. --Superxpdude
 	products = list(
 		/obj/item/stack/medical/bruise_pack = 3,
@@ -980,26 +1001,24 @@
 		)
 	contraband = list(/obj/item/reagent_containers/syringe/antitoxin = 4,/obj/item/reagent_containers/syringe/antiviral = 4,/obj/item/reagent_containers/pill/tox = 1)
 
-/obj/machinery/vending/wallmed2
-	name = "\improper NanoMed Mini"
-	desc = "A wall-mounted version of the NanoMed, containing only vital first aid equipment."
-	product_ads = "Go save some lives!;The best stuff for your medbay.;Only the finest tools.;Natural chemicals!;This stuff saves lives.;Don't you want some?"
-	icon_state = "wallmed"
-	icon_deny = "wallmed-deny"
-	icon_vend = "wallmed-vend"
-	density = FALSE //It is wall-mounted, and thus, not dense. --Superxpdude
-	base_type = /obj/machinery/vending/wallmed2
-	products = list(
-		/obj/item/reagent_containers/hypospray/autoinjector = 5,
-		/obj/item/stack/medical/bruise_pack = 4,
-		/obj/item/stack/medical/ointment = 4,
-		/obj/item/storage/med_pouch/trauma,
-		/obj/item/storage/med_pouch/burn,
-		/obj/item/storage/med_pouch/oxyloss,
-		/obj/item/storage/med_pouch/toxin,
-		/obj/item/storage/med_pouch/radiation
-		)
-	contraband = list(/obj/item/reagent_containers/pill/tox = 3, /obj/item/reagent_containers/hypospray/autoinjector/pain = 2)
+// rotate this shit
+/obj/machinery/vending/wallmed/LateInitialize()
+	if(dir == 2)
+		pixel_x = 0
+		pixel_y = 28
+		return
+	if(dir == 1)
+		pixel_x = 0
+		pixel_y = -32
+		return
+	if(dir == 8)
+		pixel_x = 22
+		pixel_y = 0
+		return
+	if(dir == 4)
+		pixel_x = -22
+		pixel_y = 0
+		return
 
 /obj/machinery/vending/security
 	name = "\improper SecTech"

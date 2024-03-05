@@ -9000,7 +9000,7 @@
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/llcz/dclass/medicalpost)
 "vd" = (
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled/monotile/white,
@@ -11526,7 +11526,7 @@
 /turf/simulated/floor/tiled/old_tile,
 /area/site53/llcz/dclass/reeducation)
 "Bh" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	name = "Emergency NanoMed";
 	pixel_x = -28
 	},
@@ -13771,7 +13771,7 @@
 /area/site53/llcz/dclass/primaryhallway)
 "Hd" = (
 /obj/structure/bed/roller,
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 8;
 	pixel_x = 22
 	},
@@ -18834,7 +18834,7 @@
 /obj/machinery/cell_charger,
 /obj/item/screwdriver,
 /obj/effect/floor_decal/corner/b_green/mono,
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	name = "Emergency NanoMed";
 	pixel_y = 28
 	},

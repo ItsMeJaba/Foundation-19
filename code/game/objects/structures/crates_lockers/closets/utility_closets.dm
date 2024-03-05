@@ -164,10 +164,34 @@
 		/obj/item/clothing/shoes/brown,
 		/obj/item/clothing/head/bomb_hood/security)
 
+
+/obj/structure/closet/wall
+	name = "wall-type closets"
+	desc = "DONT USE THIS OBJECT"
+
+/obj/structure/closet/wall/LateInitialize()
+	. = ..()
+	if(dir == 2)
+		pixel_x = 0
+		pixel_y = 28
+		return
+	if(dir == 1)
+		pixel_x = 0
+		pixel_y = -32
+		return
+	if(dir == 8)
+		pixel_x = 22
+		pixel_y = 0
+		return
+	if(dir == 4)
+		pixel_x = -22
+		pixel_y = 0
+		return
+
 /*
  * Hydrant
  */
-/obj/structure/closet/hydrant //wall mounted fire closet
+/obj/structure/closet/wall/hydrant //wall mounted fire closet
 	name = "fire-safety closet"
 	desc = "It's a storage unit for fire-fighting supplies."
 	icon_state = "hydrant"
@@ -180,7 +204,7 @@
 	storage_types = CLOSET_STORAGE_ITEMS
 	setup = 0
 
-/obj/structure/closet/hydrant/WillContain()
+/obj/structure/closet/wall/hydrant/WillContain()
 	return list(
 		/obj/item/inflatable/door = 2,
 		/obj/item/storage/med_pouch/burn = 2,
@@ -191,7 +215,7 @@
 /*
  * First Aid
  */
-/obj/structure/closet/medical_wall //wall mounted medical closet
+/obj/structure/closet/wall/medical //wall mounted medical closet
 	name = "first-aid closet"
 	desc = "It's a wall-mounted storage unit for first aid supplies."
 	icon_state = "medical_wall_first_aid"
@@ -204,7 +228,7 @@
 	storage_types = CLOSET_STORAGE_ITEMS
 	setup = 0
 
-/obj/structure/closet/medical_wall/filled/WillContain()
+/obj/structure/closet/wall/medical/filled/WillContain()
 	return list(
 		/obj/random/firstaid,
 		/obj/random/medical/lite = 12)
@@ -234,7 +258,7 @@
 		/obj/item/device/spaceflare
 	)
 
-/obj/structure/closet/shipping_wall
+/obj/structure/closet/wall/shipping
 	name = "shipping supplies closet"
 	desc = "It's a wall-mounted storage unit containing supplies for preparing shipments."
 	icon_state = "shipping_wall"
@@ -247,7 +271,7 @@
 	storage_types = CLOSET_STORAGE_ITEMS
 	setup = 0
 
-/obj/structure/closet/shipping_wall/filled/WillContain()
+/obj/structure/closet/wall/shipping/filled/WillContain()
 	return list(
 		/obj/item/stack/material/cardboard/ten,
 		/obj/item/device/destTagger,

@@ -145,21 +145,7 @@
 	},
 /turf/simulated/floor/shuttle/black,
 /area/site53/tram/mtf)
-"bG" = (
-/obj/machinery/button/blast_door{
-	id_tag = "supply_shuttle";
-	name = "Supply Drone Shutter Control"
-	},
-/obj/effect/paint/silver,
-/turf/simulated/wall/r_titanium,
-/area/supply/dock)
 "bL" = (
-/turf/simulated/floor/plating,
-/area/supply/dock)
-"bU" = (
-/obj/machinery/light/spot{
-	dir = 1
-	},
 /turf/simulated/floor/plating,
 /area/supply/dock)
 "bW" = (
@@ -227,15 +213,6 @@
 	},
 /turf/simulated/floor/shuttle/white,
 /area/site53/tram/mtf)
-"cu" = (
-/obj/effect/floor_decal/industrial/hatch/yellow,
-/obj/machinery/door/blast/shutters{
-	dir = 4;
-	id_tag = "supply_shuttle";
-	name = "Supply Drone Shutters"
-	},
-/turf/simulated/floor/plating,
-/area/supply/dock)
 "cv" = (
 /turf/simulated/floor/shuttle/white,
 /area/site53/tram/mtf)
@@ -382,21 +359,6 @@
 	},
 /turf/simulated/floor/shuttle/black,
 /area/site53/tram/mtf)
-"dG" = (
-/obj/machinery/light/spot,
-/turf/simulated/floor/plating,
-/area/supply/dock)
-"dJ" = (
-/obj/structure/window/reinforced{
-	dir = 1
-	},
-/obj/structure/showcase{
-	desc = "A self-contained autopilot that controls supply drones.";
-	icon_state = "comm_server";
-	name = "Supply Drone Virtual Intelligence"
-	},
-/turf/simulated/floor/plating,
-/area/supply/dock)
 "dQ" = (
 /obj/effect/decal/cleanable/blood/oil,
 /turf/unsimulated/floor/reinforced,
@@ -6769,14 +6731,6 @@
 	icon_state = "dark"
 	},
 /area/centcom)
-"HO" = (
-/obj/structure/shuttle/engine/heater{
-	dir = 1
-	},
-/obj/structure/window/reinforced,
-/obj/effect/paint/silver,
-/turf/simulated/wall/r_titanium,
-/area/supply/dock)
 "HW" = (
 /obj/structure/reagent_dispensers/watertank,
 /obj/effect/floor_decal/corner/orange/border{
@@ -7803,10 +7757,6 @@
 	icon_state = "monotiledark"
 	},
 /area/centcom)
-"OB" = (
-/obj/effect/paint/silver,
-/turf/simulated/wall/r_titanium,
-/area/supply/dock)
 "OJ" = (
 /obj/machinery/door/airlock/vault{
 	name = "Secondary Living Quarters"
@@ -8740,12 +8690,6 @@
 	icon_state = "dark"
 	},
 /area/centcom)
-"UD" = (
-/obj/structure/shuttle/engine/propulsion{
-	dir = 1
-	},
-/turf/unsimulated/floor/reinforced,
-/area/centcom)
 "UG" = (
 /turf/unsimulated/wall{
 	desc = "A secure airlock. Doesn't look like you can get through easily.";
@@ -8784,7 +8728,7 @@
 	},
 /area/space)
 "UU" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	pixel_y = 32
 	},
 /turf/unsimulated/floor{
@@ -8853,7 +8797,7 @@
 	},
 /area/centcom)
 "VH" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -21
 	},
@@ -8966,7 +8910,7 @@
 /obj/structure/table/reinforced,
 /obj/item/storage/pill_bottle/amnesticsb,
 /obj/item/storage/pill_bottle/amnesticsb,
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	pixel_y = 32
 	},
 /turf/unsimulated/floor/techfloor,
@@ -9079,7 +9023,7 @@
 /area/centcom)
 "YF" = (
 /obj/structure/table/reinforced,
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	pixel_y = 32
 	},
 /turf/unsimulated/floor/techfloor,
@@ -9141,7 +9085,7 @@
 /turf/unsimulated/floor/techfloor,
 /area/centcom)
 "Zn" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -21
 	},
@@ -13540,13 +13484,13 @@ Rr
 Uk
 Uk
 Uk
-OB
-bG
-cu
-cu
-cu
-bG
-OB
+Uk
+bL
+bL
+bL
+bL
+bL
+Uk
 Uk
 Uk
 Uk
@@ -13741,15 +13685,15 @@ Nx
 Rr
 Uk
 Uk
-UD
-OB
+Uk
+Uk
 bL
 bL
 bL
 bL
 bL
-OB
-OB
+Uk
+Uk
 Uk
 Uk
 Rr
@@ -13943,15 +13887,15 @@ Nx
 Rr
 Uk
 Uk
-UD
-HO
-bU
+Uk
+Uk
 bL
 bL
+cz
 bL
-dG
-OB
-OB
+bL
+Uk
+Uk
 Uk
 Uk
 Rr
@@ -14145,15 +14089,15 @@ Nx
 Rr
 Uk
 Uk
-UD
-HO
+Uk
+Uk
 bL
 bL
-cz
 bL
 bL
-dJ
-OB
+bL
+Uk
+Uk
 Uk
 Uk
 Rr
@@ -14347,15 +14291,15 @@ Nx
 Rr
 Uk
 Uk
-UD
-OB
+Uk
+Uk
 bL
 bL
 bL
 bL
 bL
-OB
-OB
+Uk
+Uk
 Uk
 Uk
 Rr
@@ -14550,13 +14494,13 @@ Rr
 Uk
 Uk
 Uk
-OB
-bG
-cu
-cu
-cu
-bG
-OB
+Uk
+Uk
+Uk
+Uk
+Uk
+Uk
+Uk
 Uk
 Uk
 Uk

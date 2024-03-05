@@ -3271,7 +3271,7 @@
 /obj/effect/floor_decal/industrial/warning/corner{
 	dir = 8
 	},
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled/dark/monotile,
@@ -3929,9 +3929,7 @@
 /obj/effect/floor_decal/corner/yellow/half{
 	dir = 8
 	},
-/obj/structure/closet/secure_closet/engineering_personal{
-	req_access = list("ACCESS_ENGINEERING_LEVEL2")
-	},
+/obj/structure/closet/secure_closet/engineering_personal,
 /obj/item/device/flashlight{
 	pixel_y = 15
 	},
@@ -4170,9 +4168,7 @@
 /obj/effect/floor_decal/corner/yellow/half{
 	dir = 4
 	},
-/obj/structure/closet/secure_closet/engineering_personal{
-	req_access = list("ACCESS_ENGINEERING_LEVEL2")
-	},
+/obj/structure/closet/secure_closet/engineering_personal,
 /obj/item/device/flashlight{
 	pixel_y = 15
 	},
@@ -4646,9 +4642,7 @@
 /obj/effect/floor_decal/corner/yellow/half{
 	dir = 4
 	},
-/obj/structure/closet/secure_closet/engineering_personal{
-	req_access = list("ACCESS_ENGINEERING_LEVEL2")
-	},
+/obj/structure/closet/secure_closet/engineering_personal,
 /obj/item/device/flashlight{
 	pixel_y = 15
 	},
@@ -5024,9 +5018,7 @@
 /turf/simulated/floor/tiled/white,
 /area/site53/reswing/xenobiology)
 "aoR" = (
-/obj/structure/closet/secure_closet/engineering_personal{
-	req_access = list("ACCESS_ENGINEERING_LEVEL2")
-	},
+/obj/structure/closet/secure_closet/engineering_personal,
 /obj/effect/floor_decal/corner/yellow/mono,
 /obj/item/device/flashlight{
 	pixel_y = 15
@@ -12314,9 +12306,7 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/reswing/robotics)
 "aJp" = (
-/obj/machinery/computer/rdconsole/core{
-	req_access = list()
-	},
+/obj/machinery/computer/rdconsole/core,
 /turf/simulated/floor/tiled/monotile,
 /area/site53/reswing/robotics)
 "aJq" = (
@@ -15892,7 +15882,7 @@
 /turf/simulated/wall/prepainted,
 /area/site53/llcz/scp013)
 "aWt" = (
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled/monotile/white,
@@ -16350,8 +16340,7 @@
 /area/site53/llcz/entrance_checkpoint)
 "aXL" = (
 /obj/effect/floor_decal/corner/blue/border{
-	dir = 4;
-	icon_state = "bordercolor"
+	dir = 4
 	},
 /obj/structure/cable/green{
 	d1 = 2;
@@ -20295,7 +20284,7 @@
 /obj/effect/floor_decal/corner/orange/border{
 	dir = 1
 	},
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	name = "Emergency NanoMed";
 	pixel_y = 28
 	},
@@ -22712,9 +22701,7 @@
 	network = list("Engineering Network")
 	},
 /obj/effect/floor_decal/corner/yellow/mono,
-/obj/structure/closet/secure_closet/engineering_personal{
-	req_access = list("ACCESS_ENGINEERING_LEVEL2")
-	},
+/obj/structure/closet/secure_closet/engineering_personal,
 /obj/item/device/flashlight{
 	pixel_y = 15
 	},
@@ -23327,7 +23314,7 @@
 /obj/machinery/light/small{
 	dir = 4
 	},
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled/monotile,
@@ -25059,7 +25046,7 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/lowertrams/redline)
 "gVy" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -22
 	},
@@ -27206,7 +27193,7 @@
 /turf/space,
 /area/site53/ulcz/humanoidcontainment)
 "jek" = (
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled/monotile,
@@ -27767,7 +27754,7 @@
 /area/site53/uhcz/hallways)
 "jKi" = (
 /obj/effect/paint_stripe/gray,
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/wall/prepainted,
@@ -28374,9 +28361,7 @@
 /obj/effect/floor_decal/corner/yellow/half{
 	dir = 8
 	},
-/obj/structure/closet/secure_closet/engineering_personal{
-	req_access = list("ACCESS_ENGINEERING_LEVEL2")
-	},
+/obj/structure/closet/secure_closet/engineering_personal,
 /obj/item/device/flashlight{
 	pixel_y = 15
 	},
@@ -29822,7 +29807,7 @@
 /turf/simulated/floor/tiled/techfloor,
 /area/site53/engineering/controlroom)
 "mcz" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -22
 	},
@@ -30339,8 +30324,7 @@
 	},
 /obj/item/paper{
 	info = "Weapons have been moved to the armory, use the new weapon dispenser devices.";
-	name = "notice from the council";
-	text = null
+	name = "notice from the council"
 	},
 /turf/simulated/floor/tiled/dark,
 /area/site53/lhcz/hczguardgear)
@@ -31952,7 +31936,7 @@
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/llcz/checkequip)
 "onl" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	name = "Emergency NanoMed";
 	pixel_y = 28
 	},
@@ -33131,7 +33115,7 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/uhcz/securitypost)
 "pFN" = (
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled/steel_grid,
@@ -35675,7 +35659,7 @@
 	icon_state = "1-2"
 	},
 /obj/effect/catwalk_plated/white,
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -22
 	},
@@ -36175,8 +36159,7 @@
 /obj/structure/table/steel,
 /obj/item/paper{
 	info = "WARNING: Testing on SCP-096 is not permitted without explicit O5 permission. Only break glass in case of approved test or emergencies.";
-	name = "notice from council";
-	text = null
+	name = "notice from council"
 	},
 /obj/effect/floor_decal/corner/red{
 	dir = 10
@@ -36749,7 +36732,7 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/uhcz/securitypost)
 "tSr" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -22
 	},
@@ -36828,7 +36811,7 @@
 /turf/simulated/floor,
 /area/site53/ulcz/humanoidcontainment)
 "tYx" = (
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled,
@@ -39539,8 +39522,7 @@
 /area/site53/engineering/primaryhallway)
 "wVL" = (
 /obj/effect/floor_decal/corner/blue/border{
-	dir = 4;
-	icon_state = "bordercolor"
+	dir = 4
 	},
 /obj/structure/cable/green{
 	d1 = 1;

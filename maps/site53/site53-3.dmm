@@ -645,7 +645,6 @@
 	dir = 4
 	},
 /obj/machinery/door/blast/regular{
-	begins_closed = 1;
 	dir = 4;
 	id_tag = "EZ Security Maintenance Hatch";
 	name = "EZ Security Maintenance Hatch"
@@ -1163,7 +1162,6 @@
 	},
 /obj/structure/disposalpipe/segment,
 /obj/machinery/door/blast/regular{
-	begins_closed = 1;
 	dir = 4;
 	id_tag = "EZ Security Maintenance Hatch";
 	name = "EZ Security Maintenance Hatch"
@@ -2654,7 +2652,7 @@
 /turf/simulated/floor/tiled/dark,
 /area/site53/medical/morgue)
 "gY" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 8;
 	pixel_x = 22
 	},
@@ -3864,7 +3862,7 @@
 	d2 = 4;
 	icon_state = "2-4"
 	},
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -22
 	},
@@ -5716,7 +5714,7 @@
 /area/site53/logistics/logistics)
 "rY" = (
 /obj/effect/shuttle_landmark/supply/station,
-/turf/simulated/floor/tiled/monotile,
+/turf/simulated/open,
 /area/quartermaster/hangar)
 "rZ" = (
 /obj/effect/floor_decal/industrial/outline/yellow,
@@ -5926,7 +5924,7 @@
 	d2 = 8;
 	icon_state = "4-8"
 	},
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/plating,
@@ -6274,7 +6272,7 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/logistics/logistics)
 "vj" = (
-/obj/structure/closet/shipping_wall/filled{
+/obj/structure/closet/wall/shipping/filled{
 	pixel_x = -32
 	},
 /obj/structure/closet/crate/bin{
@@ -6284,14 +6282,14 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/logistics/logistics)
 "vk" = (
-/obj/structure/closet/shipping_wall/filled{
+/obj/structure/closet/wall/shipping/filled{
 	pixel_y = 32
 	},
 /obj/structure/table/standard,
 /turf/simulated/floor/tiled/monotile,
 /area/site53/logistics/logistics)
 "vl" = (
-/obj/structure/closet/shipping_wall/filled{
+/obj/structure/closet/wall/shipping/filled{
 	pixel_y = -32
 	},
 /turf/simulated/floor/tiled/monotile,
@@ -6645,6 +6643,13 @@
 	},
 /turf/simulated/floor/tiled/white,
 /area/site53/medical/infirmary)
+"ys" = (
+/obj/machinery/door/blast/railing{
+	dir = 2;
+	id_tag = "supply_elevator_railing"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/quartermaster/hangar)
 "yv" = (
 /obj/effect/floor_decal/corner/paleblue/half{
 	dir = 8
@@ -6717,6 +6722,12 @@
 	},
 /turf/simulated/floor/tiled/white,
 /area/site53/medical/surgery/hall)
+"yU" = (
+/obj/machinery/door/blast/railing{
+	id_tag = "supply_elevator_railing"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/quartermaster/hangar)
 "yV" = (
 /obj/structure/railing/mapped{
 	dir = 4;
@@ -7969,7 +7980,7 @@
 /turf/simulated/floor/tiled/white,
 /area/site53/medical/mentalhealth/isolation)
 "Ks" = (
-/obj/structure/closet/shipping_wall/filled{
+/obj/structure/closet/wall/shipping/filled{
 	pixel_y = -32
 	},
 /obj/machinery/conveyor/west{
@@ -8279,6 +8290,9 @@
 /obj/structure/barricade/spike,
 /turf/simulated/floor/exoplanet/snow,
 /area/site53/surface/surface)
+"NL" = (
+/turf/simulated/open,
+/area/quartermaster/hangar)
 "NP" = (
 /obj/item/gun/energy/ionrifle,
 /turf/unsimulated/mineral,
@@ -8510,6 +8524,16 @@
 /obj/structure/flora/ausbushes/fullgrass,
 /turf/simulated/floor/exoplanet/snow,
 /area/site53/surface/surface)
+"Qv" = (
+/obj/effect/floor_decal/industrial/warning{
+	dir = 8;
+	icon_state = "warning"
+	},
+/obj/machinery/gear{
+	id = "supply_elevator_gear"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/quartermaster/hangar)
 "QA" = (
 /obj/machinery/light{
 	dir = 4
@@ -9148,7 +9172,7 @@
 /turf/simulated/floor/tiled/dark/monotile,
 /area/site53/medical/equipstorage)
 "WK" = (
-/obj/structure/closet/hydrant{
+/obj/structure/closet/wall/hydrant{
 	pixel_y = 32
 	},
 /turf/simulated/floor/tiled/monotile,
@@ -9228,6 +9252,16 @@
 /obj/machinery/papershredder,
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/uez/goirepoffice)
+"XG" = (
+/obj/effect/floor_decal/industrial/warning{
+	dir = 4;
+	icon_state = "warning"
+	},
+/obj/machinery/gear{
+	id = "supply_elevator_gear"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/quartermaster/hangar)
 "XH" = (
 /obj/structure/disposalpipe/segment{
 	dir = 4;
@@ -28935,7 +28969,7 @@ jp
 ju
 jQ
 uK
-uI
+XG
 uI
 uI
 uI
@@ -29192,13 +29226,13 @@ jp
 ua
 uG
 uH
-jH
-jH
-jH
-jH
-jH
-jH
-jH
+ys
+NL
+NL
+NL
+NL
+NL
+yU
 jH
 uG
 uH
@@ -29449,13 +29483,13 @@ jp
 ua
 uG
 uH
-jH
-jH
-jH
-jH
-jH
-jH
-jH
+ys
+NL
+NL
+NL
+NL
+NL
+yU
 jH
 uG
 uH
@@ -29706,13 +29740,13 @@ jp
 ua
 uG
 uA
-jH
-jH
-jH
+ys
+NL
+NL
 rY
-jH
-jH
-jH
+NL
+NL
+yU
 jH
 uA
 uH
@@ -29963,13 +29997,13 @@ jp
 ua
 uG
 uH
-jH
-jH
-jH
-jH
-jH
-jH
-jH
+ys
+NL
+NL
+NL
+NL
+NL
+yU
 jH
 uG
 uH
@@ -30220,13 +30254,13 @@ jp
 ju
 jQ
 uH
-jH
-jH
-jH
-jH
-jH
-jH
-jH
+ys
+NL
+NL
+NL
+NL
+NL
+yU
 jH
 uG
 jp
@@ -30477,7 +30511,7 @@ jp
 ju
 jQ
 uL
-uJ
+Qv
 uJ
 uJ
 uJ

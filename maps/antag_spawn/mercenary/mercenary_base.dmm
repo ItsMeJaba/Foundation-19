@@ -2075,7 +2075,7 @@
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/map_template/merc_shuttle)
 "xA" = (
-/obj/structure/closet/medical_wall/filled{
+/obj/structure/closet/wall/medical/filled{
 	pixel_x = -32
 	},
 /obj/item/reagent_containers/spray/cleaner,

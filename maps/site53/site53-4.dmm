@@ -794,7 +794,7 @@
 /turf/simulated/floor/plating,
 /area/site53/uez/substation)
 "cB" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -22
 	},
@@ -2332,7 +2332,7 @@
 /turf/simulated/floor/tiled/dark,
 /area/site53/entrancezone/forensics)
 "hw" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	name = "Emergency NanoMed";
 	pixel_y = 28
 	},
@@ -5175,7 +5175,7 @@
 /area/site53/uez/equipmentroom)
 "ys" = (
 /obj/effect/paint_stripe/blue,
-/obj/machinery/vending/wallmed2{
+/obj/machinery/vending/wallmed{
 	dir = 1
 	},
 /turf/simulated/wall/titanium,
@@ -7848,7 +7848,7 @@
 /turf/simulated/floor/carpet/blue,
 /area/site53/uez/commandpanicbunker)
 "TM" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	name = "Emergency NanoMed";
 	pixel_y = 28
 	},
@@ -8263,7 +8263,7 @@
 /turf/simulated/floor/tiled/white/monotile,
 /area/site53/uez/commandpanicbunker)
 "Xj" = (
-/obj/machinery/vending/wallmed1{
+/obj/machinery/vending/wallmed/light{
 	dir = 4;
 	pixel_x = -22
 	},
