@@ -18,7 +18,7 @@
 	id_type = /obj/item/card/id/seclvl4conteng
 	belt = /obj/item/storage/belt/utility/full
 	l_pocket = /obj/item/device/radio
-	r_ear =  = /obj/item/device/radio/headset/conteng/alt
+	r_ear = /obj/item/device/radio/headset/conteng/alt
 	l_ear = /obj/item/device/radio/headset/conteng
 
 /decl/hierarchy/outfit/job/engineering/seneng
