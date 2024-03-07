@@ -308,6 +308,10 @@
 	icon_state = "1-2"
 	},
 /obj/machinery/door/airlock/multi_tile/glass/civilian,
+/obj/machinery/door/blast/regular{
+	name = "Entrance Lockdown Blast Door";
+	id_tag = "entrance lock"
+	},
 /turf/simulated/floor/tiled,
 /area/site53/surface/cryogenicsprimary)
 "aU" = (
@@ -956,7 +960,7 @@
 	},
 /obj/machinery/camera/autoname{
 	dir = 8;
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /obj/machinery/door/blast/regular{
 	begins_closed = 0;
@@ -1723,7 +1727,7 @@
 /obj/structure/cable/green,
 /obj/machinery/camera/autoname{
 	dir = 1;
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /obj/machinery/light,
 /obj/structure/filingcabinet,
@@ -1762,13 +1766,9 @@
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/medical/infirmreception)
 "ep" = (
-/obj/effect/wallframe_spawn/reinforced,
-/obj/machinery/door/blast/regular/open{
-	icon_state = "pdoor0";
-	id_tag = "facilitylockdown";
-	name = "Exterior Lockdown Blast Door"
-	},
-/turf/simulated/floor/plating,
+/obj/effect/paint_stripe/red,
+/obj/effect/paint_stripe/red,
+/turf/simulated/wall/prepainted,
 /area/site53/upper_surface/entrancehallway)
 "eq" = (
 /obj/machinery/camera/network/medbay{
@@ -4394,7 +4394,7 @@
 "lx" = (
 /obj/machinery/camera/autoname{
 	dir = 1;
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /turf/simulated/floor/plating,
 /area/site53/entrancezone/substation)
@@ -4487,14 +4487,18 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/entrancezone/hallway)
 "ma" = (
-/obj/machinery/door/airlock/glass/civilian{
-	name = "Hub"
-	},
 /obj/structure/disposalpipe/segment,
 /obj/machinery/door/blast/regular/open{
+	dir = 4;
 	icon_state = "pdoor0";
 	id_tag = "facilitylockdown";
 	name = "Exterior Lockdown Blast Door"
+	},
+/obj/machinery/door/blast/regular/open{
+	dir = 4;
+	icon_state = "pdoor0";
+	id_tag = "entrance lock";
+	name = "Entrance Lockdown Blast Door"
 	},
 /turf/simulated/floor/tiled,
 /area/site53/upper_surface/entrancehallway)
@@ -4519,51 +4523,44 @@
 /turf/simulated/floor/tiled/white,
 /area/site53/medical/surgery/op2)
 "mh" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/glass/civilian{
-	name = "Hub"
-	},
-/obj/machinery/door/blast/regular/open{
-	icon_state = "pdoor0";
-	id_tag = "facilitylockdown";
-	name = "Exterior Lockdown Blast Door"
+/obj/structure/table/standard,
+/obj/machinery/button/blast_door{
+	tag = "EZ first gate";
+	id_tag = "Ez entrance lock";
+	name = "Ez entrance lock"
 	},
 /turf/simulated/floor/tiled/monotile,
 /area/site53/upper_surface/entrancehallway)
 "mi" = (
-/obj/structure/bed/chair,
+/obj/machinery/light,
 /turf/simulated/floor/tiled/monotile,
-/area/site53/upper_surface/entrancehallway)
+/area/site53/surface/cryogenicsprimary)
 "mj" = (
-/obj/structure/closet/crate/bin{
-	anchored = 1;
-	name = "trash bin"
+/obj/effect/wallframe_spawn/reinforced,
+/obj/machinery/door/blast/regular/open{
+	dir = 4;
+	icon_state = "pdoor0";
+	id_tag = "facilitylockdown";
+	name = "Exterior Lockdown Blast Door"
 	},
-/obj/effect/landmark{
-	name = "scp420j"
+/obj/machinery/door/blast/shutters{
+	tag = "EZ first gate";
+	id_tag = "Ez entrance lock"
 	},
-/turf/simulated/floor/tiled/monotile,
+/turf/simulated/floor/plating,
 /area/site53/upper_surface/entrancehallway)
 "mk" = (
 /obj/effect/paint_stripe/orange,
 /turf/simulated/wall/titanium,
 /area/site53/uez/goirepoffice)
 "ml" = (
-/obj/structure/bed/chair{
-	dir = 1
-	},
+/obj/structure/table/standard,
 /turf/simulated/floor/tiled/monotile,
 /area/site53/upper_surface/entrancehallway)
 "mm" = (
-/obj/machinery/light,
-/obj/structure/closet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/fleet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/fleet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/fleet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/fleet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/fleet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/fleet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/fleet,
+/obj/structure/bed/chair/padded/black{
+	dir = 4
+	},
 /turf/simulated/floor/tiled/monotile,
 /area/site53/upper_surface/entrancehallway)
 "mn" = (
@@ -5162,19 +5159,22 @@
 /turf/simulated/floor/tiled,
 /area/site53/logistics/logistics)
 "pq" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/glass/civilian{
-	name = "Hub"
-	},
 /obj/structure/cable{
 	d1 = 1;
 	d2 = 2;
 	icon_state = "1-2"
 	},
 /obj/machinery/door/blast/regular/open{
+	dir = 4;
 	icon_state = "pdoor0";
 	id_tag = "facilitylockdown";
 	name = "Exterior Lockdown Blast Door"
+	},
+/obj/machinery/door/blast/regular/open{
+	dir = 4;
+	icon_state = "pdoor0";
+	id_tag = "entrance lock";
+	name = "Entrance Lockdown Blast Door"
 	},
 /turf/simulated/floor/tiled,
 /area/site53/upper_surface/entrancehallway)
@@ -5285,11 +5285,16 @@
 /turf/simulated/floor/tiled/white,
 /area/site53/medical/infirmary)
 "qa" = (
-/obj/structure/bed/chair,
 /obj/structure/cable{
 	d1 = 4;
 	d2 = 8;
 	icon_state = "4-8"
+	},
+/obj/structure/table/standard,
+/obj/machinery/button/blast_door{
+	tag = "EZ first gate";
+	id_tag = "Ez entrance lock";
+	name = "Ez entrance lock"
 	},
 /turf/simulated/floor/tiled/monotile,
 /area/site53/upper_surface/entrancehallway)
@@ -5432,6 +5437,13 @@
 /obj/machinery/light{
 	dir = 8
 	},
+/obj/effect/landmark{
+	name = "scp420j"
+	},
+/obj/structure/closet/crate/bin{
+	anchored = 1;
+	name = "trash bin"
+	},
 /turf/simulated/floor/tiled/monotile,
 /area/site53/surface/cryogenicsprimary)
 "qU" = (
@@ -5450,6 +5462,10 @@
 "qW" = (
 /obj/machinery/door/firedoor,
 /obj/structure/disposalpipe/segment,
+/obj/machinery/door/blast/regular{
+	name = "Entrance Lockdown Blast Door";
+	id_tag = "entrance lock"
+	},
 /turf/simulated/floor/tiled,
 /area/site53/surface/cryogenicsprimary)
 "qZ" = (
@@ -5503,15 +5519,20 @@
 	},
 /area/site53/surface/surface)
 "ro" = (
-/obj/machinery/light,
-/obj/structure/closet,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/marine,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/marine,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/marine,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/marine,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/marine,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/marine,
-/obj/item/clothing/suit/storage/hooded/wintercoat/solgov/marine,
+/obj/machinery/door/airlock/command{
+	name = "EZ Brig Control Room";
+	req_access = list("ACCESS_SECURITY_LEVEL3")
+	},
+/obj/machinery/door/blast/regular/open{
+	dir = 4;
+	icon_state = "pdoor0";
+	id_tag = "facilitylockdown";
+	name = "Exterior Lockdown Blast Door"
+	},
+/obj/machinery/door/blast/shutters{
+	tag = "EZ first gate";
+	id_tag = "Ez entrance lock"
+	},
 /turf/simulated/floor/tiled/monotile,
 /area/site53/upper_surface/entrancehallway)
 "rp" = (
@@ -5584,7 +5605,7 @@
 "rE" = (
 /obj/machinery/camera/autoname{
 	dir = 1;
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /obj/structure/filingcabinet/chestdrawer,
 /turf/simulated/floor/tiled/monotile,
@@ -5624,14 +5645,10 @@
 /turf/simulated/floor/tiled/monotile,
 /area/site53/logistics/logistics)
 "rM" = (
-/obj/effect/wallframe_spawn/reinforced,
-/obj/machinery/door/blast/regular/open{
-	dir = 4;
-	icon_state = "pdoor0";
-	id_tag = "facilitylockdown";
-	name = "Exterior Lockdown Blast Door"
+/obj/structure/bed/chair/padded/black{
+	dir = 8
 	},
-/turf/simulated/floor/plating,
+/turf/simulated/floor/tiled/monotile,
 /area/site53/upper_surface/entrancehallway)
 "rN" = (
 /obj/effect/floor_decal/industrial/outline/yellow,
@@ -6420,7 +6437,7 @@
 "vO" = (
 /obj/machinery/camera/autoname{
 	dir = 4;
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /turf/simulated/floor/tiled/white/monotile,
 /area/site53/surface/surface)
@@ -6733,6 +6750,16 @@
 	},
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/medical/isolation)
+"yZ" = (
+/obj/effect/landmark{
+	name = "scp420j"
+	},
+/obj/structure/closet/crate/bin{
+	anchored = 1;
+	name = "trash bin"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/site53/surface/cryogenicsprimary)
 "za" = (
 /obj/structure/table/standard,
 /obj/item/paper_bin,
@@ -6887,6 +6914,7 @@
 	dir = 8;
 	icon_state = "warningcorner"
 	},
+/obj/machinery/light/small,
 /turf/simulated/floor/tiled/white,
 /area/site53/medical/infirmary)
 "zU" = (
@@ -6955,7 +6983,7 @@
 /area/site53/lowertrams/restaurantkitchenarea)
 "Ai" = (
 /obj/machinery/camera/autoname{
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /turf/simulated/floor/tiled/white/monotile,
 /area/site53/surface/surface)
@@ -6992,7 +7020,7 @@
 /area/site53/uez/goirepoffice)
 "AI" = (
 /obj/machinery/camera/autoname{
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /turf/simulated/floor/tiled/monotile,
 /area/site53/surface/cryogenicsprimary)
@@ -7119,6 +7147,14 @@
 	},
 /turf/simulated/floor/tiled/white,
 /area/site53/medical/infirmary)
+"BQ" = (
+/obj/machinery/door/firedoor,
+/obj/machinery/door/airlock/command{
+	name = "EZ Brig Control Room";
+	req_access = list("ACCESS_SECURITY_LEVEL3")
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/site53/surface/cryogenicsprimary)
 "BT" = (
 /obj/structure/flora/ausbushes/brflowers,
 /obj/structure/railing/mapped,
@@ -7725,6 +7761,13 @@
 	},
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/medical/surgery/hall)
+"HJ" = (
+/obj/machinery/light{
+	dir = 8;
+	icon_state = "tube1"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/site53/upper_surface/entrancehallway)
 "HK" = (
 /obj/structure/railing/mapped,
 /obj/structure/railing/mapped{
@@ -8067,19 +8110,23 @@
 /turf/simulated/floor/tiled/monotile,
 /area/quartermaster/hangar)
 "Lf" = (
-/obj/structure/closet/crate/bin{
-	anchored = 1;
-	name = "trash bin"
-	},
-/obj/effect/landmark{
-	name = "scp420j"
-	},
 /obj/structure/cable{
 	d1 = 4;
 	d2 = 8;
 	icon_state = "4-8"
 	},
-/turf/simulated/floor/tiled/monotile,
+/obj/effect/wallframe_spawn/reinforced,
+/obj/machinery/door/blast/regular/open{
+	dir = 4;
+	icon_state = "pdoor0";
+	id_tag = "facilitylockdown";
+	name = "Exterior Lockdown Blast Door"
+	},
+/obj/machinery/door/blast/shutters{
+	tag = "EZ first gate";
+	id_tag = "Ez entrance lock"
+	},
+/turf/simulated/floor/plating,
 /area/site53/upper_surface/entrancehallway)
 "Lm" = (
 /obj/structure/railing/mapped{
@@ -8092,7 +8139,7 @@
 /obj/machinery/camera/autoname{
 	c_tag = "Cryo";
 	dir = 8;
-	network = list("Entrance Zone Network 1")
+	network = list("Entrance                                Zone                                Network                                1")
 	},
 /obj/structure/disposalpipe/segment{
 	dir = 8;
@@ -8372,6 +8419,10 @@
 /obj/machinery/hologram/holopad,
 /turf/simulated/floor/wood/walnut,
 /area/site53/lowertrams/restaurantkitchenarea)
+"OZ" = (
+/obj/effect/paint_stripe/red,
+/turf/simulated/wall/prepainted,
+/area/site53/upper_surface/entrancehallway)
 "Pa" = (
 /obj/structure/railing/mapped,
 /obj/structure/railing/mapped{
@@ -8399,7 +8450,7 @@
 	dir = 8
 	},
 /obj/machinery/camera/autoname{
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /turf/simulated/floor/exoplanet/snow,
 /area/site53/surface/surface)
@@ -8421,6 +8472,18 @@
 	},
 /turf/simulated/floor/tiled/white/monotile,
 /area/site53/surface/surface)
+"PF" = (
+/obj/structure/cable{
+	d1 = 1;
+	d2 = 2;
+	icon_state = "1-2"
+	},
+/obj/machinery/light{
+	dir = 8;
+	icon_state = "tube1"
+	},
+/turf/simulated/floor/tiled,
+/area/site53/upper_surface/entrancehallway)
 "PX" = (
 /obj/item/clothing/suit/storage/toggle/fr_jacket,
 /obj/item/clothing/suit/storage/toggle/fr_jacket/ems,
@@ -8530,6 +8593,10 @@
 	},
 /turf/simulated/floor/tiled/monotile/white,
 /area/site53/medical/surgery/op1)
+"QE" = (
+/obj/effect/paint_stripe/red,
+/turf/simulated/wall/prepainted,
+/area/site53/surface/cryogenicsprimary)
 "QG" = (
 /obj/structure/cable,
 /obj/structure/cable{
@@ -8539,6 +8606,13 @@
 	},
 /turf/simulated/floor/tiled/techfloor,
 /area/site53/uez/mcrsubstation)
+"QN" = (
+/obj/machinery/light{
+	dir = 1;
+	icon_state = "tube1"
+	},
+/turf/simulated/floor/tiled/white/monotile,
+/area/site53/surface/surface)
 "QQ" = (
 /obj/effect/catwalk_plated/dark,
 /obj/machinery/light/small{
@@ -8629,6 +8703,15 @@
 /obj/structure/railing/mapped,
 /turf/simulated/floor/exoplanet/snow,
 /area/site53/surface/surface)
+"RJ" = (
+/obj/structure/table/standard,
+/obj/machinery/button/blast_door{
+	tag = "EZ first gate";
+	id_tag = "entrance lock";
+	name = "entrance lock"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/site53/upper_surface/entrancehallway)
 "RK" = (
 /obj/structure/bed/chair{
 	dir = 8
@@ -8765,6 +8848,13 @@
 	},
 /turf/simulated/floor/tiled/dark/monotile,
 /area/site53/surface/surface)
+"SM" = (
+/obj/machinery/light{
+	dir = 4;
+	icon_state = "tube1"
+	},
+/turf/simulated/floor/tiled/monotile,
+/area/site53/upper_surface/entrancehallway)
 "SN" = (
 /obj/effect/paint_stripe/green,
 /obj/effect/wallframe_spawn/reinforced/polarized/full,
@@ -8945,7 +9035,7 @@
 	icon_state = "railing0-1"
 	},
 /obj/machinery/camera/autoname{
-	network = list("Entrance Zone Network")
+	network = list("Entrance                                Zone                                Network")
 	},
 /turf/simulated/floor/exoplanet/grass,
 /area/site53/surface/surface)
@@ -9150,6 +9240,10 @@
 "WK" = (
 /obj/structure/closet/hydrant{
 	pixel_y = 32
+	},
+/obj/machinery/light{
+	dir = 1;
+	icon_state = "tube1"
 	},
 /turf/simulated/floor/tiled/monotile,
 /area/site53/surface/cryogenicsprimary)
@@ -38399,12 +38493,12 @@ xb
 xb
 xb
 xb
-af
-rM
-rM
-rM
-rM
-ae
+QE
+OZ
+OZ
+OZ
+OZ
+ep
 Uw
 rw
 iz
@@ -38656,12 +38750,12 @@ kC
 aW
 kC
 aL
-aD
+BQ
 as
 as
+HJ
 as
-as
-mh
+OZ
 nE
 nE
 iW
@@ -38913,12 +39007,12 @@ pr
 aD
 oU
 af
-af
+QE
 ac
 as
-as
-as
-mh
+mm
+ml
+OZ
 nE
 nE
 jg
@@ -39166,16 +39260,16 @@ ay
 ay
 af
 WK
-kC
+mi
 kC
 kC
 qT
-oU
-mi
-as
-as
+QE
 ml
-ep
+RJ
+mh
+ml
+OZ
 nE
 nE
 jg
@@ -39427,13 +39521,13 @@ GH
 kC
 kC
 kC
-oU
+QE
 mj
-as
-as
-mm
+mj
+mj
+OZ
 ep
-nE
+QN
 nE
 jJ
 oy
@@ -39688,7 +39782,7 @@ aT
 JU
 at
 at
-at
+PF
 pq
 jR
 jR
@@ -40198,13 +40292,13 @@ kC
 kC
 kC
 kC
-oU
+QE
 Lf
-as
-as
+mj
+ae
 ro
-ep
-nE
+OZ
+QN
 nE
 jK
 nl
@@ -40454,13 +40548,13 @@ aE
 kC
 kC
 kC
-kC
-oU
+yZ
+QE
 qa
-as
-as
+RJ
 ml
-ep
+as
+OZ
 nE
 nE
 jg
@@ -40712,12 +40806,12 @@ pr
 aD
 oU
 af
-af
+QE
 HU
+rM
 as
 as
-as
-mh
+OZ
 nE
 nE
 jg
@@ -40969,12 +41063,12 @@ kC
 aW
 kC
 aF
-aD
+BQ
 as
 as
+SM
 as
-as
-mh
+OZ
 nE
 nE
 jL
@@ -41226,12 +41320,12 @@ xb
 xb
 xb
 xb
-af
-rM
-rM
-rM
-rM
-ae
+QE
+OZ
+OZ
+OZ
+OZ
+ep
 Pv
 fL
 jW
@@ -46372,7 +46466,7 @@ bO
 bO
 bO
 bO
-bO
+bX
 bO
 bm
 bm
@@ -46626,7 +46720,7 @@ bO
 bm
 bm
 bO
-bK
+bO
 bO
 bO
 bO
