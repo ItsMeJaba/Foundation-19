@@ -372,3 +372,4 @@
 // #undef STATE_096_CHASING // Прерывание убрано для кода в -> mod_celadon\SCP096\code\SCP096.dm
 #undef STATE_096_SLAUGHTER
 // #undef STATE_096_STAGGERED // Прерывание убрано для кода в -> mod_celadon\SCP096\code\SCP096.dm
+

@@ -7,3 +7,9 @@
 	seedarkness = !(seedarkness)
 	set_see_invisible(SEE_INVISIBLE_NOLIGHTING)
 	to_chat(src, "You [(seedarkness?"now":"no longer")] see darkness.")
+
+/mob/living/scp096/verb/stop_screaming()
+	set name = "Stop scream"
+	set category = "IC"
+	stop_scream()
+	Destroy()

@@ -7,7 +7,7 @@
 			. += "Locate X: [Ptarget.x]"
 			. += "Locate Y: [Ptarget.y]"
 			. += "Locate Z: [Ptarget.z]"
-
+//
 /mob/living/scp096/proc/handle_AI()
 	switch(current_state)
 		if(STATE_096_IDLE)
