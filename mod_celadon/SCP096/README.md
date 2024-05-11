@@ -39,7 +39,7 @@ ID мода: CELADON_SCP_096
 -->
 
 ### Оверрайды
-
+отсутствуют
 - `mods/_master_files/sound/my_cool_sound.ogg`
 - `mods/_master_files/code/my_modular_override.dm`: `proc/overriden_proc`, `var/overriden_var`
 <!--
