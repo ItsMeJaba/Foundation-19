@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_SCP012_FIX
+#define MODPACK_CELADON_SCP012_FIX
+
+#include "_scp012_fix.dm"
+
+#include "code/scp012_fix.dm"
+
+#endif
