@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_SCP343_FIX
+#define MODPACK_CELADON_SCP343_FIX
+
+#include "_scp343_fix.dm"
+
+#include "code/scp343_fix.dm"
+
+#endif

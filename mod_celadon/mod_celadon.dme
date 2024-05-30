@@ -16,6 +16,7 @@
 #include "contraband_fix/_contraband_fix.dme"
 #include "utf_8/_utf_8.dme"
 #include "pull_fix/_pull_fix.dme"
+#include "scp343_fix/_scp343_fix.dme"
 
 
 // --- OBJECTS --- //
