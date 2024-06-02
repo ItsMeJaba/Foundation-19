@@ -17,6 +17,7 @@
 #include "utf_8/_utf_8.dme"
 #include "pull_fix/_pull_fix.dme"
 #include "scp343_fix/_scp343_fix.dme"
+#include "scp012_fix/_scp012_fix.dme"
 
 
 // --- OBJECTS --- //
