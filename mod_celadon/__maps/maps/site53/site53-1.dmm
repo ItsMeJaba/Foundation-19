@@ -12093,6 +12093,7 @@
 /area/site53/lhcz/scp049containment)
 "llX" = (
 /obj/machinery/mineral/unloading_machine,
+/obj/effect/floor_decal/industrial/hatch/yellow,
 /turf/simulated/floor/tiled/techfloor/grid,
 /area/site53/llcz/mining/miningops)
 "lmg" = (
