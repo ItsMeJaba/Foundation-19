@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_SOOC_UPDATE
+#define MODPACK_CELADON_SOOC_UPDATE
+
+#include "_sooc_update.dm"
+
+#include "code/sooc_update.dm"
+
+#endif
