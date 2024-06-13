@@ -20,12 +20,13 @@
 #include "scp012_fix/_scp012_fix.dme"
 #include "minor_fix/_minor_fix.dme"
 #include "sooc_update/_sooc_update.dme"
+#include "orbit_fix/_orbit_fix.dme"
 
 // --- OBJECTS --- //
 #include "objects/_objects.dme"
 #include "SCP096/_SCP096.dme"
 #include "new_ungoc_sprites/_new_ungoc_sprites.dme"
-
+#include "sign_update/_sign_update.dme"
 
 // --- MISC --- //
 #include "clothing/_clothing.dme"

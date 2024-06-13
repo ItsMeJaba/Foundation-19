@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_ORBIT_FIX
+#define MODPACK_CELADON_ORBIT_FIX
+
+#include "_orbit_fix.dm"
+
+#include "code/orbit_fix.dm"
+
+#endif
