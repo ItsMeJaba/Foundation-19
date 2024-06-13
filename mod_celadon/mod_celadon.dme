@@ -19,6 +19,8 @@
 #include "scp343_fix/_scp343_fix.dme"
 #include "scp012_fix/_scp012_fix.dme"
 #include "minor_fix/_minor_fix.dme"
+#include "radio_channels_ru/_radio_channels_ru.dme"
+
 
 // --- OBJECTS --- //
 #include "objects/_objects.dme"

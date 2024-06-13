@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_RADIO_CHANNELS_RU
+#define MODPACK_CELADON_RADIO_CHANNELS_RU
+
+#include "_radio_channels_ru.dm"
+
+#include "code/radio_channels_ru.dm"
+
+#endif
