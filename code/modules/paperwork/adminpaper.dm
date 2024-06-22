@@ -79,8 +79,6 @@
 /obj/item/paper/admin/proc/updateDisplay()
 	show_browser(usr, "<HTML><HEAD><meta http-equiv='X-UA-Compatible' content='IE=edge' charset='UTF-8'/><TITLE>[name]</TITLE></HEAD><BODY>[headerOn ? header : ""][info_links][stamps][footerOn ? footer : ""][interactions]</BODY></HTML>", "window=[name];can_close=0")
 
-
-
 /obj/item/paper/admin/Topic(href, href_list)
 	if(href_list["write"])
 		var/id = href_list["write"]
