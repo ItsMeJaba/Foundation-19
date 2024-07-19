@@ -4,12 +4,14 @@
 #Final authority on what's required to fully build the project
 
 # byond version
-export BYOND_MAJOR=514
-export BYOND_MINOR=1560
+export BYOND_MAJOR=515
+export BYOND_MINOR=1641
 
 #rust_g git tag
 export RUST_G_VERSION=3.0.0
-export RUST_VERSION=1.73.0
+
+#rust_g git tag
+export RUST_G_VERSION=3.3.0
 
 #node version
 export NODE_VERSION_LTS=20.13.0
@@ -20,4 +22,4 @@ export NODE_VERSION_COMPAT=20.2.0
 export SPACEMAN_DMM_VERSION=suite-1.9
 
 # Python version for mapmerge and other tools
-export PYTHON_VERSION=3.7.9
+export PYTHON_VERSION=3.9.0
