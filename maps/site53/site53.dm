@@ -35,11 +35,7 @@
 
 	// [CELADON-REMOVE] - CELADON_MAPS - (Перемещено в mod_celadon\__maps\_maps.dme)
 	/*
-	#include "site53-1.dmm"
-	#include "site53-2.dmm"
-	#include "site53-3.dmm"
-	#include "site53-4.dmm"
-	#include "site53-5.dmm"
+	#include "site53.dmm"
 	#include "z1_admin.dmm"
 	#include "z2_transit.dmm"
 	#include "away_mission-1.dmm"
