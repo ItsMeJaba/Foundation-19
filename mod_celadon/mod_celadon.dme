@@ -10,22 +10,22 @@
 #include "_components/__components.dme"
 #include "outfits/_outfits.dme"
 #include "human_examine/_human_examine.dme"
-#include "laptop_rotate/_laptop_rotate.dme"
+// #include "laptop_rotate/_laptop_rotate.dme" - Вероятно оффы пофиксили у себя. Проверить актуальность.
 #include "opisanie_scp/_opisanie_scp.dme"
 #include "sci_job_names/_sci_job_names.dme"
 #include "contraband_fix/_contraband_fix.dme"
-#include "utf_8/_utf_8.dme"
+// #include "utf_8/_utf_8.dme" - Вероятно оффы пофиксили у себя. Проверить актуальность.
 #include "pull_fix/_pull_fix.dme"
-#include "scp343_fix/_scp343_fix.dme"
-#include "scp012_fix/_scp012_fix.dme"
+// #include "scp343_fix/_scp343_fix.dme" - Вероятно оффы пофиксили у себя. Проверить актуальность.
+// #include "scp012_fix/_scp012_fix.dme" - Вероятно оффы пофиксили у себя. Проверить актуальность.
 #include "minor_fix/_minor_fix.dme"
 #include "radio_channels_ru/_radio_channels_ru.dme"
-#include "sooc_update/_sooc_update.dme"
+// #include "sooc_update/_sooc_update.dme" - Вероятно оффы пофиксили у себя. Проверить актуальность.
 #include "orbit_fix/_orbit_fix.dme"
 
 // --- OBJECTS --- //
 #include "objects/_objects.dme"
-#include "SCP096/_SCP096.dme"
+// #include "SCP096/_SCP096.dme" - Вероятно оффы пофиксили у себя. Проверить актуальность.
 #include "new_ungoc_sprites/_new_ungoc_sprites.dme"
 #include "sign_update/_sign_update.dme"
 
