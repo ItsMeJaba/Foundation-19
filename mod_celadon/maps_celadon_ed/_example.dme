@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_MAP
+#define MODPACK_CELADON_MAP
+
+#include "_example.dm"
+
+#include "code/example.dm"
+
+#endif

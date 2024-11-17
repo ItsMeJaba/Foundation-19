@@ -1,0 +1,9 @@
+#ifndef MODPACK_CELADON_FENCE
+#define MODPACK_CELADON_FENCE
+
+#include "_fence.dm"
+
+#include "code/fence.dm"
+#include "icon/fence.dm"
+
+#endif

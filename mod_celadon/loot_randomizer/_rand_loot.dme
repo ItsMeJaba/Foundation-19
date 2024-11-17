@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_RAND_LOOT
+#define MODPACK_CELADON_RAND_LOOT
+
+#include "_rand_loot.dm"
+
+#include "code/game/objects/random/scp_random.dm.dm"
+
+#endif

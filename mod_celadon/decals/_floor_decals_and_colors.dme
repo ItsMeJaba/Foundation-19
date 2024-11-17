@@ -1,0 +1,9 @@
+#ifndef MODPACK_CELADON_DECALS
+#define MODPACK_CELADON_DECALS
+
+#include "_floor_decals_and_color_sys.dm"
+
+#include "code\game\turfs\flooring\decals\floor_decals_and_color_sys.dm"
+#include "code\_defines\colors_of_gray.dm"
+
+#endif
