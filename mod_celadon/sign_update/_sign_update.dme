@@ -1,0 +1,8 @@
+#ifndef MODPACK_CELADON_SIGN_UPDATE
+#define MODPACK_CELADON_SIGN_UPDATE
+
+#include "_sign_update.dm"
+
+#include "code/sign_update.dm"
+
+#endif

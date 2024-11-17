@@ -1,4 +1,4 @@
-#define DEFAULT_GAME_YEAR_OFFSET 288
+#define DEFAULT_GAME_YEAR_OFFSET 0
 
 GLOBAL_DATUM_INIT(using_map, /datum/map, new using_map_DATUM)
 GLOBAL_LIST_EMPTY(all_maps)
@@ -60,8 +60,6 @@ var/const/MAP_HAS_RANK = 2		//Rank system, also togglable
 	var/company_name  = "BadMan"
 	var/company_short = "BM"
 	var/system_name = "Uncharted System"
-
-	var/list/map_admin_faxes = list()
 
 	var/shuttle_docked_message
 	var/shuttle_leaving_dock
@@ -242,9 +240,6 @@ var/const/MAP_HAS_RANK = 2		//Rank system, also togglable
 	return
 
 /datum/map/proc/setup_job_lists()
-	return
-
-/datum/map/proc/send_welcome()
 	return
 
 /datum/map/proc/perform_map_generation()
@@ -442,12 +437,10 @@ var/const/MAP_HAS_RANK = 2		//Rank system, also togglable
 		num2text(ENG_FREQ)   = list(ACCESS_ENGINEERING_LVL2, ACCESS_ATMOSPHERICS),
 		num2text(MED_FREQ)   = list(ACCESS_MEDICAL_EQUIP),
 		num2text(MED_I_FREQ) = list(ACCESS_MEDICAL_EQUIP),
-		num2text(SEC_FREQ)   = list(ACCESS_SECURITY),
 		num2text(SEC_I_FREQ) = list(ACCESS_SECURITY),
 		num2text(SCI_FREQ)   = list(ACCESS_TOX,ACCESS_ROBOTICS,ACCESS_XENOBIOLOGY),
 		num2text(SUP_FREQ)   = list(ACCESS_CARGO),
 		num2text(SRV_FREQ)   = list(ACCESS_JANITOR, ACCESS_HYDROPONICS),
-		num2text(HAIL_FREQ)  = list(),
 	)
 
 

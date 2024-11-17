@@ -62,9 +62,9 @@
 	if(bonus_percentage)
 		booster = new(src, bonus_percentage, focus_frequency, focus_sound, focus_fail_sound)
 
-	RegisterSignal(user, COMSIG_PARENT_QDELETING, .proc/on_user_delete)
-	RegisterSignal(user, COMSIG_MOB_LOGOUT, .proc/clean_user_client)
-	RegisterSignal(user, COMSIG_MOB_LOGIN, .proc/on_user_login)
+	RegisterSignal(user, COMSIG_PARENT_QDELETING, PROC_REF(on_user_delete))
+	RegisterSignal(user, COMSIG_MOB_LOGOUT, PROC_REF(clean_user_client))
+	RegisterSignal(user, COMSIG_MOB_LOGIN, PROC_REF(on_user_login))
 
 	if(show_target && (target != user))
 		targetbar = image('icons/hud/progressbar_target.dmi', target, "prog_bar_0")
@@ -79,9 +79,9 @@
 			target_client = target.get_client()
 			add_prog_bar_image_to_target()
 
-		RegisterSignal(target, COMSIG_PARENT_QDELETING, .proc/on_target_delete)
-		RegisterSignal(target, COMSIG_MOB_LOGOUT, .proc/clean_target_client)
-		RegisterSignal(target, COMSIG_MOB_LOGIN, .proc/on_target_login)
+		RegisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(on_target_delete))
+		RegisterSignal(target, COMSIG_MOB_LOGOUT, PROC_REF(clean_target_client))
+		RegisterSignal(target, COMSIG_MOB_LOGIN, PROC_REF(on_target_login))
 
 
 /datum/progressbar/Destroy()
@@ -97,21 +97,22 @@
 			animate(progress_bar.bar, pixel_y = dist_to_travel, time = PROGRESSBAR_ANIMATION_TIME, easing = SINE_EASING)
 
 		LAZYREMOVEASSOC(user.progressbars, target, src)
+
+		if(show_target && (target != user))
+			for(var/pb in target.progressbars_recipient[user])
+				var/datum/progressbar/progress_bar = pb
+				if(progress_bar == src || progress_bar.target_listindex <= target_listindex)
+					continue
+				progress_bar.target_listindex--
+
+				progress_bar.targetbar.pixel_y = 32 + (PROGRESSBAR_HEIGHT * (progress_bar.target_listindex - 1))
+				var/dist_to_travel = 32 + (PROGRESSBAR_HEIGHT * (progress_bar.target_listindex - 1)) - PROGRESSBAR_HEIGHT
+				animate(progress_bar.targetbar, pixel_y = dist_to_travel, time = PROGRESSBAR_ANIMATION_TIME, easing = SINE_EASING)
+
+			LAZYREMOVEASSOC(target.progressbars_recipient, target, src)
+			target = null
+
 		user = null
-
-	if(show_target && (target != user))
-		for(var/pb in target.progressbars_recipient[user])
-			var/datum/progressbar/progress_bar = pb
-			if(progress_bar == src || progress_bar.target_listindex <= target_listindex)
-				continue
-			progress_bar.target_listindex--
-
-			progress_bar.targetbar.pixel_y = 32 + (PROGRESSBAR_HEIGHT * (progress_bar.target_listindex - 1))
-			var/dist_to_travel = 32 + (PROGRESSBAR_HEIGHT * (progress_bar.target_listindex - 1)) - PROGRESSBAR_HEIGHT
-			animate(progress_bar.targetbar, pixel_y = dist_to_travel, time = PROGRESSBAR_ANIMATION_TIME, easing = SINE_EASING)
-
-		LAZYREMOVEASSOC(target.progressbars_recipient, target, src)
-		target = null
 
 	if(user_client)
 		clean_user_client()

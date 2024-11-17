@@ -89,6 +89,9 @@
 
 	var/attack_ignore_harm_check = FALSE
 
+	// Certain items may have mana stored in them, i.e. wands and mana crystals
+	var/datum/mana/mana = null
+
 /obj/item/New()
 	..()
 	if(randpixel && (!pixel_x && !pixel_y) && isturf(loc)) //hopefully this will prevent us from messing with mapper-set pixel_x/y
@@ -246,7 +249,7 @@
 
 	if(user.put_in_active_hand(src))
 		if (isturf(old_loc))
-			var/obj/effect/temp_visual/item_pickup_ghost/ghost = new(old_loc, src)
+			var/obj/effect/temp_visual/item_pickup_ghost/ghost = new(old_loc, dir, src)	// named arguments don't work since we want this var in Initialize() not New()
 			ghost.animate_towards(user)
 		if(randpixel)
 			pixel_x = rand(-randpixel, randpixel)
@@ -301,6 +304,9 @@
 		if(user.r_hand)
 			user.r_hand.update_twohanding()
 
+	SEND_SIGNAL(src, COMSIG_DROPPED_ITEM, user)
+	SEND_SIGNAL(user, COMSIG_MOB_DROPPED_ITEM, src)
+
 // called just as an item is picked up (loc is not yet changed)
 /obj/item/proc/pickup(mob/user)
 	return
@@ -335,6 +341,9 @@
 		M.l_hand.update_twohanding()
 	if(M.r_hand)
 		M.r_hand.update_twohanding()
+
+	SEND_SIGNAL(src, COMSIG_ITEM_EQUIPPED, user, slot)
+	SEND_SIGNAL(user, COMSIG_MOB_EQUIPPED_ITEM, src, slot)
 
 //Defines which slots correspond to which slot flags
 var/list/global/slot_flags_enumeration = list(
@@ -589,7 +598,7 @@ var/list/global/slot_flags_enumeration = list(
 
 	admin_attack_log(user, M, "Attacked using \a [src]", "Was attacked with \a [src]", "used \a [src] to attack")
 
-	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+	user.setClickCooldown(CLICK_CD_ATTACK)
 	user.do_attack_animation(M)
 
 	src.add_fingerprint(user)
@@ -618,7 +627,7 @@ var/list/global/slot_flags_enumeration = list(
 				if(M.stat != 2)
 					to_chat(M, SPAN_WARNING("You drop what you're holding and clutch at your eyes!"))
 					M.unequip_item()
-				M.eye_blurry += 10
+				M.adjust_eye_blur(10 SECONDS)
 				M.Paralyse(1)
 				M.Weaken(4)
 			if (eyes.damage >= eyes.min_broken_damage)
@@ -629,10 +638,10 @@ var/list/global/slot_flags_enumeration = list(
 		affecting.take_external_damage(7)
 	else
 		M.take_organ_damage(7, 0)
-	M.eye_blurry += rand(3,4)
+	M.adjust_eye_blur(rand(3 SECONDS, 4 SECONDS))
 	return
 
-/obj/item/clean_blood()
+/obj/item/clean()
 	. = ..()
 	if(blood_overlay)
 		cut_overlay(blood_overlay)
@@ -704,11 +713,14 @@ modules/mob/mob_movement.dm if you move you will be zoomed out
 modules/mob/living/carbon/human/life.dm if you die, you will be zoomed out.
 */
 //Looking through a scope or binoculars should /not/ improve your periphereal vision. Still, increase viewsize a tiny bit so that sniping isn't as restricted to NSEW
-/obj/item/proc/zoom(mob/user, tileoffset = 14,viewsize = 9) //tileoffset is client view offset in the direction the user is facing. viewsize is how far out this thing zooms. 7 is normal view
+/obj/item/proc/zoom(mob/user, tileoffset = 14, viewsize) //tileoffset is client view offset in the direction the user is facing. viewsize is how far out this thing zooms. 7 is normal view
 	if(!user.client)
 		return
 	if(zoom)
 		return
+	if(!viewsize)
+		var/view_size = getviewsize(user.client.view)
+		viewsize = max(view_size[1], view_size[2]) + 2
 
 	if(!user.loc?.MayZoom())
 		return
@@ -752,14 +764,14 @@ modules/mob/living/carbon/human/life.dm if you die, you will be zoomed out.
 	if(istype(H))
 		H.handle_vision()
 
-	user.client.view = viewsize
+	user.client.change_view(viewsize)
 	zoom = 1
 
-	GLOB.destroyed_event.register(src, src, /obj/item/proc/unzoom)
-	GLOB.moved_event.register(user, src, /obj/item/proc/unzoom)
-	GLOB.dir_set_event.register(user, src, /obj/item/proc/unzoom)
-	GLOB.item_unequipped_event.register(src, user, /mob/living/proc/unzoom)
-	GLOB.stat_set_event.register(user, src, /obj/item/proc/unzoom)
+	RegisterSignal(src, COMSIG_PARENT_QDELETING, TYPE_PROC_REF(/obj/item, unzoom))
+	RegisterSignal(user, COMSIG_MOVED, TYPE_PROC_REF(/obj/item, unzoom))
+	RegisterSignal(user, COMSIG_ATOM_DIR_CHANGE, TYPE_PROC_REF(/obj/item, unzoom))
+	RegisterSignal(user, COMSIG_SET_STAT, TYPE_PROC_REF(/obj/item, unzoom))
+	user.RegisterSignal(src, COMSIG_DROPPED_ITEM, TYPE_PROC_REF(/mob/living, unzoom))
 
 	user.visible_message("\The [user] peers through [zoomdevicename ? "the [zoomdevicename] of [src]" : "[src]"].")
 
@@ -772,22 +784,22 @@ modules/mob/living/carbon/human/life.dm if you die, you will be zoomed out.
 		return
 	zoom = 0
 
-	GLOB.destroyed_event.unregister(src, src, /obj/item/proc/unzoom)
-	GLOB.moved_event.unregister(user, src, /obj/item/proc/unzoom)
-	GLOB.dir_set_event.unregister(user, src, /obj/item/proc/unzoom)
-	GLOB.item_unequipped_event.unregister(src, user, /mob/living/proc/unzoom)
+	UnregisterSignal(src, COMSIG_PARENT_QDELETING)
+	UnregisterSignal(user, COMSIG_MOVED)
+	UnregisterSignal(user, COMSIG_ATOM_DIR_CHANGE)
+	user.UnregisterSignal(src, COMSIG_DROPPED_ITEM)
 
 	user = user == src ? loc : (user || loc)
 	if(!istype(user))
 		crash_with("[log_info_line(src)]: Zoom user lost]")
 		return
 
-	GLOB.stat_set_event.unregister(user, src, /obj/item/proc/unzoom)
+	UnregisterSignal(user, COMSIG_SET_STAT)
 
 	if(!user.client)
 		return
 
-	user.client.view = world.view
+	user.client.change_view(user.client.get_default_view())
 	if(!user.hud_used.hud_shown)
 		user.toggle_zoom_hud()
 
@@ -901,20 +913,6 @@ modules/mob/living/carbon/human/life.dm if you die, you will be zoomed out.
 		attack_self(user)
 	return TRUE
 
-/obj/item/proc/inherit_custom_item_data(datum/custom_item/citem)
-	. = src
-	if(citem.item_name)
-		SetName(citem.item_name)
-	if(citem.item_desc)
-		desc = citem.item_desc
-	if(citem.item_icon_state)
-		item_state_slots = null
-		item_icons = null
-		icon = CUSTOM_ITEM_OBJ
-		set_icon_state(citem.item_icon_state)
-		item_state = null
-		icon_override = CUSTOM_ITEM_MOB
-
 /obj/item/proc/attack_message_name()
 	return "\a [src]"
 
@@ -922,9 +920,28 @@ GLOBAL_LIST_EMPTY(items_by_convert_rating)
 // A list of types that will not be added to the auto-item-generator below;
 GLOBAL_LIST_INIT(items_conversion_blacklist, list(
 	/obj/item/card/id/syndicate/station_access,
-	/obj/item/card/id/captains_spare,
-	/obj/item/spellbook,
-	) + typesof(/obj/item/card/id/centcom))
+	/obj/item/paper/scp012,
+	/obj/item/photo/scp096,
+	/obj/item/photo/scp096/scp096_photo,
+	/obj/item/storage/backpack/santabag,
+	/obj/item/reagent_containers/glass/beaker/vial/scp008,
+	/obj/item/storage/pill_bottle/scp500,
+	/obj/item/reagent_containers/pill/scp500,
+	/obj/item/reagent_containers/syringe/scp008,
+	/obj/item/rig/light/stealth/scp5000,
+	/obj/item/rig/light/stealth/scp5000/working,
+	/obj/item/storage/briefcase/scp1102ru,
+	/obj/item/scp113,
+	/obj/item/scp513,
+	/obj/item/clothing/head/helmet/scp912,
+	/obj/item/clothing/suit/storage/vest/scp912,
+	/obj/item/clothing/under/scp/scp912,
+	/obj/item/storage/belt/holster/security/tactical/full912pistol,
+	/obj/item/material/twohanded/baseballbat/scp2398,
+	/obj/item/card/id/captains_spare) \
+	+ typesof(/obj/item/spellbook) \
+	+ typesof(/obj/item/card/id/centcom) \
+	+ typesof(/obj/item/gun))
 
 // BEHOLD! THE TERROR! THE NIGHTMARE!!!
 // tl;dr - We build a path of ALL(yes, all) items by "damage rating" for 1:1 and fine modes
@@ -998,13 +1015,16 @@ GLOBAL_LIST_INIT(items_conversion_blacklist, list(
 /obj/item/proc/Check914Rating(mode = MODE_ONE_TO_ONE)
 	var/rating = ""
 	var/my_force = force
+	var/my_w_class = w_class
 	switch(mode)
 		if(MODE_FINE)
-			my_force *= (prob(90) ? 1.25 : 0.9)
+			my_force *= (prob(90) ? pick(1.25, 1.5) : 0.9)
+			my_w_class += prob(50)
 		if(MODE_VERY_FINE)
-			my_force *= (prob(50) ? 1.5 : 0.75)
+			my_force *= (prob(50) ? pick(1.5, 2) : 0.75)
+			my_w_class += pick(-1, 0, 0, 1)
 	// By weight
-	switch(w_class)
+	switch(my_w_class)
 		if(-INFINITY to ITEM_SIZE_TINY)
 			rating += "tiny "
 		if(ITEM_SIZE_SMALL)
@@ -1045,9 +1065,9 @@ GLOBAL_LIST_INIT(items_conversion_blacklist, list(
 	else
 		rating += "high-speed "
 	// Sharp/Edge
-	if(sharp)
+	if(sharp || (mode == MODE_VERY_FINE && prob(35)))
 		rating += "sharp "
-	if(edge)
+	if(edge || (mode == MODE_VERY_FINE && prob(35)))
 		rating += "edge "
 	rating += "item"
 	return rating

@@ -57,7 +57,7 @@
 	if(environment_smash >= 1)
 		damage = max(damage, 10)
 
-	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN*2)
+	user.setClickCooldown(CLICK_CD_ATTACK*2)
 	playsound(loc, hitsound, 50, 1)
 	show_sound_effect(loc, user)
 
@@ -86,7 +86,7 @@
 	update_nearby_tiles(need_rebuild=1)
 
 /obj/machinery/door/Initialize()
-	set_extension(src, /datum/extension/penetration, /datum/extension/penetration/proc_call, .proc/CheckPenetration)
+	set_extension(src, /datum/extension/penetration, /datum/extension/penetration/proc_call, PROC_REF(CheckPenetration))
 	. = ..()
 #ifdef UNIT_TEST
 	if(autoset_access)
@@ -128,9 +128,9 @@
 	if(p_open || operating) return
 	if(ismob(AM))
 		var/mob/M = AM
-		if(world.time - M.last_bumped <= 10) return	//Can bump-open one airlock per second. This is to prevent shock spam.
+		if(world.time - M.last_bumped <= 1 SECOND) return	//Can bump-open one airlock per second. This is to prevent shock spam.
 		M.last_bumped = world.time
-		if(!M.restrained() && (!issmall(M) || ishuman(M) || issilicon(M)))
+		if(!M.restrained() && (!issmall(M) || ishuman(M) || issilicon(M)) && !(HAS_TRAIT(M, TRAIT_HANDS_BLOCKED)))
 			bumpopen(M)
 		return
 
@@ -311,7 +311,7 @@
 		return FALSE
 	if(I.damtype != BRUTE && I.damtype != BURN)
 		return FALSE
-	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+	user.setClickCooldown(CLICK_CD_ATTACK)
 	user.do_attack_animation(src)
 	if(I.force < min_force)
 		visible_message(SPAN_WARNING("\The [user] hits \the [src] with \an [I] to no effect."))
@@ -391,11 +391,11 @@
 /obj/machinery/door/proc/update_dir()
 	if(connections in list(NORTH, SOUTH, NORTH|SOUTH))
 		if(connections in list(WEST, EAST, EAST|WEST))
-			set_dir(SOUTH)
+			setDir(SOUTH)
 		else
-			set_dir(EAST)
+			setDir(EAST)
 	else
-		set_dir(SOUTH)
+		setDir(SOUTH)
 
 /obj/machinery/door/proc/do_animate(animation)
 	switch(animation)
@@ -476,7 +476,7 @@
 	operating = 0
 
 	//I shall not add a check every x ticks if a door has closed over some fire.
-	var/obj/fire/fire = locate() in loc
+	var/obj/hotspot/fire = locate() in loc
 	if(fire)
 		qdel(fire)
 	return
@@ -662,9 +662,9 @@
 /decl/public_access/public_method/open_door
 	name = "open door"
 	desc = "Opens the door if possible."
-	call_proc = /obj/machinery/door/proc/open
+	call_proc = TYPE_PROC_REF(/obj/machinery/door, open)
 
 /decl/public_access/public_method/toggle_door
 	name = "toggle door"
 	desc = "Toggles whether the door is open or not, if possible."
-	call_proc = /obj/machinery/door/proc/toggle
+	call_proc = TYPE_PROC_REF(/obj/machinery/door, toggle)

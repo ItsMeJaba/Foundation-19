@@ -2,9 +2,11 @@
 #define MEGAWATTS *1000000
 #define GIGAWATTS *1000000000
 
-#define MACHINERY_TICKRATE 2		// Tick rate for machinery in seconds. As it affects CELLRATE calculation it is kept as define here
+/// Tick rate for machinery in seconds. As it affects CELLRATE calculation it is kept as define here
+#define MACHINERY_TICKRATE 2
 
-#define CELLRATE (1 / ( 3600 / MACHINERY_TICKRATE )) // Multiplier for charge units. Converts cell charge units(watthours) to joules. Takes into consideration that our machinery ticks once per two seconds.
+/// Multiplier for charge units. Converts cell charge units(watthours) to joules. Takes into consideration that our machinery ticks once per two seconds.
+#define CELLRATE (MACHINERY_TICKRATE / 3600)
 
 // Doors!
 #define DOOR_CRUSH_DAMAGE 40
@@ -149,15 +151,22 @@
 
 #define  PART_CPU  		/obj/item/stock_parts/computer/processor_unit				// CPU. Without it the computer won't run. Better CPUs can run more programs at once.
 #define  PART_NETWORK  	/obj/item/stock_parts/computer/network_card					// Network Card component of this computer. Allows connection to SCiPnet
-#define  PART_HDD 		/obj/item/stock_parts/computer/hard_drive					// Hard Drive component of this computer. Stores programs and files.
+#define  PART_HDD 		/obj/item/stock_parts/computer/storage/hard_drive					// Hard Drive component of this computer. Stores programs and files.
 
 // Optional hardware (improves functionality, but is not critical for computer to work in most cases)
-#define  PART_BATTERY  	/obj/item/stock_parts/computer/battery_module			// An internal power source for this computer. Can be recharged.
-#define  PART_CARD  	/obj/item/stock_parts/computer/card_slot					// ID Card slot component of this computer. Mostly for HoP modification console that needs ID slot for modification.
-#define  PART_PRINTER  	/obj/item/stock_parts/computer/nano_printer			// Nano Printer component of this computer, for your everyday paperwork needs.
-#define  PART_DRIVE  	/obj/item/stock_parts/computer/hard_drive/portable		// Portable data storage
-#define  PART_AI  		/obj/item/stock_parts/computer/ai_slot							// AI slot, an intellicard housing that allows modifications of AIs.
-#define  PART_TESLA  	/obj/item/stock_parts/computer/tesla_link					// Tesla Link, Allows remote charging from nearest APC.
-#define  PART_SCANNER  	/obj/item/stock_parts/computer/scanner							// One of several optional scanner attachments.
+/// An internal power source for this computer. Can be recharged.
+#define  PART_BATTERY  	/obj/item/stock_parts/computer/battery_module
+/// ID Card slot component of this computer. Mostly for HoP modification console that needs ID slot for modification.
+#define  PART_CARD  	/obj/item/stock_parts/computer/card_slot
+/// Nano Printer component of this computer, for your everyday paperwork needs.
+#define  PART_PRINTER  	/obj/item/stock_parts/computer/nano_printer
+/// Portable data storage.
+#define  PART_DRIVE  	/obj/item/stock_parts/computer/storage/portable_drive
+/// AI slot, an intellicard housing that allows modifications of AIs.
+#define  PART_AI  		/obj/item/stock_parts/computer/ai_slot
+/// Tesla Link, Allows remote charging from nearest APC.
+#define  PART_TESLA  	/obj/item/stock_parts/computer/tesla_link
+/// One of several optional scanner attachments.
+#define  PART_SCANNER  	/obj/item/stock_parts/computer/scanner
 
 #define CLICKSOUND_INTERVAL (5 SECONDS)

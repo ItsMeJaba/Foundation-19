@@ -42,7 +42,7 @@
 /obj/item/reagent_containers/food/snacks/proc/On_Consume(mob/M)
 	if(!reagents.total_volume)
 		M.visible_message(SPAN_NOTICE("[M] finishes eating \the [src]."),SPAN_NOTICE("You finish eating \the [src]."))
-		M.drop_item()
+		M.drop_active_hand()
 		if(trash)
 			if(ispath(trash,/obj/item))
 				var/obj/item/TrashItem = new trash(get_turf(M))
@@ -78,7 +78,7 @@
 					to_chat(user, SPAN_WARNING("\The [blocked] is in the way!"))
 					return
 
-			user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)//puts a limit on how fast people can eat/drink things
+			user.setClickCooldown(CLICK_CD_ATTACK)//puts a limit on how fast people can eat/drink things
 			if (fullness <= 50)
 				to_chat(C, SPAN_DANGER("You hungrily chew out a piece of [src] and gobble it!"))
 			if (fullness > 50 && fullness <= 150)
@@ -100,7 +100,8 @@
 				user.visible_message(SPAN_DANGER("[user] cannot force anymore of [src] down [M]'s throat."))
 				return 0
 
-			user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+			user.setClickCooldown(CLICK_CD_ATTACK)
+
 			if(!do_after(user, 4 SECONDS, M, bonus_percentage = 25)) return
 
 			if (user.get_active_hand() != src)
@@ -407,7 +408,7 @@ GLOBAL_LIST_EMPTY(mobs_by_meat)
 		return
 	has_been_heated = 1
 	user.visible_message(SPAN_NOTICE("[user] crushes \the [src] package."), "You crush \the [src] package and feel a comfortable heat build up.")
-	addtimer(CALLBACK(src, .proc/heat, weakref(user)), 20 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(heat), weakref(user)), 20 SECONDS)
 
 /obj/item/reagent_containers/food/snacks/donkpocket/sinpocket/heat(weakref/message_to)
 	..()
@@ -442,7 +443,7 @@ GLOBAL_LIST_EMPTY(mobs_by_meat)
 		reagents.add_reagent(reagent, heated_reagents[reagent])
 	bitesize = 6
 	SetName("warm " + name)
-	addtimer(CALLBACK(src, .proc/cool), 7 MINUTES)
+	addtimer(CALLBACK(src, PROC_REF(cool)), 7 MINUTES)
 
 /obj/item/reagent_containers/food/snacks/donkpocket/proc/cool()
 	if(!warm)

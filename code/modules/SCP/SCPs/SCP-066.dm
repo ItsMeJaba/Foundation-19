@@ -45,7 +45,7 @@
 	)
 
 	SCP.memeticFlags = MAUDIBLE
-	SCP.memetic_proc = /mob/living/simple_animal/friendly/retaliate/scp066/proc/audibleEffect
+	SCP.memetic_proc = TYPE_PROC_REF(/mob/living/simple_animal/friendly/retaliate/scp066, audibleEffect)
 	SCP.memetic_sounds = list('sounds/scp/066/BeethovenLOUD.ogg')
 	SCP.compInit()
 
@@ -86,7 +86,7 @@
 
 /mob/living/simple_animal/friendly/retaliate/scp066/proc/audibleEffect(mob/living/carbon/human/target)
 	target.Stun(4)
-	target.confused += 10
+	target.adjust_confusion(10 SECONDS)
 	target.ear_damage += rand(10, 20)
 	target.ear_deaf = max(target.ear_deaf,15)
 	shake_camera(target, 18, 5)

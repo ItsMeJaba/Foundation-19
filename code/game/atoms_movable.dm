@@ -21,6 +21,10 @@
 	var/item_state = null // Used to specify the item state for the on-mob overlays.
 	var/does_spin = TRUE // Does the atom spin when thrown (of course it does :P)
 	var/datum/orbit/orbiting = null
+	/// How many pixels on the X axis to offset any generated floating messages when this is the holder
+	var/floating_message_pixel_x_offset = 0
+	/// How many pixels on the Y axis to offset any generated floating messages when this is the holder
+	var/floating_message_pixel_y_offset = 0
 
 /atom/movable/Destroy()
 	if(!(atom_flags & ATOM_FLAG_INITIALIZED))
@@ -56,7 +60,7 @@
 
 	if (A && yes)
 		A.last_bumped = world.time
-		INVOKE_ASYNC(A, /atom/proc/Bumped, src) // Avoids bad actors sleeping or unexpected side effects, as the legacy behavior was to spawn here
+		INVOKE_ASYNC(A, TYPE_PROC_REF(/atom, Bumped), src) // Avoids bad actors sleeping or unexpected side effects, as the legacy behavior was to spawn here
 	..()
 
 /atom/movable/proc/forceMove(atom/destination)
@@ -91,7 +95,7 @@
 			if(is_new_area && is_destination_turf)
 				destination.loc.Entered(src, origin)
 
-	SEND_SIGNAL(src, COMSIG_MOVED, src, origin, destination)
+	SEND_SIGNAL(src, COMSIG_MOVED, origin, destination)
 
 	return 1
 
@@ -99,9 +103,9 @@
 	var/old_loc = loc
 	. = ..()
 	if (.)
-		// observ
+		// signal
 		if(!loc)
-			GLOB.moved_event.raise_event(src, old_loc, null)
+			SEND_SIGNAL(src, COMSIG_MOVED, old_loc, null)
 
 		// freelook
 		if(opacity)
@@ -116,8 +120,7 @@
 	var/old_loc = loc
 	. = ..()
 	if (.)
-		if(!loc)
-			GLOB.moved_event.raise_event(src, old_loc, null)
+		SEND_SIGNAL(src, COMSIG_MOVED, old_loc, loc)
 
 		// freelook
 		if(opacity)
@@ -166,7 +169,7 @@
 //Overlays
 /atom/movable/overlay
 	var/atom/master = null
-	var/follow_proc = /atom/movable/proc/move_to_loc_or_null
+	var/follow_proc = TYPE_PROC_REF(/atom/movable, move_to_loc_or_null)
 	anchored = TRUE
 	simulated = FALSE
 
@@ -176,14 +179,14 @@
 		return INITIALIZE_HINT_QDEL
 	master = loc
 	SetName(master.name)
-	set_dir(master.dir)
+	setDir(master.dir)
 
 	if(istype(master, /atom/movable))
-		GLOB.moved_event.register(master, src, follow_proc)
+		RegisterSignal(master, COMSIG_MOVED, follow_proc)
 		SetInitLoc()
 
-	GLOB.destroyed_event.register(master, src, /datum/proc/qdel_self)
-	GLOB.dir_set_event.register(master, src, /atom/proc/recursive_dir_set)
+	RegisterSignal(master, COMSIG_PARENT_QDELETING, TYPE_PROC_REF(/datum, qdel_self))
+	RegisterSignal(master, COMSIG_ATOM_DIR_CHANGE, TYPE_PROC_REF(/atom, recursive_dir_set))
 
 	. = ..()
 
@@ -192,9 +195,9 @@
 
 /atom/movable/overlay/Destroy()
 	if(istype(master, /atom/movable))
-		GLOB.moved_event.unregister(master, src)
-	GLOB.destroyed_event.unregister(master, src)
-	GLOB.dir_set_event.unregister(master, src)
+		UnregisterSignal(master, COMSIG_MOVED)
+	UnregisterSignal(master, COMSIG_PARENT_QDELETING)
+	UnregisterSignal(master, COMSIG_ATOM_DIR_CHANGE)
 	master = null
 	. = ..()
 
@@ -264,6 +267,12 @@
 * Return value will be placed in the output section of the machine
 * If you don't return valid atom - nothing will be returned
 * If return value isn't src - the original item will be deleted
+**************************************************************************
+* Rough - Destroys or otherwise mutilates the object beyond repair.
+* Coarse - Dismantles/Deconstructs/Disassembles the object without damage.
+* 1:1 - Returns a similar object, either in material or other properties.
+* Fine - Simply upgrades the object or returns a better one.
+* Very Fine - Returns something with improved anomalous properties.
 */
 /atom/movable/proc/Conversion914(mode = MODE_ONE_TO_ONE, mob/user = usr)
 	switch(mode)
@@ -272,3 +281,9 @@
 		if(MODE_COARSE)
 			return (prob(50) ? null : src)
 	return src
+
+/// The effect of being affected by dispells, either a projectile or AOE effects
+/atom/movable/proc/Dispell(dispell_strength = DISPELL_WEAK)
+	if(SEND_SIGNAL(src, COMSIG_ATOM_MOVABLE_DISPELL, dispell_strength) & COMPONENT_DISPELL_BLOCKED)
+		return FALSE
+	return TRUE

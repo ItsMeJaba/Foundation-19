@@ -4,16 +4,17 @@
 
 /datum/component/goalcontainer/New()
 	. = ..()
-	RegisterSignal(SSdcs, COMSIG_ROUND_ENDED, .proc/goal_recap)
+	RegisterSignal(SSdcs, COMSIG_ROUND_ENDED, PROC_REF(goal_recap))
 
 /datum/component/goalcontainer/RegisterWithParent()
-	RegisterSignal(parent, COMSIG_MIND_POST_INIT, .proc/recalculate_goals)
+	RegisterSignal(parent, COMSIG_MIND_POST_INIT, PROC_REF(recalculate_goals))
 
 /datum/component/goalcontainer/UnregisterFromParent()
 	UnregisterSignal(parent, COMSIG_MIND_POST_INIT)
 
 /datum/component/goalcontainer/Destroy()
-	QDEL_LIST_NULL(goal_list)
+	QDEL_LIST_ASSOC_VAL(goal_list)
+	goal_list = null
 	return ..()
 
 /datum/component/goalcontainer/proc/add_goal_by_type(type, category, autofill_rewards = FALSE)

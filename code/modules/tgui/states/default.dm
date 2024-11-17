@@ -22,7 +22,7 @@ GLOBAL_DATUM_INIT(default_tgui_state, /datum/tgui_state/default, new)
 	. = shared_ui_interaction(src_object)
 	if(. > UI_CLOSE && loc) //must not be in nullspace.
 		. = min(., shared_living_ui_distance(src_object)) // Check the distance...
-	if(. == UI_INTERACTIVE && !IsAdvancedToolUser()) // unhandy living mobs can only look, not touch.
+	if(. == UI_INTERACTIVE && !ISADVANCEDTOOLUSER(src)) // unhandy living mobs can only look, not touch.
 		return UI_UPDATE
 
 /mob/living/silicon/robot/default_can_use_tgui_topic(src_object)
@@ -32,7 +32,7 @@ GLOBAL_DATUM_INIT(default_tgui_state, /datum/tgui_state/default, new)
 
 	// Robots can interact with anything they can see.
 	var/list/clientviewlist = getviewsize(client.view)
-	if(get_dist(src, src_object) <= min(clientviewlist[1],clientviewlist[2]))
+	if(get_dist(src, src_object) <= max(clientviewlist[1], clientviewlist[2]))
 		return UI_INTERACTIVE
 	return UI_DISABLED // Otherwise they can keep the UI open.
 

@@ -4,7 +4,10 @@
 	desc = "A portable computer."
 	hardware_flag = PROGRAM_LAPTOP
 	icon_state_unpowered = "laptop-open"
-	icon = 'icons/obj/modular_laptop.dmi'
+	// [CELADON-EDIT] - CELADON_LAPTOP
+	// icon = 'icons/obj/modular_laptop.dmi' // CELADON-EDIT - ORIGINAL
+	icon = 'mod_celadon/laptop_rotate/icons/laptop_rotate_1.dmi'
+	// [/CELADON-EDIT]
 	icon_state = "laptop-open"
 	icon_state_screensaver = "standby"
 	base_idle_power_usage = 25
@@ -37,7 +40,6 @@
 	else
 		cut_overlays()
 		set_light(0)		// No glow from closed laptops
-		compile_overlays()
 		icon_state = icon_state_closed
 
 /obj/item/modular_computer/laptop/preset

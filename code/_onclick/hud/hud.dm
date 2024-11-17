@@ -19,6 +19,8 @@
 	InitializePlanes()
 
 /mob/proc/InitializePlanes()
+	if(!client)
+		return
 	if(length(effects_planemasters))
 		for(var/i in effects_planemasters)
 			client.screen += effects_planemasters["[i]"]
@@ -27,13 +29,13 @@
 	effects_planemasters = list()
 
 	for(var/index in plane_index)
-		var/obj/screen/plane_master/effects_planemaster/generated_plane = new
+		var/atom/movable/screen/plane_master/effects_planemaster/generated_plane = new
 		generated_plane.plane = index
 		client.screen += generated_plane
 		effects_planemasters["[index]"] = generated_plane
 
 	for(var/os_plane_index = OPENTURF_MAX_PLANE-OPENTURF_MAX_DEPTH to OPENTURF_MAX_PLANE)
-		var/obj/screen/plane_master/effects_planemaster/openspace/os_pm = new
+		var/atom/movable/screen/plane_master/effects_planemaster/openspace/os_pm = new
 		os_pm.plane = os_plane_index
 		client.screen += os_pm
 		effects_planemasters["[os_plane_index]"] = os_pm
@@ -41,7 +43,7 @@
 
 
 /mob/proc/InitializeAo()
-	var/obj/screen/plane_master/effects_planemaster/object_pm = effects_planemasters["[OBJ_PLANE]"]
+	var/atom/movable/screen/plane_master/effects_planemaster/object_pm = effects_planemasters["[OBJ_PLANE]"]
 	if(object_pm)
 		object_pm.add_filter("ao", 1, list(type = "drop_shadow", x = 0, y = -2, size = 4, color = "#04080FAA"))
 
@@ -64,19 +66,20 @@
 	var/show_intent_icons = 0
 	var/hotkey_ui_hidden = 0	//This is to hide the buttons that can be used via hotkeys. (hotkeybuttons list of buttons)
 
-	var/obj/screen/lingchemdisplay
-	var/obj/screen/r_hand_hud_object
-	var/obj/screen/l_hand_hud_object
-	var/obj/screen/action_intent
-	var/obj/screen/move_intent
-	var/obj/screen/stamina/stamina_bar
-	var/obj/screen/rest_button
+	var/atom/movable/screen/lingchemdisplay
+	var/atom/movable/screen/r_hand_hud_object
+	var/atom/movable/screen/l_hand_hud_object
+	var/atom/movable/screen/action_intent
+	var/atom/movable/screen/move_intent
+	var/atom/movable/screen/stamina/stamina_bar
+	var/atom/movable/screen/rest_button
+	var/atom/movable/screen/facedir_button = null
 
 	var/list/adding
 	var/list/other
-	var/list/obj/screen/hotkeybuttons
+	var/list/atom/movable/screen/hotkeybuttons
 
-	var/obj/screen/movable/action_button/hide_toggle/hide_actions_toggle
+	var/atom/movable/screen/movable/action_button/hide_toggle/hide_actions_toggle
 	var/action_buttons_hidden = 0
 
 /datum/hud/New(mob/owner)
@@ -96,6 +99,7 @@
 	other = null
 	hotkeybuttons = null
 	rest_button = null
+	facedir_button = null
 	mymob = null
 
 /datum/hud/proc/update_stamina()
@@ -199,7 +203,7 @@
 	var/ui_color = mymob.client.prefs.UI_style_color
 	var/ui_alpha = mymob.client.prefs.UI_style_alpha
 
-
+	mymob.reload_fullscreen()
 	FinalizeInstantiation(ui_style, ui_color, ui_alpha)
 
 /datum/hud/proc/FinalizeInstantiation(ui_style, ui_color, ui_alpha)
@@ -219,8 +223,7 @@
 		return
 
 	if(!client) return
-	if(client.view != world.view)
-		return
+	if(!client.has_default_view()) return
 	if(hud_used.hud_shown)
 		hud_used.hud_shown = 0
 		if(src.hud_used.adding)
@@ -304,13 +307,7 @@
 	hud_used.persistant_inventory_update()
 	update_action_buttons()
 
-/mob/proc/add_click_catcher()
-	client.screen |= GLOB.click_catchers
-
-/mob/new_player/add_click_catcher()
-	return
-
-/obj/screen/stamina
+/atom/movable/screen/stamina
 	name = "stamina"
 	icon = 'icons/hud/progressbar.dmi'
 	icon_state = "prog_bar_100"

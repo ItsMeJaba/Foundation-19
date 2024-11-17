@@ -246,7 +246,7 @@
 			wash(M)
 			process_heat(M)
 		for (var/atom/movable/G in src.loc)
-			G.clean_blood()
+			G.clean()
 
 /obj/structure/hygiene/shower/attackby(obj/item/I as obj, mob/user)
 	if(istype(I, /obj/item/device/scanner/gas))
@@ -398,7 +398,7 @@
 		return TRUE
 	busy = 0
 
-	user.clean_blood()
+	user.clean()
 	user.visible_message( \
 		SPAN_NOTICE("[user] washes their hands using \the [src]."), \
 		SPAN_NOTICE("You wash your hands using \the [src]."))
@@ -426,7 +426,7 @@
 			if(B.bcell.charge > 0 && B.status == 1)
 				flick("baton_active", src)
 				user.Stun(10)
-				user.stuttering = 10
+				user.adjust_stutter(10 SECONDS)
 				user.Weaken(10)
 				if(isrobot(user))
 					var/mob/living/silicon/robot/R = user
@@ -460,7 +460,7 @@
 
 	if(istype(O, /obj/item/extinguisher/)) return TRUE // We're washing, not filling.
 
-	O.clean_blood()
+	O.clean()
 	user.visible_message( \
 		SPAN_NOTICE("[user] washes \a [I] using \the [src]."), \
 		SPAN_NOTICE("You wash \a [I] using \the [src]."))

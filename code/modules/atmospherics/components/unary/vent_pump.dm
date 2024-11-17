@@ -426,7 +426,7 @@
 /decl/public_access/public_method/purge_pump
 	name = "activate purge mode"
 	desc = "Activates purge mode, overriding pressure checks and removing air."
-	call_proc = /obj/machinery/atmospherics/unary/vent_pump/proc/purge
+	call_proc = TYPE_PROC_REF(/obj/machinery/atmospherics/unary/vent_pump, purge)
 
 /decl/stock_part_preset/radio/event_transmitter/vent_pump
 	frequency = PUMP_FREQ
@@ -454,7 +454,7 @@
 	)
 	receive_and_write = list(
 		"set_power" = /decl/public_access/public_variable/use_power,
-		"set_direction" = /decl/public_access/public_variable/pump_dir,
+		"setDirection" = /decl/public_access/public_variable/pump_dir,
 		"set_checks" = /decl/public_access/public_variable/pump_checks,
 		"set_internal_pressure" = /decl/public_access/public_variable/pressure_bound,
 		"set_external_pressure" = /decl/public_access/public_variable/pressure_bound/external,

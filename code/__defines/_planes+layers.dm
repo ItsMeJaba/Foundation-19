@@ -139,6 +139,7 @@ What is the naming convention for planes or layers?
 	//MOB
 	#define MECH_UNDER_LAYER            3.11
 	// MOB_LAYER                        4
+	//MECH
 	#define MECH_BASE_LAYER             4.01
 	#define MECH_INTERMEDIATE_LAYER     4.02
 	#define MECH_PILOT_LAYER            4.03
@@ -150,6 +151,9 @@ What is the naming convention for planes or layers?
 	#define ABOVE_HUMAN_LAYER           4.08
 	#define VEHICLE_LOAD_LAYER          4.09
 	#define CAMERA_LAYER                4.10
+	//SCP
+	#define SCP_082_LYING_LAYER			4.101
+	#define SCP_082_LAYER				4.102
 	//BLOB
 	#define BLOB_SHIELD_LAYER           4.11
 	#define BLOB_NODE_LAYER             4.12
@@ -242,42 +246,42 @@ What is the naming convention for planes or layers?
   PLANE MASTERS
 */
 
-/obj/screen/plane_master
+/atom/movable/screen/plane_master
 	appearance_flags = PLANE_MASTER
-	screen_loc = "CENTER,CENTER"
+	screen_loc = "CENTER"
 	globalscreen = 1
 
-/obj/screen/plane_master/ghost_master
+/atom/movable/screen/plane_master/ghost_master
 	plane = OBSERVER_PLANE
 
-/obj/screen/plane_master/ghost_dummy
+/atom/movable/screen/plane_master/ghost_dummy
 	// this avoids a bug which means plane masters which have nothing to control get angry and mess with the other plane masters out of spite
 	alpha = 0
 	appearance_flags = 0
 	plane = OBSERVER_PLANE
 
 GLOBAL_LIST_INIT(ghost_master, list(
-	new /obj/screen/plane_master/ghost_master(),
-	new /obj/screen/plane_master/ghost_dummy()
+	new /atom/movable/screen/plane_master/ghost_master(),
+	new /atom/movable/screen/plane_master/ghost_dummy()
 ))
 
-/obj/screen/plane_master/effects_planemaster
+/atom/movable/screen/plane_master/effects_planemaster
 	appearance_flags = PLANE_MASTER | KEEP_TOGETHER
 	blend_mode = BLEND_OVERLAY
 
-/obj/screen/plane_master/effects_planemaster/openspace/Initialize()
+/atom/movable/screen/plane_master/effects_planemaster/openspace/Initialize()
 	. = ..()
 	add_filter("openspace_blur", 0, list(type = "blur", size = 0.6))
 
-/obj/screen/plane_master/vision_cone_target
+/atom/movable/screen/plane_master/vision_cone_target
 	name = "vision cone master"
 	plane = HIDDEN_PLANE
 	render_target = "vision_cone_target"
 
-/obj/screen/plane_master/vision_cone/primary/Initialize() //Things to hide
+/atom/movable/screen/plane_master/vision_cone/primary/Initialize() //Things to hide
 	. = ..()
 	add_filter("vision_cone", 50, list(type="alpha", render_source="vision_cone_target", flags=MASK_INVERSE))
 
-/obj/screen/plane_master/vision_cone/inverted/Initialize() //Things to show in hidden section
+/atom/movable/screen/plane_master/vision_cone/inverted/Initialize() //Things to show in hidden section
 	. = ..()
 	add_filter("inverted_vision_cone", 50, list(type="alpha", render_source="vision_cone_target"))

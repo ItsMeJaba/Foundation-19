@@ -5,6 +5,7 @@
 	holding_type = /obj/item/gun/energy/taser/carbine/mounted/mech
 	restricted_hardpoints = list(HARDPOINT_LEFT_HAND, HARDPOINT_RIGHT_HAND)
 	restricted_software = list(MECH_SOFTWARE_WEAPONS)
+	equipment_flags = ME_ENGINE_POWERED | ME_BYPASS_INTERFACE | ME_CELL_POWERED
 
 /obj/item/mech_equipment/mounted_system/taser/MouseDragInteraction(src_object, over_object, src_location, over_location, src_control, over_control, params, mob/user)
 	. = ..()
@@ -19,12 +20,14 @@
 	desc = "An exosuit-mounted ion rifle. Handle with care."
 	icon_state = "mech_ionrifle"
 	holding_type = /obj/item/gun/energy/ionrifle/mounted/mech
+	equipment_flags = ME_ENGINE_POWERED | ME_BYPASS_INTERFACE | ME_CELL_POWERED
 
 /obj/item/mech_equipment/mounted_system/taser/laser
 	name = "\improper CH-PS \"Immolator\" laser"
 	desc = "An exosuit-mounted laser rifle. Handle with care."
 	icon_state = "mech_lasercarbine"
 	holding_type = /obj/item/gun/energy/laser/mounted/mech
+	equipment_flags = ME_ENGINE_POWERED | ME_BYPASS_INTERFACE | ME_CELL_POWERED
 
 /obj/item/gun/energy/taser/carbine/mounted/mech
 	use_external_power = TRUE
@@ -41,6 +44,7 @@
 	use_external_power = TRUE
 	has_safety = FALSE
 	self_recharge = TRUE
+	accuracy = 2
 
 /obj/item/gun/energy/get_hardpoint_maptext()
 	return "[round(power_supply.charge / charge_cost)]/[max_shots]"
@@ -124,7 +128,7 @@
 		return
 	if((world.time - last_recharge) < cooldown)
 		return
-	var/obj/item/cell/cell = owner.get_cell()
+	var/obj/item/cell/cell = get_cell()
 
 	var/actual_required_power = Clamp(max_charge - charge, 0, charging_rate)
 
@@ -145,6 +149,7 @@
 	layer = ABOVE_HUMAN_LAYER
 	var/north_layer = MECH_UNDER_LAYER
 	plane = DEFAULT_PLANE
+	vis_flags = VIS_INHERIT_PLANE
 	pixel_x = 8
 	pixel_y = 4
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
@@ -156,13 +161,13 @@
 /obj/aura/mechshield/added_to(mob/living/target)
 	. = ..()
 	target.vis_contents += src
-	set_dir()
-	GLOB.dir_set_event.register(user, src, /obj/aura/mechshield/proc/update_dir)
+	setDir()
+	RegisterSignal(user, COMSIG_ATOM_DIR_CHANGE, TYPE_PROC_REF(/obj/aura/mechshield, update_dir))
 
 /obj/aura/mechshield/proc/update_dir(user, old_dir, dir)
-	set_dir(dir)
+	setDir(dir)
 
-/obj/aura/mechshield/set_dir(new_dir)
+/obj/aura/mechshield/setDir(new_dir)
 	. = ..()
 	if(dir == NORTH)
 		layer = north_layer
@@ -170,7 +175,7 @@
 
 /obj/aura/mechshield/Destroy()
 	if(user)
-		GLOB.dir_set_event.unregister(user, src, /obj/aura/mechshield/proc/update_dir)
+		UnregisterSignal(user, COMSIG_ATOM_DIR_CHANGE)
 		user.vis_contents -= src
 	shields = null
 	. = ..()
@@ -403,15 +408,15 @@
 /obj/aura/mech_ballistic/added_to(mob/living/target)
 	. = ..()
 	target.vis_contents += src
-	set_dir()
-	GLOB.dir_set_event.register(user, src, /obj/aura/mech_ballistic/proc/update_dir)
+	setDir()
+	RegisterSignal(user, COMSIG_ATOM_DIR_CHANGE, TYPE_PROC_REF(/obj/aura/mech_ballistic, update_dir))
 
 /obj/aura/mech_ballistic/proc/update_dir(user, old_dir, dir)
-	set_dir(dir)
+	setDir(dir)
 
 /obj/aura/mech_ballistic/Destroy()
 	if (user)
-		GLOB.dir_set_event.unregister(user, src, /obj/aura/mech_ballistic/proc/update_dir)
+		UnregisterSignal(user, COMSIG_ATOM_DIR_CHANGE)
 		user.vis_contents -= src
 	shield = null
 	. = ..()
@@ -459,10 +464,11 @@
 
 /obj/item/mech_equipment/flash/proc/area_flash()
 	playsound(src.loc, 'sounds/weapons/flash.ogg', 100, 1)
-	var/flash_time = (rand(flash_min,flash_max) - 1)
+	var/flash_time = (rand(flash_min, flash_max) - 1) SECONDS
 
-	var/obj/item/cell/C = owner.get_cell()
-	C.use(active_power_use * CELLRATE)
+	var/obj/item/cell/C = owner.get_cell(FALSE, ME_ANY_POWER)
+	if(!C?.use(active_power_use * CELLRATE))
+		return
 
 	for (var/mob/living/O in oviewers(flash_range, owner))
 		if(istype(O))
@@ -481,8 +487,8 @@
 
 			if(O.can_see())
 				O.flash_eyes(FLASH_PROTECTION_MODERATE - protection)
-				O.eye_blurry += flash_time
-				O.confused += (flash_time + 2)
+				O.adjust_eye_blur(flash_time)
+				O.adjust_confusion(flash_time * 1.2)
 
 /obj/item/mech_equipment/flash/attack_self(mob/user)
 	. = ..()
@@ -507,7 +513,7 @@
 		if(istype(O))
 
 			playsound(src.loc, 'sounds/weapons/flash.ogg', 100, 1)
-			var/flash_time = (rand(flash_min,flash_max))
+			var/flash_time = (rand(flash_min, flash_max)) SECONDS
 
 			var/obj/item/cell/C = owner.get_cell()
 			C.use(active_power_use * CELLRATE)
@@ -527,16 +533,76 @@
 
 			if(O.can_see())
 				O.flash_eyes(FLASH_PROTECTION_MAJOR - protection)
-				O.eye_blurry += flash_time
-				O.confused += (flash_time + 2)
+				O.adjust_eye_blur(flash_time)
+				O.adjust_confusion(flash_time * 1.2)
 
 				if(isanimal(O)) //Hit animals a bit harder
-					O.Stun(flash_time)
+					O.Stun(flash_time / (1 SECOND))
 				else
-					O.Stun(flash_time / 2)
+					O.Stun(flash_time / (2 SECONDS))
 
-				if(flash_time > 3)
+				if(flash_time > (3 SECONDS))
 					O.drop_l_hand()
 					O.drop_r_hand()
-				if(flash_time > 5)
+				if(flash_time > (5 SECONDS))
 					O.Weaken(3)
+
+/obj/item/flamethrower/full/mech
+	max_beaker = ITEM_SIZE_NORMAL
+	range = 5
+	desc = "A Hephaestus brand 'Prometheus' flamethrower. Bigger and better."
+
+/obj/item/flamethrower/full/mech/Initialize()
+	. = ..()
+	beaker = new /obj/item/reagent_containers/glass/beaker/bluespace(src)
+
+/obj/item/flamethrower/full/mech/get_hardpoint_maptext()
+	return beaker ? "[lit ? "ON" : "OFF"]-:-[beaker.reagents.total_volume]/[beaker.reagents.maximum_volume]" : "NO TANK"
+
+/obj/item/flamethrower/full/mech/get_hardpoint_status_value()
+	return beaker ? beaker.reagents.total_volume/beaker.reagents.maximum_volume : 0
+
+/obj/item/mech_equipment/mounted_system/flamethrower
+	icon_state = "mech_flamer"
+	holding_type = /obj/item/flamethrower/full/mech
+	restricted_hardpoints = list(HARDPOINT_LEFT_HAND, HARDPOINT_RIGHT_HAND)
+	restricted_software = list(MECH_SOFTWARE_WEAPONS)
+
+/obj/item/mech_equipment/mounted_system/flamethrower/attack_self(mob/user)
+	. = ..()
+	if(owner && holding)
+		update_icon()
+
+/obj/item/mech_equipment/mounted_system/flamethrower/attackby(obj/item/W as obj, mob/user as mob)
+	if(!CanPhysicallyInteract(user))	return
+
+	var/obj/item/flamethrower/full/mech/FM = holding
+	if(istype(FM))
+		if(isCrowbar(W) && FM.beaker)
+			if(FM.beaker)
+				user.visible_message(SPAN_NOTICE("\The [user] pries out \the [FM.beaker] using \the [W]."))
+				FM.beaker.dropInto(get_turf(user))
+				FM.beaker = null
+			return
+
+		if (istype(W, /obj/item/reagent_containers) && W.is_open_container() && (W.w_class <= FM.max_beaker))
+			if(FM.beaker)
+				to_chat(user, SPAN_NOTICE("There is already a tank inserted!"))
+				return
+			if(user.unEquip(W, FM))
+				user.visible_message(SPAN_NOTICE("\The [user] inserts \the [W] inside \the [src]."))
+				FM.beaker = W
+			return
+	..()
+
+/obj/item/mech_equipment/mounted_system/flamethrower/on_update_icon()
+	. = ..()
+	if(owner && holding)
+		var/obj/item/flamethrower/full/mech/FM = holding
+		if(istype(FM))
+			if(FM.lit)
+				icon_state = "mech_flamer_lit"
+			else icon_state = "mech_flamer"
+
+			if(owner)
+				owner.update_icon()

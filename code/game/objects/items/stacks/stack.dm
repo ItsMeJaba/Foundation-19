@@ -25,6 +25,7 @@
 	var/uses_charge = 0
 	var/list/charge_costs = null
 	var/list/datum/matter_synth/synths = null
+	var/list/possible_multipliers = list(1, 5, 10, 25)
 
 /obj/item/stack/New(loc, amount=null)
 	if (!stacktype)
@@ -38,7 +39,7 @@
 	if(!plural_name)
 		plural_name = "[singular_name]s"
 	if (!mapload && isturf(loc))
-		addtimer(CALLBACK(src, .proc/stack_new), 0)
+		addtimer(CALLBACK(src, PROC_REF(stack_new)), 0)
 
 /obj/item/stack/proc/stack_new()
 	for (var/obj/item/stack/S in loc)
@@ -110,11 +111,10 @@
 			if (R.max_res_amount>1 && max_multiplier>1)
 				max_multiplier = min(max_multiplier, round(R.max_res_amount/R.res_amount))
 				t1 += " |"
-				var/list/multipliers = list(5,10,25)
-				for (var/n in multipliers)
-					if (max_multiplier>=n)
+				for (var/n in possible_multipliers)
+					if ((n != 1) && (max_multiplier >= n))
 						t1 += " <A href='?src=\ref[src];make=[i];multiplier=[n]'>[n*R.res_amount]x</A>"
-				if (!(max_multiplier in multipliers))
+				if (!(max_multiplier in possible_multipliers))
 					t1 += " <A href='?src=\ref[src];make=[i];multiplier=[max_multiplier]'>[max_multiplier*R.res_amount]x</A>"
 
 	t1 += "</TT></body></HTML>"
@@ -175,7 +175,18 @@
 
 		var/datum/stack_recipe/R = recipes_list[text2num(href_list["make"])]
 		var/multiplier = text2num(href_list["multiplier"])
+		if(!R)
+			return
 		if (!multiplier || (multiplier <= 0)) //href exploit protection
+			return
+
+		// max multiplier calculation stolen from recipe logic
+		var/max_multiplier = round(src.get_amount() / R.req_amount)
+		if (R.max_res_amount > 1 && max_multiplier > 1)
+			max_multiplier = min(max_multiplier, round(R.max_res_amount/R.res_amount))
+		if(max_multiplier < 1)
+			return
+		if (!((multiplier in possible_multipliers) || (multiplier == max_multiplier))) // more href exploit protection
 			return
 
 		src.produce_recipe(R, multiplier, usr)
@@ -328,7 +339,7 @@
 		. = ceil(. * amount / max_amount)
 
 /obj/item/stack/Crossed(obj/o)
-	addtimer(CALLBACK(src, .proc/stack_crossed, o), 0)
+	addtimer(CALLBACK(src, PROC_REF(stack_crossed), o), 0)
 	. = ..()
 
 /obj/item/stack/proc/stack_crossed(obj/o)
@@ -403,7 +414,7 @@
 		O = new result_type(location, use_material, use_reinf_material)
 	else
 		O = new result_type(location)
-	O.set_dir(user.dir)
+	O.setDir(user.dir)
 	return O
 
 /datum/stack_recipe/proc/can_make(mob/user)

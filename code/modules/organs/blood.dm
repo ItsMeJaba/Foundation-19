@@ -27,7 +27,7 @@
 				"viruses" = null,
 				"species" = species.name,
 				"blood_DNA" = dna.unique_enzymes,
-				"blood_colour" = species.get_blood_colour(src),
+				"blood_colour" = GetBloodColor(),
 				"blood_type" = dna.b_type,
 				"trace_chem" = null
 			)
@@ -74,8 +74,8 @@
 									blinding = FALSE
 									break
 						if(blinding)
-							H.eye_blurry = max(H.eye_blurry, 10)
-							H.eye_blind = max(H.eye_blind, 5)
+							H.set_eye_blur_if_lower(10 SECONDS)
+							set_temp_blindness_if_lower(5 SECONDS)
 							to_chat(H, SPAN_DANGER("You are blinded by a spray of blood!"))
 						else
 							to_chat(H, SPAN_DANGER("You are hit by a spray of blood!"))
@@ -215,7 +215,7 @@
 		temp_chem[R.type] = R.volume
 	data["trace_chem"] = temp_chem
 	data["dose_chem"] = chem_doses.Copy()
-	data["blood_colour"] = species.get_blood_colour(src)
+	data["blood_colour"] = GetBloodColor()
 	return data
 
 /proc/blood_splatter(target,datum/reagent/blood/source,large,spray_dir)

@@ -1,17 +1,15 @@
-/obj/screen/ai_button
+/atom/movable/screen/ai_button
 	var/mob/living/silicon/ai/ai_verb
 	var/list/input_procs
 	var/list/input_args
-	icon = 'icons/mob/screen_ai.dmi'
+	icon = 'icons/hud/screen_ai.dmi'
 	var/list/template_icon = list(null, "template")
 	var/image/template_undelay
 
-/obj/screen/ai_button/Click()
+/atom/movable/screen/ai_button/Click()
 	if(!isAI(usr))
 		return TRUE
 	var/mob/living/silicon/ai/A = usr
-	if(!(ai_verb in A.verbs))
-		return TRUE
 
 	var/input_arguments = list()
 	for(var/input_proc in input_procs)
@@ -27,10 +25,10 @@
 			if(!input_arg)
 				return // We assume a null-input means the user cancelled
 
-		if(!(ai_verb in A.verbs) || A.incapacitated())
-			return
-
 		input_arguments += input_arg
+
+	if(A.incapacitated())
+		return
 
 	if(length(input_args))
 		input_arguments |= input_args
@@ -38,7 +36,7 @@
 	call(A, ai_verb)(arglist(input_arguments))
 	return TRUE
 
-/obj/screen/ai_button/Initialize(maploading, screen_loc, name, icon_state, ai_verb, list/input_procs = null, list/input_args = null)
+/atom/movable/screen/ai_button/Initialize(maploading, screen_loc, name, icon_state, ai_verb, list/input_procs = null, list/input_args = null)
 	. = ..()
 	if(!LAZYLEN(template_icon))
 		template_icon = list(icon)

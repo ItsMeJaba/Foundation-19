@@ -1,13 +1,14 @@
 import { Component } from 'inferno';
+
 import { useBackend } from '../backend';
-import { Button, Flex, Section, Box } from '../components';
-import { Window } from '../layouts';
+import { Box, Button, Flex, Section } from '../components';
 import { globalEvents } from '../events.js';
+import { Window } from '../layouts';
 
 const KEY_MODS = {
-  'SHIFT': true,
-  'ALT': true,
-  'CONTROL': true,
+  SHIFT: true,
+  ALT: true,
+  CONTROL: true,
 };
 
 export const KeyBinds = (props, context) => {
@@ -20,8 +21,8 @@ export const KeyBinds = (props, context) => {
         <Flex direction="column">
           <Flex.Item>
             <Section title="Important Note">
-              Чтобы сохранить привязку, нужно нажать `Esc`, удерживая клавиши,
-              которые вы хотите установить в качестве привязки.
+              You need to press `Esc` while holding keys you want to set as a
+              keybind to actually save it.
             </Section>
           </Flex.Item>
           <Flex.Item>
@@ -103,9 +104,7 @@ export const KeybindElement = (props, context) => {
                   const mods = keysDown.filter((k) => KEY_MODS[k]);
                   const keys = keysDown.filter((k) => !KEY_MODS[k]);
                   if (keys.length === 0) {
-                    if (mods.length >= 0) {
-                      keys.push(mods.pop());
-                    }
+                    keys.push(mods.pop());
                   }
                   act('set_keybind', {
                     keybind_name: keybind.name,
@@ -127,9 +126,7 @@ export const KeybindElement = (props, context) => {
             const mods = keysDown.filter((k) => KEY_MODS[k]);
             const keys = keysDown.filter((k) => !KEY_MODS[k]);
             if (keys.length === 0) {
-              if (mods.length >= 0) {
-                keys.push(mods.pop());
-              } else return;
+              keys.push(mods.pop());
             }
             act('set_keybind', {
               keybind_name: keybind.name,
@@ -229,8 +226,8 @@ export class ButtonKeybind extends Component {
         content={
           focused
             ? Object.keys(keysDown)
-              .filter((isTrue) => keysDown[isTrue])
-              .join('+') || content
+                .filter((isTrue) => keysDown[isTrue])
+                .join('+') || content
             : content
         }
         selected={focused}

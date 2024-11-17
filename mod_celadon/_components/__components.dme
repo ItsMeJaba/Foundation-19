@@ -1,0 +1,11 @@
+#ifndef MODPACK_CELADON_COMPONENTS
+#define MODPACK_CELADON_COMPONENTS
+
+#include "__components.dm"
+
+// Различный дополнительный функционал
+#include "code/_components.dm"
+#include "code/keybinds.dm"
+#include "code/cards_ids.dm"
+
+#endif

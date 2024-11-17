@@ -36,12 +36,19 @@
 
 /datum/keybinding/admin/admin_pm
 	hotkey_keys = list("F8")
+	// [CELADON-EDIT] - CELADON_COMPONENTS
+	/* // CELADON-EDIT - ORIGINAL
 	name = "admin_pm"
 	full_name = "Admin PM"
 	description = "Sends Admin PM message"
+	*/
+	name = "build_mod"
+	full_name = "Build Mod"
+	description = "Change Build Mod"
+	// [/CELADON-EDIT]
 
 /datum/keybinding/admin/admin_pm/down(client/user)
-	user.cmd_admin_pm_panel()
+	user.togglebuildmodeself()
 	return TRUE
 
 /datum/keybinding/admin/invisimin

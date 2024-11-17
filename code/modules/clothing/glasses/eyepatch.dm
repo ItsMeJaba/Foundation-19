@@ -5,6 +5,7 @@
 	item_state = "eyepatch"
 	body_parts_covered = 0
 	var/flipped = FALSE // Indicates left or right eye; 0 = on the right
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/eyepatch/verb/flip_patch()
 	set name = "Flip Patch"
@@ -80,7 +81,4 @@
 	vision_flags = SEE_TURFS
 	see_invisible = SEE_INVISIBLE_NOLIGHTING
 	eye_color = COLOR_LIME
-
-/obj/item/clothing/glasses/eyepatch/hud/meson/Initialize()
-	. = ..()
-	overlay = GLOB.global_hud.meson
+	overlay = /atom/movable/screen/fullscreen/hud/meson

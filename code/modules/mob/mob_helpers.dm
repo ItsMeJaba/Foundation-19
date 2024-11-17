@@ -220,13 +220,21 @@ var/list/global/organ_rel_size = list(
 
 /proc/slur(phrase)
 	phrase = html_decode(phrase)
+	// [CELADON-EDIT] - CELADON_COMPONENTS
+	// var/leng=length(phrase) // CELADON-EDIT - ORIGINAL
+	// var/counter=length(phrase) // CELADON-EDIT - ORIGINAL
 	var/leng=length_char(phrase)
 	var/counter=length_char(phrase)
+	// [/CELADON-EDIT]
 	var/newphrase=""
 	var/newletter=""
 	while(counter>=1)
+		// [CELADON-EDIT] - CELADON_COMPONENTS
+		// newletter=copytext(phrase,(leng-counter)+1,(leng-counter)+2) // CELADON-EDIT - ORIGINAL
+		// if(prob(30)) // CELADON-EDIT - ORIGINAL
 		newletter=copytext_char(phrase,(leng-counter)+1,(leng-counter)+2)
 		if(rand(1,3)==3)
+		// [/CELADON-EDIT]
 			if(lowertext(newletter)=="o")
 				newletter="u"
 			if(lowertext(newletter)=="s")
@@ -235,18 +243,36 @@ var/list/global/organ_rel_size = list(
 				newletter="ah"
 			if(lowertext(newletter)=="c")
 				newletter="k"
-
+				// [CELADON-ADD] - CELADON_COMPONENTS
+				newletter="ah"
+				// [/CELADON-ADD]
+			// [CELADON-ADD] - CELADON_COMPONENTS
+			if(lowertext(newletter)=="c")
+				newletter="k"
+			// [/CELADON-ADD]
+			// [CELADON-ADD] - CELADON_COMPONENTS
 			if(lowertext(newletter)=="о")  newletter="у"
 			if(lowertext(newletter)=="с")  newletter="з"
 			if(lowertext(newletter)=="а")  newletter="ах"
 			if(lowertext(newletter)=="с")  newletter="к"
 			if(lowertext(newletter)=="ч")  newletter="з"
+			// [/CELADON-ADD]
+		// [CELADON-EDIT] - CELADON_COMPONENTS
+		// switch(rand(1,9)) // CELADON-EDIT - ORIGINAL
+			// if(1,2,3,4) // CELADON-EDIT - ORIGINAL
 		switch(rand(1,7))
 			if(1,3,5)
+			// [/CELADON-EDIT]
 				newletter="[lowertext(newletter)]"
+			// [CELADON-EDIT] - CELADON_COMPONENTS
+			// if(5,6,7,8) // CELADON-EDIT - ORIGINAL
 			if(2,4,6)
+			// [/CELADON-EDIT]
 				newletter="[uppertext(newletter)]"
+			// [CELADON-EDIT] - CELADON_COMPONENTS
+			// if(9) // CELADON-EDIT - ORIGINAL
 			if(7)
+			// [/CELADON-EDIT]
 				newletter+="'"
 			//if(9,10)	newletter="<b>[newletter]</b>"
 			//if(11,12)	newletter="<big>[newletter]</big>"
@@ -257,15 +283,23 @@ var/list/global/organ_rel_size = list(
 /proc/stutter(n)
 	var/te = html_decode(n)
 	var/t = ""//placed before the message. Not really sure what it's for.
+	// [CELADON-EDIT] - CELADON_COMPONENTS
+	// n = length(n)//length of the entire word // CELADON-EDIT - ORIGINAL
 	n = length_char(n)//length of the entire word
+	// [/CELADON-EDIT]
 	var/p = null
 	p = 1//1 is the start of any word
 	while(p <= n)//while P, which starts at 1 is less or equal to N which is the length.
 		var/n_letter = copytext(te, p, p + 1)//copies text from a certain distance. In this case, only one letter at a time.
+		// [CELADON-ADD] - CELADON_COMPONENTS
 		var/list/letters_list = list(
 			"b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z",
 			"б","с","д","ф","г","ч","ж","к","л","т","н","р","т","в","х","у","з")
+		// [/CELADON-ADD]
+		// [CELADON-EDIT] - CELADON_COMPONENTS
+		// if (prob(80) && (ckey(n_letter) in list("b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z"))) // CELADON-EDIT - ORIGINAL
 		if (prob(80) && (ckey(n_letter) in letters_list))
+		// [/CELADON-EDIT]
 			if (prob(10))
 				n_letter = text("[n_letter]-[n_letter]-[n_letter]-[n_letter]")//replaces the current letter with this instead.
 			else
@@ -610,7 +644,7 @@ var/list/intents = list(I_HELP,I_DISARM,I_GRAB,I_HURT)
 	if(client)
 		client.images -= image
 
-/mob/proc/flash_eyes(intensity = FLASH_PROTECTION_MODERATE, override_blindness_check = FALSE, affect_silicon = FALSE, visual = FALSE, type = /obj/screen/fullscreen/flash)
+/mob/proc/flash_eyes(intensity = FLASH_PROTECTION_MODERATE, override_blindness_check = FALSE, affect_silicon = FALSE, visual = FALSE, type = /atom/movable/screen/fullscreen/flash)
 	for(var/mob/M in contents)
 		M.flash_eyes(intensity, override_blindness_check, affect_silicon, visual, type)
 
@@ -626,26 +660,6 @@ var/list/intents = list(I_HELP,I_DISARM,I_GRAB,I_HURT)
 
 /mob/proc/ssd_check()
 	return !client && !teleop
-
-/mob/proc/jittery_damage()
-	return //Only for living/carbon/human/
-
-/mob/living/carbon/human/jittery_damage()
-	var/obj/item/organ/internal/heart/L = internal_organs_by_name[BP_HEART]
-	if(!istype(L))
-		return 0
-	if(BP_IS_ROBOTIC(L))
-		return 0//Robotic hearts don't get jittery.
-	if(src.jitteriness >= 400 && prob(5)) //Kills people if they have high jitters.
-		if(prob(1))
-			L.take_internal_damage(L.max_damage / 2, 0)
-			to_chat(src, SPAN_DANGER("Something explodes in your heart."))
-			admin_victim_log(src, "has taken <b>lethal heart damage</b> at jitteriness level [src.jitteriness].")
-		else
-			L.take_internal_damage(1, 0)
-			to_chat(src, SPAN_DANGER("The jitters are killing you! You feel your heart beating out of your chest."))
-			admin_victim_log(src, "has taken <i>minor heart damage</i> at jitteriness level [src.jitteriness].")
-	return 1
 
 /mob/proc/try_teleport(area/thearea)
 	if(!istype(thearea))
@@ -717,14 +731,39 @@ var/list/intents = list(I_HELP,I_DISARM,I_GRAB,I_HURT)
 /mob/proc/unset_sdisability(sdisability)
 	sdisabilities &= ~sdisability
 
+/// This is necesarry due to how invisibility is handled
+/// This is a list for defining the item which will set the see_invisible
+/// The higher the number the higher its priority , if multiple items of the same priority exist
+/// It will use the max of them
+#define VISION_PRIORITY_LIST list(/mob/living/exosuit = 100, /atom = 99)
+
 /mob/proc/get_accumulated_vision_handlers()
 	var/result[2]
 	var/asight = 0
 	var/ainvis = 0
+	var/max_prio = 0
+	var/list/equal_priority = list()
 	for(var/atom/vision_handler in additional_vision_handlers)
 		//Grab their flags
+
 		asight |= vision_handler.additional_sight_flags()
-		ainvis = max(ainvis, vision_handler.additional_see_invisible())
+		for(var/atom_type in VISION_PRIORITY_LIST)
+			if(istype(vision_handler, atom_type))
+				if(VISION_PRIORITY_LIST[atom_type] > max_prio)
+					max_prio = VISION_PRIORITY_LIST[atom_type]
+					equal_priority.Cut()
+					equal_priority.Add(vision_handler)
+				else if(VISION_PRIORITY_LIST[atom_type] == max_prio)
+					equal_priority.Add(vision_handler)
+
+	if(length(equal_priority) == 1)
+		var/atom/cast = equal_priority[1]
+		/// Doing : with the first item of the list just calls atom/see_invisible instead of the type's proc override...
+		ainvis = cast.additional_see_invisible()
+	else if(length(equal_priority != 0))
+		for(var/atom/visual_thing in equal_priority)
+			ainvis = max(visual_thing.additional_see_invisible(), ainvis)
+
 	result[1] = asight
 	result[2] = ainvis
 

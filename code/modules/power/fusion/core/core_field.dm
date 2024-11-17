@@ -1,4 +1,4 @@
-#define FUSION_ENERGY_PER_K        20
+#define FUSION_ENERGY_PER_K        50
 #define FUSION_INSTABILITY_DIVISOR 50000
 #define FUSION_RUPTURE_THRESHOLD   10000
 #define FUSION_REACTANT_CAP        10000
@@ -84,7 +84,7 @@
 
 /obj/effect/fusion_em_field/Initialize()
 	. = ..()
-	addtimer(CALLBACK(src, .proc/update_light_colors), 10 SECONDS, TIMER_LOOP)
+	addtimer(CALLBACK(src, PROC_REF(update_light_colors)), 10 SECONDS, TIMER_LOOP)
 
 /obj/effect/fusion_em_field/proc/update_light_colors()
 	var/use_range
@@ -398,14 +398,14 @@
 					continue
 				var/decl/fusion_reaction/cur_reaction = get_fusion_reaction(cur_p_react, cur_s_react)
 				if(cur_reaction && plasma_temperature >= cur_reaction.minimum_energy_level)
-					LAZYDISTINCTADD(possible_reactions, cur_reaction)
+					LAZYOR(possible_reactions, cur_reaction)
 
 			//if there are no possible reactions here, abandon this primary reactant and move on
 			if(!LAZYLEN(possible_reactions))
 				continue
 
 			/// Sort based on reaction priority to avoid deut-deut eating all the deut before deut-trit can run etc.
-			sortTim(possible_reactions, /proc/cmp_fusion_reaction_des)
+			sortTim(possible_reactions, GLOBAL_PROC_REF(cmp_fusion_reaction_des))
 
 			//split up the reacting atoms between the possible reactions
 			while(possible_reactions.len)

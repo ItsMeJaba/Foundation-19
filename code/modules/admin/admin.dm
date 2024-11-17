@@ -84,7 +84,6 @@ var/global/floorIsLava = 0
 
 
 /datum/admins/proc/show_player_info(key as text)
-
 	set category = "Admin"
 	set name = "Show Player Info"
 	if (!istype(src,/datum/admins))
@@ -96,12 +95,13 @@ var/global/floorIsLava = 0
 	var/list/dat = list()
 
 	var/p_age
+	var/key_c = ckey(key)
 	for(var/client/C in GLOB.clients)
-		if(C.ckey == key)
+		if(C.ckey == key_c)
 			p_age = C.player_age
 			break
 
-	if(!p_age)
+	if(p_age == null)
 		p_age = get_player_age(key)
 
 	dat += "<b>Player age: [p_age ? p_age : "unknown"]</b><br><ul id='notes'>"
@@ -502,19 +502,23 @@ var/global/floorIsLava = 0
 
 
 /datum/admins/proc/announce()
-	set category = "Special Verbs"
+	set category = "Admin"
 	set name = "Announce"
 	set desc="Announce your desires to the world"
 	if(!check_rights(0))	return
 
 	var/message = input("Global message to send:", "Admin Announce", null, null) as message
-	message = sanitize(message, 500, extra = 0)
+	var/max_length = 1000
 	if(message)
+		if(length(message) >= max_length)
+			var/overflow = ((length(message)+1) - max_length)
+			to_chat(usr, SPAN_WARNING("Your message is too long by [overflow] character\s."))
+			return
+		message = copytext_char(message,1,max_length)
 		message = replacetext(message, "\n", "<br>") // required since we're putting it in a <p> tag
 		to_world("<span class=notice><b>[usr.key] Announces:</b><p style='text-indent: 50px'>[message]</p></span>")
 		log_admin("Announce: [key_name(usr)] : [message]")
 	SSstatistics.add_field_details("admin_verb","A") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-
 /datum/admins/proc/toggleooc()
 	set category = "Server"
 	set desc="Globally Toggles OOC"
@@ -844,47 +848,6 @@ var/global/floorIsLava = 0
 	S.harvest(usr,0,0,1)
 	log_admin("[key_name(usr)] spawned [seedtype] fruit at ([usr.x],[usr.y],[usr.z])")
 
-/datum/admins/proc/spawn_custom_item()
-	set category = "Debug"
-	set desc = "Spawn a custom item."
-	set name = "Spawn Custom Item"
-
-	if(!check_rights(R_SPAWN))	return
-
-	var/owner = input("Select a ckey.", "Spawn Custom Item") as null|anything in SScustomitems.custom_items_by_ckey
-	if(!owner|| !SScustomitems.custom_items_by_ckey[owner])
-		return
-
-	var/list/possible_items = list()
-	for(var/datum/custom_item/item in SScustomitems.custom_items_by_ckey[owner])
-		possible_items[item.item_name] = item
-	var/item_to_spawn = input("Select an item to spawn.", "Spawn Custom Item") as null|anything in possible_items
-	if(item_to_spawn && possible_items[item_to_spawn])
-		var/datum/custom_item/item_datum = possible_items[item_to_spawn]
-		item_datum.spawn_item(get_turf(usr))
-
-/datum/admins/proc/check_custom_items()
-
-	set category = "Debug"
-	set desc = "Check the custom item list."
-	set name = "Check Custom Items"
-
-	if(!check_rights(R_SPAWN))	return
-
-	if(!SScustomitems.custom_items_by_ckey)
-		to_chat(usr, "Custom item list is null.")
-		return
-
-	if(!SScustomitems.custom_items_by_ckey.len)
-		to_chat(usr, "Custom item list not populated.")
-		return
-
-	for(var/assoc_key in SScustomitems.custom_items_by_ckey)
-		to_chat(usr, "[assoc_key] has:")
-		var/list/current_items = SScustomitems.custom_items_by_ckey[assoc_key]
-		for(var/datum/custom_item/item in current_items)
-			to_chat(usr, "- name: [item.item_name] icon: [item.item_icon_state] path: [item.item_path] desc: [item.item_desc]")
-
 /datum/admins/proc/spawn_plant(seedtype in SSplants.seeds)
 	set category = "Debug"
 	set desc = "Spawn a spreading plant effect."
@@ -1211,7 +1174,7 @@ var/global/floorIsLava = 0
 	return 1
 
 /datum/admins/proc/force_antag_latespawn()
-	set category = "Admin"
+	set category = "Debug"
 	set name = "Force Template Spawn"
 	set desc = "Force an antagonist template to spawn."
 
@@ -1236,7 +1199,7 @@ var/global/floorIsLava = 0
 	antag.attempt_auto_spawn()
 
 /datum/admins/proc/force_mode_latespawn()
-	set category = "Admin"
+	set category = "Fun"
 	set name = "Force Mode Spawn"
 	set desc = "Force autotraitor to proc."
 
@@ -1280,7 +1243,7 @@ var/global/floorIsLava = 0
 
 
 /datum/admins/proc/sendFax()
-	set category = "Special Verbs"
+	set category = "Fun"
 	set name = "Send Fax"
 	set desc = "Sends a fax to this machine"
 
@@ -1292,7 +1255,7 @@ var/global/floorIsLava = 0
 		return
 
 	// Origin
-	var/list/option_list = GLOB.admin_departments.Copy() + GLOB.alldepartments.Copy() + "(Custom)"
+	var/list/option_list = GLOB.alldepartments.Copy() + "(Custom)"
 	var/replyorigin = tgui_input_list(owner, "Please specify who the fax is coming from. Choose '(Custom)' to enter a custom department or '(Cancel) to cancel.", "Fax Origin", option_list)
 	if (!replyorigin || replyorigin == "(Cancel)")
 		return
@@ -1306,6 +1269,8 @@ var/global/floorIsLava = 0
 
 	// Destination
 	var/department = tgui_input_list(owner, "Choose a destination fax", "Fax Target", GLOB.alldepartments)
+	if(!department)
+		return
 
 	// Generate the fax
 	var/obj/item/paper/admin/P = new /obj/item/paper/admin( null ) //hopefully the null loc won't cause trouble for us
@@ -1318,13 +1283,13 @@ var/global/floorIsLava = 0
 
 
 /client/proc/check_fax_history()
-	set category = "Special Verbs"
+	set category = "Fun"
 	set name = "Check Fax History"
 	set desc = "Look up the faxes sent this round."
 
 	var/data = "<center><b>Fax History:</b></center><br>"
 
-	if(GLOB.adminfaxes)
+	if(length(GLOB.adminfaxes))
 		for(var/obj/item/item in GLOB.adminfaxes)
 			data += "[item.name] - <a href='?_src_=holder;AdminFaxView=\ref[item]'>view message</a><br>"
 	else
@@ -1339,11 +1304,9 @@ var/global/floorIsLava = 0
 	P.SetName("[customname]")
 
 	var/shouldStamp = TRUE
-	if(!P.sender) // admin initiated
-		var/need_stamp = alert(src.owner, "Would you like the fax stamped?", "Stamp", "Yes", "No")
-		tgui_alert(src.owner, "Would you like the fax stamped?", "Stamp", list("Yes", "No"))
-		if(need_stamp != "Yes")
-			shouldStamp = FALSE
+	var/need_stamp = tgui_alert(src.owner, "Would you like the fax stamped?", "Stamp", list("Yes", "No"))
+	if(need_stamp != "Yes")
+		shouldStamp = FALSE
 
 	if(shouldStamp)
 		P.stamps += "<hr><i>This paper has been stamped by the [P.origin] Quantum Relay.</i>"
@@ -1372,28 +1335,20 @@ var/global/floorIsLava = 0
 	var/obj/machinery/photocopier/faxmachine/destination = P.destinations[1]
 	rcvdcopy = destination.copy(P, FALSE)
 	rcvdcopy.forceMove(null) //hopefully this shouldn't cause trouble
+
+	if(P.origin_offsite)
+		SEND_SIGNAL(P.origin_offsite, COMSIG_OFFSITE_FAX_SENT, rcvdcopy, P)
 	GLOB.adminfaxes += rcvdcopy
 	var/success = send_fax_loop(P, P.department, P.origin)
 
 	if(success)
-		to_chat(src.owner, SPAN_NOTICE("Message reply to transmitted successfully."))
-		if(P.sender) // sent as a reply
-			log_admin("[key_name(src.owner)] replied to a fax message from [key_name(P.sender)]")
-			for(var/client/C in GLOB.admins)
-				if((R_ADMIN|R_MOD) & C.holder.rights)
-					to_chat(C, SPAN_CLASS("log_message","<span class='prefix'>FAX LOG:</span>[key_name_admin(src.owner)] replied to a fax message from [key_name_admin(P.sender)] (<a href='?_src_=holder;AdminFaxView=\ref[rcvdcopy]'>VIEW</a>)"))
-		else
-			log_admin("[key_name(src.owner)] has sent a fax message to [P.department]")
-			for(var/client/C in GLOB.admins)
-				if((R_ADMIN|R_MOD) & C.holder.rights)
-					to_chat(C, SPAN_CLASS("log_message","<span class='prefix'>FAX LOG:</span>[key_name_admin(src.owner)] has sent a fax message to [P.department] (<a href='?_src_=holder;AdminFaxView=\ref[rcvdcopy]'>VIEW</a>)"))
-
+		log_admin("[key_name(src.owner)] has sent a fax message to [P.department]")
+		message_staff("[key_name_admin(src.owner)] has sent a fax message to [P.department] (<a href='?_src_=holder;AdminFaxView=\ref[rcvdcopy]'>VIEW</a>)")
 	else
-		to_chat(src.owner, SPAN_WARNING("Message reply failed."))
+		to_chat(src.owner, SPAN_WARNING("Fax transmission failed! Saved to offsite log for recovery of contents."))
 
-	spawn(100)
-		qdel(P)
-		faxreply = null
+	qdel(P)
+	faxreply = null
 	return
 
 /datum/admins/proc/shutdown_server()

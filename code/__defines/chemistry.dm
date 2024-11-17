@@ -25,13 +25,12 @@
 #define IS_SLIME   5
 #define IS_NABBER  6
 #define IS_MANTID  7
+#define IS_ABOMINATION 8
 
 #define CE_STABLE        "stable"       // Inaprovaline
 #define CE_ANTIBIOTIC    "antibiotic"   // Penicillin
 #define CE_BLOODRESTORE  "bloodrestore" // Iron/nutriment
 #define CE_PAINKILLER    "painkiller"
-#define CE_ALCOHOL       "alcohol"      // Liver filtering
-#define CE_ALCOHOL_TOXIC "alcotoxic"    // Liver damage
 #define CE_SPEEDBOOST    "gofast"       // Hyperzine
 #define CE_SLOWDOWN      "goslow"       // Slowdown
 #define CE_PULSE         "xcardic"      // increases or decreases heart rate

@@ -21,8 +21,6 @@
 	var/recharge_time = 4
 	var/charge_tick = 0
 
-	general_codex_key = "energy weapons"		// for codex
-
 /obj/item/gun/energy/switch_firemodes()
 	. = ..()
 	if(.)
@@ -107,6 +105,12 @@
 			icon_state = "[initial(icon_state)][ratio]"
 		update_held_icon()
 
+GLOBAL_LIST_INIT(banned_914_energy_guns, list(
+	/obj/item/gun/energy/pulse_rifle/destroyer,
+	/obj/item/gun/energy/meteorgun,
+	/obj/item/gun/energy/meteorgun/pen
+	))
+
 // Coarse - Returns random gun with lower max_shots or damage
 // 1:1 - Returns random gun with similar max_shots value and similar projectile damage
 // Fine or Very Fine - Returns random gun with higher max_shots, higher damage or self-recharging
@@ -114,7 +118,7 @@
 	switch(mode)
 		if(MODE_COARSE)
 			var/list/potential_return
-			for(var/thing in subtypesof(/obj/item/gun/energy))
+			for(var/thing in (subtypesof(/obj/item/gun/energy) - GLOB.banned_914_energy_guns))
 				var/obj/item/gun/energy/G = thing
 				if(initial(G.max_shots) < max_shots * 0.8)
 					potential_return += G
@@ -127,7 +131,7 @@
 			return pick(potential_return)
 		if(MODE_ONE_TO_ONE)
 			var/list/potential_return = list()
-			for(var/thing in subtypesof(/obj/item/gun/energy))
+			for(var/thing in (subtypesof(/obj/item/gun/energy) - GLOB.banned_914_energy_guns))
 				var/obj/item/gun/energy/G = thing
 				if(initial(G.max_shots) > max_shots * 1.25 || initial(G.max_shots) < max_shots * 0.75)
 					continue
@@ -145,7 +149,7 @@
 				empulse(get_turf(src), 2, 5)
 				return null
 			var/list/potential_return = list()
-			for(var/thing in subtypesof(/obj/item/gun/energy))
+			for(var/thing in (subtypesof(/obj/item/gun/energy) - GLOB.banned_914_energy_guns))
 				var/obj/item/gun/energy/G = thing
 				if(initial(G.max_shots) > max_shots * 1.25 * mult_mod && initial(G.max_shots) < max_shots * 2 * mult_mod)
 					potential_return += G

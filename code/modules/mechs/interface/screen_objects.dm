@@ -1,51 +1,55 @@
 // Screen objects hereon out.
-#define MECH_UI_STYLE(X) "<span style=\"font-family: 'Small Fonts'; -dm-text-outline: 1 black; font-size: 5px;\">" + X + "</span>"
+#define MECH_UI_STYLE(X) ("<span style=\"font-family: 'Small Fonts'; -dm-text-outline: 1 black; font-size: 5px;\">" + X + "</span>")
 
-/obj/screen/exosuit
+/atom/movable/screen/exosuit
 	name = "hardpoint"
 	icon = 'icons/mecha/mech_hud.dmi'
 	icon_state = "base"
 	var/mob/living/exosuit/owner
 	var/height = 14
 
-/obj/screen/exosuit/radio
+/atom/movable/screen/exosuit/radio
 	name = "radio"
 	maptext = MECH_UI_STYLE("RADIO")
 	maptext_x = 5
 	maptext_y = 12
 
-/obj/screen/exosuit/radio/Click()
+/atom/movable/screen/exosuit/radio/Click()
 	if(..())
 		if(owner.radio)
 			owner.radio.attack_self(usr)
 		else
 			to_chat(usr, SPAN_WARNING("There is no radio installed."))
 
-/obj/screen/exosuit/Initialize()
+/atom/movable/screen/exosuit/Initialize()
 	. = ..()
 	var/mob/living/exosuit/newowner = loc
 	if(!istype(newowner))
 		return qdel(src)
 	owner = newowner
 
-/obj/screen/exosuit/Click()
+/atom/movable/screen/exosuit/Click()
 	return (!usr.incapacitated() && usr.canClick() && (usr == owner || usr.loc == owner))
 
-/obj/screen/exosuit/hardpoint
+#define HARDPOINT_SELECTABLE (1<<0)
+#define HARDPOINT_EJECTABLE (1<<1)
+
+/atom/movable/screen/exosuit/hardpoint
 	name = "hardpoint"
 	var/hardpoint_tag
 	var/obj/item/holding
+	var/interact_flags = HARDPOINT_SELECTABLE | HARDPOINT_EJECTABLE
 	icon_state = "hardpoint"
 
 	maptext_x = 34
 	maptext_y = 3
 	maptext_width = 72
 
-/obj/screen/exosuit/hardpoint/MouseDrop()
+/atom/movable/screen/exosuit/hardpoint/MouseDrop()
 	..()
 	if(holding) holding.screen_loc = screen_loc
 
-/obj/screen/exosuit/hardpoint/proc/update_system_info()
+/atom/movable/screen/exosuit/hardpoint/proc/update_system_info()
 
 	// No point drawing it if we have no item to use or nobody to see it.
 	if(!holding || !owner)
@@ -62,7 +66,7 @@
 		return
 
 	var/list/new_overlays = list()
-	if(!owner.get_cell() || (owner.get_cell().charge <= 0))
+	if(!owner.get_cell(FALSE, ME_ANY_POWER) || (owner.get_cell(FALSE, ME_ANY_POWER).charge <= 0))
 		cut_overlays()
 		maptext = ""
 		return
@@ -123,102 +127,117 @@
 			new_overlays += GLOB.hardpoint_bar_cache[i]
 	set_overlays(new_overlays)
 
-/obj/screen/exosuit/hardpoint/Initialize(mapload, newtag)
+/atom/movable/screen/exosuit/hardpoint/Initialize(mapload, newtag)
 	. = ..()
 	hardpoint_tag = newtag
 	name = "hardpoint ([hardpoint_tag])"
 
-/obj/screen/exosuit/hardpoint/Click(location, control, params)
+/atom/movable/screen/exosuit/hardpoint/Click(location, control, params)
 
 	if(!(..()))
-		return
+		return FALSE
 
 	if(!owner?.hatch_closed)
-		to_chat(usr, SPAN_WARNING("Error: Hardpoint interface disabled while [owner.body.hatch_descriptor] is open."))
-		return
+		if(istype(holding, /obj/item/mech_equipment))
+			var/obj/item/mech_equipment/cast = holding
+			if(!(cast.equipment_flags & ME_BYPASS_INTERFACE))
+				to_chat(usr, SPAN_WARNING("Error: Hardpoint interface disabled while [owner.body.hatch_descriptor] is open."))
+				return FALSE
+		else
+			to_chat(usr, SPAN_WARNING("Error: Hardpoint interface disabled while [owner.body.hatch_descriptor] is open."))
+			return FALSE
 
 	var/modifiers = params2list(params)
 	if(modifiers["ctrl"])
 		if(owner.hardpoints_locked)
 			to_chat(usr, SPAN_WARNING("Hardpoint ejection system is locked."))
-			return
+			return FALSE
+		if(!(interact_flags & HARDPOINT_EJECTABLE))
+			to_chat(usr, SPAN_WARNING("This hardpoint can't eject modules! It must be done manually."))
+			return FALSE
 		if(owner.remove_system(hardpoint_tag))
 			to_chat(usr, SPAN_NOTICE("You disengage and discard the system mounted to your [hardpoint_tag] hardpoint."))
 		else
 			to_chat(usr, SPAN_DANGER("You fail to remove the system mounted to your [hardpoint_tag] hardpoint."))
+		return FALSE
+
+	if(interact_flags & HARDPOINT_SELECTABLE)
+		if(owner.selected_hardpoint == hardpoint_tag)
+			icon_state = initial(icon_state)
+			owner.clear_selected_hardpoint()
+		else
+			if(owner.set_hardpoint(hardpoint_tag))
+				icon_state = "[initial(icon_state)]_selected"
+	return TRUE
+
+/atom/movable/screen/exosuit/hardpoint/power
+	name = "power hardpoint"
+	icon_state = "hardpoint_p"
+	interact_flags = null
+
+/atom/movable/screen/exosuit/hardpoint/power/Click(location, control, params)
+	if(!..())
 		return
+	var/obj/item/mech_equipment/power_stuff = owner.hardpoints[hardpoint_tag]
+	if(power_stuff)
+		power_stuff.attack_self(usr)
 
-	if(owner.selected_hardpoint == hardpoint_tag)
-		icon_state = "hardpoint"
-		owner.clear_selected_hardpoint()
+/atom/movable/screen/exosuit/hardpoint/power/update_system_info()
+	..()
+	var/obj/item/mech_equipment/power_stuff = owner.hardpoints[hardpoint_tag]
+	if(power_stuff?.active)
+		icon_state = "[initial(icon_state)]_selected"
 	else
-		if(owner.set_hardpoint(hardpoint_tag))
-			icon_state = "hardpoint_selected"
+		icon_state = "[initial(icon_state)]"
 
-/obj/screen/exosuit/eject
+/atom/movable/screen/exosuit/eject
 	name = "eject"
 	maptext = MECH_UI_STYLE("EJECT")
 	maptext_x = 5
 	maptext_y = 12
 
-/obj/screen/exosuit/eject/Click()
+/atom/movable/screen/exosuit/eject/Click()
 	if(..())
 		owner.eject(usr)
 
-/obj/screen/exosuit/rename
+/atom/movable/screen/exosuit/rename
 	name = "rename"
 	maptext = MECH_UI_STYLE("RENAME")
 	maptext_x = 1
 	maptext_y = 12
 
-/obj/screen/exosuit/power
+/atom/movable/screen/exosuit/power
 	name = "power"
 	icon_state = null
 
 	maptext_width = 64
 
-/obj/screen/exosuit/rename/Click()
+/atom/movable/screen/exosuit/rename/Click()
 	if(..())
 		owner.rename(usr)
 
-/obj/screen/exosuit/toggle
+/atom/movable/screen/exosuit/toggle
 	name = "toggle"
 	var/toggled = FALSE
 
-/obj/screen/exosuit/toggle/Initialize()
+/atom/movable/screen/exosuit/toggle/Initialize()
 	. = ..()
 	queue_icon_update()
 
-/obj/screen/exosuit/toggle/on_update_icon()
+/atom/movable/screen/exosuit/toggle/on_update_icon()
 	. = ..()
 	icon_state = "[initial(icon_state)][toggled ? "_enabled" : ""]"
 	maptext = FONT_COLORED(toggled ? COLOR_WHITE : COLOR_GRAY,initial(maptext))
 
-/obj/screen/exosuit/toggle/Click()
+/atom/movable/screen/exosuit/toggle/Click()
 	if(..()) toggled()
 
-/obj/screen/exosuit/toggle/proc/toggled()
+/atom/movable/screen/exosuit/toggle/proc/toggled()
 	toggled = !toggled
 	queue_icon_update()
 	return toggled
 
-/obj/screen/exosuit/toggle/power_control
-	name = "Power control"
-	icon_state = "small_important"
-	maptext = MECH_UI_STYLE("POWER")
-	maptext_x = 3
-	maptext_y = 13
-	height = 12
-
-/obj/screen/exosuit/toggle/power_control/toggled()
-	. = ..()
-	owner.toggle_power(usr)
-
-/obj/screen/exosuit/toggle/power_control/on_update_icon()
-	toggled = (owner.power == MECH_POWER_ON)
-	. = ..()
-
-/obj/screen/exosuit/toggle/air
+/atom/movable/screen/exosuit/toggle/air
 	name = "air"
 	icon_state = "small_important"
 	maptext = MECH_UI_STYLE("AIR")
@@ -226,11 +245,12 @@
 	maptext_y = 13
 	height = 12
 
-/obj/screen/exosuit/toggle/air/toggled()
+/atom/movable/screen/exosuit/toggle/air/toggled()
 	owner.use_air = ..()
 	to_chat(usr, SPAN_NOTICE("Auxiliary atmospheric system [owner.use_air ? "enabled" : "disabled"]."))
+	playsound(src.loc, 'sounds/effects/turret/open.wav', 50, 1, -6)
 
-/obj/screen/exosuit/toggle/maint
+/atom/movable/screen/exosuit/toggle/maint
 	name = "toggle maintenance protocol"
 	icon_state = "small"
 	maptext = MECH_UI_STYLE("MAINT")
@@ -238,40 +258,43 @@
 	maptext_y = 13
 	height = 12
 
-/obj/screen/exosuit/toggle/maint/toggled()
+/atom/movable/screen/exosuit/toggle/maint/toggled()
 	owner.maintenance_protocols = ..()
 	to_chat(usr, SPAN_NOTICE("Maintenance protocols [owner.maintenance_protocols ? "enabled" : "disabled"]."))
+	playsound(src.loc, 'sounds/mecha/mech_maints_toggle.ogg', 50, 1, -6)
 
-/obj/screen/exosuit/toggle/hardpoint
+/atom/movable/screen/exosuit/toggle/hardpoint
 	name = "toggle hardpoint lock"
 	maptext = MECH_UI_STYLE("GEAR")
 	maptext_x = 5
 	maptext_y = 12
 
-/obj/screen/exosuit/toggle/hardpoint/toggled()
+/atom/movable/screen/exosuit/toggle/hardpoint/toggled()
 	owner.hardpoints_locked = ..()
 	to_chat(usr, SPAN_NOTICE("Hardpoint system access is now [owner.hardpoints_locked ? "disabled" : "enabled"]."))
+	playsound(src.loc, 'sounds/machines/twobeep.ogg', 50, 1, -6)
 
-/obj/screen/exosuit/toggle/hatch
+/atom/movable/screen/exosuit/toggle/hatch
 	name = "toggle hatch lock"
 	maptext = MECH_UI_STYLE("LOCK")
 	maptext_x = 5
 	maptext_y = 12
 
-/obj/screen/exosuit/toggle/hatch/toggled()
+/atom/movable/screen/exosuit/toggle/hatch/toggled()
 	if(!owner.hatch_locked && !owner.hatch_closed)
 		to_chat(usr, SPAN_WARNING("You cannot lock the hatch while it is open."))
 		return
 	owner.hatch_locked = ..()
 	to_chat(usr, SPAN_NOTICE("The [owner.body.hatch_descriptor] is [owner.hatch_locked ? "now" : "no longer" ] locked."))
+	playsound(src.loc, 'sounds/mecha/mech_lock_toggle.ogg', 50, 1, -6)
 
-/obj/screen/exosuit/toggle/hatch_open
+/atom/movable/screen/exosuit/toggle/hatch_open
 	name = "open or close hatch"
 	maptext = MECH_UI_STYLE("CLOSE")
 	maptext_x = 4
 	maptext_y = 12
 
-/obj/screen/exosuit/toggle/hatch_open/toggled()
+/atom/movable/screen/exosuit/toggle/hatch_open/toggled()
 	if (!owner)
 		return
 	if(owner.hatch_locked && owner.hatch_closed)
@@ -280,8 +303,9 @@
 	owner.hatch_closed = ..()
 	to_chat(usr, SPAN_NOTICE("The [owner.body.hatch_descriptor] is now [owner.hatch_closed ? "closed" : "open" ]."))
 	owner.update_icon()
+	playsound(src.loc, 'sounds/mecha/mech_hatch_toggle.ogg', 50, 1, -6)
 
-/obj/screen/exosuit/toggle/hatch_open/on_update_icon()
+/atom/movable/screen/exosuit/toggle/hatch_open/on_update_icon()
 	toggled = owner.hatch_closed
 	. = ..()
 	if(toggled)
@@ -292,13 +316,13 @@
 		maptext_x = 4
 
 // This is basically just a holder for the updates the exosuit does.
-/obj/screen/exosuit/health
+/atom/movable/screen/exosuit/health
 	name = "exosuit integrity"
 	icon_state = "health"
 
-/obj/screen/exosuit/health/Click()
+/atom/movable/screen/exosuit/health/Click()
 	if(..())
-		if(owner && owner.body && owner.get_cell() && owner.body.diagnostics?.is_functional())
+		if(owner && owner.body && owner.get_cell(FALSE, ME_ANY_POWER) && owner.body.diagnostics?.is_functional())
 			usr.setClickCooldown(0.2 SECONDS)
 			to_chat(usr, SPAN_NOTICE("The diagnostics panel blinks several times as it updates:"))
 			playsound(owner.loc,'sounds/effects/scanbeep.ogg',30,0)
@@ -307,7 +331,7 @@
 					MC.return_diagnostics(usr)
 
 //Controls if cameras set the vision flags
-/obj/screen/exosuit/toggle/camera
+/atom/movable/screen/exosuit/toggle/camera
 	name = "toggle camera matrix"
 	icon_state = "small_important"
 	maptext = MECH_UI_STYLE("SENSOR")
@@ -315,22 +339,52 @@
 	maptext_y = 13
 	height = 12
 
-/obj/screen/exosuit/toggle/camera/toggled()
+/atom/movable/screen/exosuit/toggle/camera/toggled()
 	if(!owner.head)
 		to_chat(usr, SPAN_WARNING("I/O Error: Camera systems not found."))
 		return
 	if(!owner.head.vision_flags)
 		to_chat(usr,  SPAN_WARNING("Alternative sensor configurations not found. Contact manufacturer for more details."))
 		return
-	if(!owner.get_cell())
+	if(!owner.get_cell(FALSE, ME_ANY_POWER))
 		to_chat(usr,  SPAN_WARNING("The augmented vision systems are offline."))
 		return
 	owner.head.active_sensors = ..()
 	to_chat(usr, SPAN_NOTICE("[owner.head.name] advanced sensor mode is [owner.head.active_sensors ? "now" : "no longer" ] active."))
 
-/obj/screen/exosuit/toggle/camera/on_update_icon()
+/atom/movable/screen/exosuit/toggle/camera/on_update_icon()
 	toggled = owner.head.active_sensors
 	. = ..()
+
+// Controls strafing mode on the mech
+/atom/movable/screen/exosuit/toggle/strafe
+	name = "toggle strafe"
+	maptext = MECH_UI_STYLE("STRAFE")
+	maptext_x = 2
+	maptext_y = 12
+
+/atom/movable/screen/exosuit/toggle/strafe/toggled() // Prevents exosuits from strafing when EMP'd enough
+	if(!(owner.legs.movement_flags & PF_OMNI_STRAFE))
+		to_chat(usr, SPAN_WARNING("Error: This propulsion system doesn't support synchronization!"))
+		return
+	if(owner.emp_damage >= EMP_MOVE_DISRUPT)
+		to_chat(usr, SPAN_WARNING("Error: Coordination systems are unable to synchronize. Contact an authorised exo-electrician immediately."))
+		return
+	if(..())
+		owner.mech_flags |= MF_STRAFING
+	else
+		owner.mech_flags &= ~MF_STRAFING
+	to_chat(usr, SPAN_NOTICE("Strafing [owner.mech_flags & MF_STRAFING ? "enabled" : "disabled"]."))
+	playsound(src,'sounds/mecha/lever.ogg', 40, 1)
+
+/atom/movable/screen/exosuit/toggle/strafe/on_update_icon()
+	if(!(owner?.legs?.movement_flags & PF_OMNI_STRAFE))
+		maptext = MECH_UI_STYLE("------")
+	else
+		maptext = initial(maptext)
+	. = ..()
+
+
 
 #undef BAR_CAP
 #undef MECH_UI_STYLE

@@ -19,9 +19,9 @@
 #define ui_inventory "WEST:6,SOUTH:5"
 
 //Lower center, persistant menu
-#define ui_sstore1 "WEST+2:10,SOUTH:5"
-#define ui_id "WEST+3:12,SOUTH:5"
-#define ui_belt "WEST+4:14,SOUTH:5"
+#define ui_sstore1 "CENTER-5:10,SOUTH:5"
+#define ui_id "CENTER-4:12,SOUTH:5"
+#define ui_belt "CENTER-3:14,SOUTH:5"
 #define ui_back "CENTER-2:14,SOUTH:5"
 #define ui_rhand "CENTER-1:16,SOUTH:5"
 #define ui_lhand "CENTER:16,SOUTH:5"
@@ -53,7 +53,8 @@
 #define ui_drop_throw "EAST-1:28,SOUTH+1:7"
 #define ui_pull_resist "EAST-2:26,SOUTH+1:7"
 #define ui_acti "EAST-2:26,SOUTH:5"
-#define ui_rest_act "EAST-4:24,SOUTH:5"
+#define ui_rest_act "EAST-4:24,SOUTH+1:5"
+#define ui_facedir "EAST-4:24,SOUTH:5"
 #define ui_movi "EAST-3:24,SOUTH:5"
 #define ui_zonesel "EAST-1:28,SOUTH:5"
 #define ui_acti_alt "EAST-1:28,SOUTH:5" //alternative intent switcher for when the interface is hidden (F12)
@@ -168,7 +169,15 @@
 #define ui_ai_power_override "LEFT:6,TOP:0"
 #define ui_ai_shutdown "LEFT+1:6,TOP:0"
 #define ui_ai_holo_mov "LEFT:6, TOP-1:0"
+#define ui_ai_area_apc "LEFT+1:6, TOP-1:0"
 
 // AI: Crew
 #define ui_ai_crew_mon "RIGHT-1:30,TOP:0"
 #define ui_ai_crew_rec "RIGHT-2:30, TOP:0"
+
+//Upper-middle right (alerts)
+#define ui_alert1 "EAST-1:28,CENTER+5:27"
+#define ui_alert2 "EAST-1:28,CENTER+4:25"
+#define ui_alert3 "EAST-1:28,CENTER+3:23"
+#define ui_alert4 "EAST-1:28,CENTER+2:21"
+#define ui_alert5 "EAST-1:28,CENTER+1:19"

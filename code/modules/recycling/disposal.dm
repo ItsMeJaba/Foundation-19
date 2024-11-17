@@ -228,7 +228,7 @@ GLOBAL_LIST_EMPTY(diversion_junctions)
 // human interact with machine
 /obj/machinery/disposal/physical_attack_hand(mob/user)
 	// Clumsy folks can only flush it.
-	if(!user.IsAdvancedToolUser(1))
+	if(!ISADVANCEDTOOLUSER(user))
 		flush = !flush
 		update_icon()
 		return TRUE
@@ -672,7 +672,7 @@ GLOBAL_LIST_EMPTY(diversion_junctions)
 		dirs = list( direction, turn(direction, -45), turn(direction, 45))
 	else
 		dirs = GLOB.alldirs.Copy()
-	addtimer(CALLBACK(src, .proc/streak, dirs), 0)
+	addtimer(CALLBACK(src, PROC_REF(streak), dirs), 0)
 
 /obj/effect/decal/cleanable/blood/gibs/robot/pipe_eject(direction)
 	var/list/dirs
@@ -680,4 +680,4 @@ GLOBAL_LIST_EMPTY(diversion_junctions)
 		dirs = list( direction, turn(direction, -45), turn(direction, 45))
 	else
 		dirs = GLOB.alldirs.Copy()
-	addtimer(CALLBACK(src, .proc/streak, dirs), 0)
+	addtimer(CALLBACK(src, PROC_REF(streak), dirs), 0)

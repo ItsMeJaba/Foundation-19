@@ -118,7 +118,7 @@
 		H.resist()
 		return
 
-	addtimer(CALLBACK(src, .proc/handle_action, H), rand(10, 20))
+	addtimer(CALLBACK(src, PROC_REF(handle_action), H), rand(10, 20))
 
 /datum/species/scp049_1/proc/handle_action(mob/living/carbon/human/H)
 	var/dist = 128
@@ -134,7 +134,7 @@
 			if (D <= dist * 0.5) //Must be significantly closer to change targets
 				target = M //For closest target
 				dist = D
-				H.setClickCooldown(DEFAULT_ATTACK_COOLDOWN*2)
+				H.setClickCooldown(CLICK_CD_ATTACK*2)
 	if (target)
 		if (isspecies(target, SPECIES_SCP049_1))
 			target = null
@@ -154,7 +154,7 @@
 			H.face_atom(target)
 
 			if (!H.zone_sel)
-				H.zone_sel = new /obj/screen/zone_sel(null)
+				H.zone_sel = new /atom/movable/screen/zone_sel(null)
 			H.zone_sel.selecting = BP_CHEST
 			target.attack_hand(H)
 

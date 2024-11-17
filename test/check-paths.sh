@@ -23,7 +23,7 @@ exactly() { # exactly N name search [mode] [filter]
 
 # With the potential exception of << if you increase any of these numbers you're probably doing it wrong
 exactly 0 "escapes" '\\\\(red|blue|green|black|b|i[^mc])'
-exactly 7 "Del()s" '\S\WDel\(' # +1 because it also matches comments, sigh
+exactly 8 "Del()s" '\S\WDel\(' # +1 because it also matches comments, sigh
 exactly 2 "/atom text paths" '"/atom'
 exactly 2 "/area text paths" '"/area'
 exactly 2 "/datum text paths" '"/datum'
@@ -38,7 +38,7 @@ exactly 0 "world.log<< uses" 'world.log<<|world.log[[:space:]]<<'
 exactly 0 "incorrect indentations" '^( {4,})' -P
 #exactly 3 "update_icon() override" '/update_icon\((.*)\)'  -P - nothing wrong wtih overriding it
 exactly 1 "goto use" 'goto '
-exactly 1 "NOOP match" 'NOOP'
+exactly 3 "NOOP match" 'NOOP'
 #exactly 416 "spawn uses" 'spawn\s*\(\s*(-\s*)?\d*\s*\)' -P - oddly specific number
 exactly 0 "tag uses" '\stag = ' -P '**/*.dmm'
 #exactly 4 ".Replace( matches" '\.Replace(_char)?\(' -P - oddly specific number
@@ -47,6 +47,8 @@ exactly 0 "anchored = 0/1" 'anchored\s*=\s*\d' -P
 exactly 0 "density = 0/1" 'density\s*=\s*\d' -P
 exactly 0 "emagged = 0/1" 'emagged\s*=\s*\d' -P
 exactly 0 "simulated = 0/1" 'simulated\s*=\s*\d' -P
+exactly 2 ".proc/ uses" '([, ])\.proc/(\w+)'
+exactly 9 "/proc/ uses" '([(, ])/proc/(\w+)'
 # With the potential exception of << if you increase any of these numbers you're probably doing it wrong
 # - Fuck you, I am going to use as many text2path as I want
 

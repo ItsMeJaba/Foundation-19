@@ -312,7 +312,7 @@ GLOBAL_LIST_EMPTY(hivemind_bank)
 		user.status_flags |= FAKEDEATH
 		user.UpdateLyingBuckledAndVerbStatus()
 		state = CHANGELING_STASIS_WAITING
-		addtimer(CALLBACK(src, .proc/make_ready, user), rand(800, 2000))
+		addtimer(CALLBACK(src, PROC_REF(make_ready), user), rand(800, 2000))
 	else // No need to check for(state == 2) here due to logic in can_activate()
 		var/mob/living/carbon/C = user
 		if(C.stat == DEAD)
@@ -537,15 +537,10 @@ GLOBAL_LIST_EMPTY(hivemind_bank)
 
 /datum/power/changeling/sting/blind_sting/sting_effects()
 	to_chat(target, SPAN_WARNING("Your eyes burn horrifically!"))
-	target.eye_blind += 10
-	target.eye_blurry += 20
-	target.disabilities |= NEARSIGHTED
-	addtimer(CALLBACK(src, .proc/unblind, target), 30 SECONDS)
+	target.adjust_temp_blindness(10 SECONDS)
+	target.adjust_eye_blur(20 SECONDS)
+	target.adjust_temp_nearsightedness(30 SECONDS)
 	SSstatistics.add_field_details("changeling_powers", "BS")
-
-/datum/power/changeling/sting/blind_sting/proc/unblind(mob/living/carbon/human/target)
-	if(target)
-		target.disabilities &= ~NEARSIGHTED
 
 
 /// Silences a target for 30 seconds.
@@ -559,7 +554,7 @@ GLOBAL_LIST_EMPTY(hivemind_bank)
 	allow_during_lesser_form = TRUE
 
 /datum/power/changeling/sting/silence_sting/sting_effects()
-	target.silent += 30
+	target.set_silence_if_lower(30 SECONDS)
 	SSstatistics.add_field_details("changeling_powers", "SS")
 
 
@@ -599,7 +594,7 @@ GLOBAL_LIST_EMPTY(hivemind_bank)
 	genome_cost = 3
 
 /datum/power/changeling/sting/hallucination_sting/sting_effects()
-	addtimer(CALLBACK(src, .proc/good_stuff, target), rand(30 SECONDS, 60 SECONDS))
+	addtimer(CALLBACK(src, PROC_REF(good_stuff), target), rand(30 SECONDS, 60 SECONDS))
 	SSstatistics.add_field_details("changeling_powers", "HS")
 
 /datum/power/changeling/sting/hallucination_sting/proc/good_stuff(mob/living/carbon/human/victim)
@@ -619,7 +614,7 @@ GLOBAL_LIST_EMPTY(hivemind_bank)
 
 /datum/power/changeling/sting/death_sting/sting_effects()
 	to_chat(target, SPAN_DANGER("You feel a lance of pain and your chest becomes tight."))
-	target.make_jittery(400)
+	target.adjust_jitter(40 SECONDS)
 	if(target.reagents)
 		target.reagents.add_reagent(/datum/reagent/lexorin, 40)
 	SSstatistics.add_field_details("changeling_powers", "DS")
@@ -847,7 +842,7 @@ GLOBAL_LIST_EMPTY(hivemind_bank)
 	H.adjustFireLoss(-10)
 	H.playsound_local(H, 'sounds/effects/singlebeat.ogg', 50, FALSE, is_global = TRUE) // Audio feedback to highlight each regen tick
 	if(active_ticks)
-		addtimer(CALLBACK(src, .proc/do_regen, H), 1 SECONDS) // Repeat every second until we're fully regenerated
+		addtimer(CALLBACK(src, PROC_REF(do_regen), H), 1 SECONDS) // Repeat every second until we're fully regenerated
 	else
 		to_chat(H, SPAN_NOTICE("We have finished regenerating."))
 		H.ability_master?.update_spells(0) // Immediately refresh icons to turn off the "active" overlay

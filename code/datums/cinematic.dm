@@ -4,7 +4,7 @@ GLOBAL_DATUM_INIT(cinematic, /datum/cinematic, new)
 /datum/cinematic
 	//station_explosion used to be a variable for every mob's hud. Which was a waste!
 	//Now we have a general cinematic centrally held within the gameticker....far more efficient!
-	var/obj/screen/cinematic_screen = null
+	var/atom/movable/screen/cinematic_screen = null
 	/// List of clients currently watching a cinematic
 	var/list/watching_clients = list()
 
@@ -26,7 +26,9 @@ GLOBAL_DATUM_INIT(cinematic, /datum/cinematic, new)
 
 	// Initialise our cinematic screen object
 	cinematic_screen = new(src)
-	cinematic_screen.icon = 'icons/effects/station_explosion.dmi'
+	// [CELADON-EDIT] - Больше никаких взрывов космических кораблей. [icons/effects/station_explosion.dmi]
+	cinematic_screen.icon = 'mod_celadon/_components/icons/station_explosion.dmi'
+	// [/CELADON-EDIT]
 	cinematic_screen.icon_state = "station_intact"
 	cinematic_screen.plane = HUD_PLANE
 	cinematic_screen.layer = HUD_ABOVE_ITEM_LAYER

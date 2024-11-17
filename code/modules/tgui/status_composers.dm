@@ -49,7 +49,7 @@
 /// Returns a UI status such that advanced tool users will be able to interact,
 /// but everyone else can only watch.
 /proc/ui_status_user_is_advanced_tool_user(mob/user)
-	return user.IsAdvancedToolUser() ? UI_INTERACTIVE : UI_UPDATE
+	return ISADVANCEDTOOLUSER(user) ? UI_INTERACTIVE : UI_UPDATE
 
 /// Returns a UI status such that silicons will be able to interact with whatever
 /// they would have access to if this was a machine. For example, AIs can
@@ -68,7 +68,7 @@
 /mob/living/silicon/robot/get_ui_access(atom/source)
 	// Robots can interact with anything they can see.
 	var/list/clientviewlist = getviewsize(client.view)
-	if(get_dist(src, source) <= min(clientviewlist[1],clientviewlist[2]))
+	if(get_dist(src, source) <= max(clientviewlist[1], clientviewlist[2]))
 		return UI_INTERACTIVE
 	return UI_DISABLED // Otherwise they can keep the UI open.
 
@@ -96,3 +96,8 @@
 		return UI_CLOSE
 
 	return UI_INTERACTIVE
+
+/// Returns a UI status such that those without blocked hands will be able to interact,
+/// but everyone else can only watch.
+/proc/ui_status_user_has_free_hands(mob/user, atom/source)
+	return HAS_TRAIT(user, TRAIT_HANDS_BLOCKED) ? UI_UPDATE : UI_INTERACTIVE

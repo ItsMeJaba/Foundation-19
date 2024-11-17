@@ -34,7 +34,7 @@
 	)
 
 	SCP.memeticFlags = MVISUAL|MAUDIBLE|MSYNCED //Memetic flags determine required factors for a human to be affected
-	SCP.memetic_proc = /obj/item/paper/scp012/proc/memetic_effect //proc to be called for the effect an affected individual should recieve
+	SCP.memetic_proc = TYPE_PROC_REF(/obj/item/paper/scp012, memetic_effect) //proc to be called for the effect an affected individual should recieve
 	SCP.memetic_sounds = list('sounds/scp/012/012.ogg')
 	SCP.compInit()
 
@@ -49,8 +49,30 @@
 	return ..()
 
 //Mechanics
-
 /obj/item/paper/scp012/proc/memetic_effect(mob/living/carbon/human/H)
+	if(!H || H.stat == UNCONSCIOUS || !H.can_see(src)) //Unconscious individuals cant keep hurting themselves
+		return
+
+	if(get_dist(H, src) > 1)
+		step_to(H, src)
+		H.Stun(2)
+	else if(((world.time - effect_cooldown_counter) > effect_cooldown) || abs((world.time - effect_cooldown_counter) - effect_cooldown) < 0.1 SECONDS) //Last part is so that this can run for all affected humans without worrying about cooldown
+		H.Stun(60)
+		if(prob(60) && H.getBruteLoss())
+			H.visible_message(SPAN_WARNING("[H] smears [H.p_their()] blood on \"[name]\", writing musical notes..."))
+		else if(prob(50))
+			H.visible_message(SPAN_DANGER("[H] rips into [H.p_their()] own flesh and covers [H.p_their()] hands in blood!"))
+			H.emote("scream")
+			H.apply_damage(25, BRUTE, prob(50) ? BP_L_ARM : BP_R_ARM)
+			H.drip(50)
+		else if(prob(30))
+			if(prob(50))
+				H.visible_message(SPAN_NOTICE("[H] looks at the \"[name]\" and sighs dejectedly."))
+				playsound(H, "sounds/voice/emotes/sigh_[gender2text(H.gender)].ogg", 100)
+			else
+				H.visible_message(SPAN_NOTICE("[H] looks at the \"[name]\" and cries."))
+				playsound(H, "sounds/voice/emotes/[gender2text(H.gender)]_cry[pick(list("1","2"))].ogg", 100)
+		effect_cooldown_counter = world.time
 	if(!H || H.stat == UNCONSCIOUS) //Unconscious individuals cant keep hurting themselves
 		return
 	if(get_dist(H, src) > 1)
@@ -79,3 +101,20 @@
 /obj/item/paper/scp012/Process()
 	SCP.meme_comp.check_viewers()
 	SCP.meme_comp.activate_memetic_effects() //Memetic effects are synced because of how we handle sound
+
+// Very Fine - Deletes itself and forces every mob on z level to bleed temporarily while playing the silly music
+/obj/item/paper/scp012/Conversion914(mode = MODE_ONE_TO_ONE, mob/user = usr)
+	switch(mode)
+		if(MODE_VERY_FINE)
+			log_and_message_admins("put [src] through SCP-914 on \"Very Fine\" mode.", user, src)
+			for(var/mob/living/carbon/human/H in GLOB.human_mob_list)
+				if(H.z != z)
+					continue
+				H.playsound_local(get_turf(H), looping_sound, 50, FALSE)
+				to_chat(H, SPAN_USERDANGER("The music is bleeding into your body!"))
+				flash_color(H, flash_color = "#ff4444", flash_time = 200)
+				for(var/i = 1 to 50)
+					addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, drip), 2), i * rand(2 SECONDS, 10 SECONDS))
+			return null
+	return ..()
+

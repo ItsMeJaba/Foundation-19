@@ -3,7 +3,6 @@
 	desc = "You shouldn't be seeing this."
 	icon = 'maps/torch/icons/obj/solgov-under.dmi'
 	item_icons = list(slot_w_uniform_str = 'maps/torch/icons/mob/solgov-under.dmi')
-	armor = list(melee = 5, bullet = 0, laser = 5, energy = 5, bomb = 0, bio = 5, rad = 5)
 	siemens_coefficient = 0.8
 
 //PT
@@ -234,9 +233,6 @@
 /obj/item/clothing/under/solgov/utility/fleet/command
 	accessories = list(/obj/item/clothing/accessory/solgov/department/command/fleet)
 
-/obj/item/clothing/under/solgov/utility/fleet/command/pilot
-	accessories = list(/obj/item/clothing/accessory/solgov/speciality/pilot)
-
 /obj/item/clothing/under/solgov/utility/fleet/engineering
 	accessories = list(/obj/item/clothing/accessory/solgov/department/engineering/fleet)
 
@@ -320,7 +316,6 @@
 	desc = "A service uniform of some kind."
 	icon_state = "whiteservice"
 	worn_state = "whiteservice"
-	armor = list(melee = 5, bullet = 0, laser = 0, energy = 0, bomb = 0, bio = 5, rad = 0)
 	siemens_coefficient = 0.9
 
 /obj/item/clothing/under/solgov/service/expeditionary
@@ -395,7 +390,6 @@
 	desc = "A dress uniform of some kind."
 	icon_state = "greydress"
 	worn_state = "greydress"
-	armor = list(melee = 5, bullet = 0, laser = 0, energy = 0, bomb = 0, bio = 5, rad = 0)
 	siemens_coefficient = 0.9
 
 /obj/item/clothing/under/solgov/mildress/marine
@@ -434,9 +428,3 @@
 	species_restricted = list("Monkey")
 	sprite_sheets = list("Monkey" = 'icons/mob/species/monkey/uniform.dmi')
 //	accessories = list(/obj/item/clothing/accessory/solgov/rank/fleet/officer/wo1_monkey)
-
-/obj/item/clothing/under/scp/utility/chaos
-	desc = "A dark black uniform. On the back, in silver lettering, are the words 'CHAOS INSURGENCY'."
-	name = "chaos uniform"
-	icon_state = "scpuniform3"
-	worn_state = "chaos"

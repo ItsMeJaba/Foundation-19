@@ -1,6 +1,3 @@
-// large amount of fields creates a heavy load on the server, see updateinfolinks() and addtofield()
-#define MAX_FIELDS 50
-
 #define PAPER_CAMERA_DISTANCE 2
 #define PAPER_EYEBALL_DISTANCE 3
 
@@ -37,12 +34,9 @@
 	var/list/ico[0]      //Icons and
 	var/list/offset_x[0] //offsets stored for later
 	var/list/offset_y[0] //usage by the photocopier
-	var/spam_flag = 0
 	var/last_modified_ckey
 	var/age = 0
 	var/list/metadata
-	var/readable = TRUE  //Paper will not be able to be written on and will not bring up a window upon examine if FALSE
-	var/is_memo = FALSE  //If TRUE, paper will act the same as readable = FALSE, but will also be unrenameable.
 	var/datum/language/language = LANGUAGE_ENGLISH // Language the paper was written in. Editable by users up until something's actually written
 
 	///Whether or not title should be show in the desc.
@@ -91,7 +85,7 @@
 	return TRUE
 
 /obj/item/paper/on_update_icon()
-	if(icon_state == "paper_talisman" || is_memo)
+	if(icon_state == "paper_talisman")
 		return
 	else if(info)
 		icon_state = "paper_words"
@@ -104,7 +98,7 @@
 
 /obj/item/paper/examine(mob/user, distance)
 	. = ..()
-	if(!is_memo && name != "sheet of paper" && show_title)
+	if(name != "sheet of paper" && show_title)
 		to_chat(user, "It's titled '[name]'.")
 	if(distance <= 1)
 		show_content(usr)
@@ -137,7 +131,7 @@
 			if (L.has_written_form)
 				selectable_languages += L
 
-	var/new_language = input(user, "What language do you want to write in?", "Change language", language) as null|anything in selectable_languages
+	var/new_language = tgui_input_list(user, "What language do you want to write in?", "Change language", selectable_languages, language)
 	if (!new_language || new_language == language)
 		to_chat(user, SPAN_NOTICE("You decide to leave the language as [language.name]."))
 		return
@@ -148,8 +142,6 @@
 
 
 /obj/item/paper/proc/show_content(mob/user, force, editable)
-	if (!readable || is_memo)
-		return
 	if (isclient(user))
 		var/client/C = user
 		user = C.mob
@@ -165,7 +157,7 @@
 			can_read = ishuman(user) || issilicon(user)
 			if (can_read)
 				can_read = get_dist(src, user) < PAPER_EYEBALL_DISTANCE
-	var/html = "<meta http-equiv='X-UA-Compatible' content='IE=edge' charset='UTF-8'/>"
+	var/html = ""
 	if (!can_read)
 		html += PAPER_META_BAD("The paper is too far away or you can't read.")
 	var/has_content = length(info)
@@ -190,8 +182,7 @@
 	html += "[stamps]"
 
 	// Ported to browser datum for IE11 feature parity
-	var/datum/browser/window = new(user, "paper_[name]")
-	window.stylesheets.Remove("common")
+	var/datum/browser/window = new(user, "paper_[name]", include_common = FALSE)
 	window.add_stylesheet("acs", 'html/acs.css')
 	window.add_head_content("<title>[name]</title><style>body { background-color: [color]; }</style>")
 	window.set_content(html)
@@ -205,13 +196,14 @@
 	set category = "Object"
 	set src in usr
 
-	if((MUTATION_CLUMSY in usr.mutations) && prob(50))
+	if(((MUTATION_CLUMSY in usr.mutations) || (HAS_TRAIT(usr, TRAIT_CLUMSY))) && prob(50))
 		to_chat(usr, SPAN_WARNING("You cut yourself on the paper."))
 		return
-	else if(is_memo)
-		to_chat(usr, SPAN_NOTICE("You decide not to alter the name of \the [src]."))
+
+	var/u_name = tgui_input_text(usr, "What would you like to label the paper?", "Paper Labelling", name, MAX_NAME_LEN)
+	if(!u_name)
 		return
-	var/n_name = sanitizeSafe(input(usr, "What would you like to label the paper?", "Paper Labelling", null)  as text, MAX_NAME_LEN)
+	var/n_name = sanitizeSafe(u_name, MAX_NAME_LEN)
 
 	// We check loc one level up, so we can rename in clipboards and such. See also: /obj/item/photo/rename()
 	if(!n_name || !CanInteract(usr, GLOB.deep_inventory_state))
@@ -291,11 +283,12 @@
 				head.forehead_graffiti = null
 				head.graffiti_style = null
 
-/obj/item/paper/proc/addtofield(id, text, links = 0)
+/obj/item/paper/proc/addtofield(id, text, links = FALSE, overwrite = FALSE)
 	var/locid = 0
 	var/laststart = 1
 	var/textindex = 1
-	while(locid < MAX_FIELDS)
+	var/field_start = null
+	while(locid < MAX_PAPER_FIELDS)
 		var/istart = 0
 		if(links)
 			istart = findtext(info_links, "<span class=\"paper_field\">", laststart)
@@ -314,16 +307,23 @@
 			else
 				iend = findtext(info, "</span>", istart)
 
+			field_start = istart
 			textindex = iend
 			break
 
 	if(links)
 		var/before = copytext(info_links, 1, textindex)
 		var/after = copytext(info_links, textindex)
+		if(overwrite)
+			var/field_closing = findtext(info_links, ">", field_start)
+			before = copytext(info_links, 1, field_closing + 1)
 		info_links = before + text + after
 	else
 		var/before = copytext(info, 1, textindex)
 		var/after = copytext(info, textindex)
+		if(overwrite)
+			var/field_closing = findtext(info, ">", field_start)
+			before = copytext(info, 1, field_closing + 1)
 		info = before + text + after
 		updateinfolinks()
 
@@ -331,7 +331,7 @@
 	info_links = info
 	var/i = 0
 	for(i=1,i<=fields,i++)
-		addtofield(i, "<font face=\"[deffont]\"><A href='?src=\ref[src];write=[i]'>write</A></font>", 1)
+		addtofield(i, "<font face=\"[deffont]\"><A href='?src=\ref[src];write=[i]'>write</A></font>", TRUE)
 	info_links = info_links + "<font face=\"[deffont]\"><A href='?src=\ref[src];write=end'>write</A></font>"
 
 
@@ -383,16 +383,9 @@
 	t = pencode2html(t)
 
 	//Count the fields
-	var/laststart = 1
-	while(fields < MAX_FIELDS)
-		var/i = findtext(t, "<span class=\"paper_field\">", laststart)	//</span>
-		if(i==0)
-			break
-		laststart = i+1
-		fields++
+	fields = clamp(fields + count_fields_from_html(t), 0, MAX_PAPER_FIELDS)
 
 	return t
-
 
 /obj/item/paper/proc/burnpaper(obj/item/flame/P, mob/user)
 	var/class = "warning"
@@ -428,7 +421,6 @@
 
 	if(href_list["write"])
 		var/id = href_list["write"]
-		//var/t = strip_html_simple(input(usr, "What text do you wish to add to " + (id=="end" ? "the end of the paper" : "field "+id) + "?", "[name]", null),8192) as message
 
 		if(free_space <= 0)
 			to_chat(usr, SPAN_INFO("There isn't enough space left on \the [src] to write anything."))
@@ -457,9 +449,8 @@
 
 		if(P.isfancy)
 			isfancy = TRUE
-
-		var/t =  sanitize(input("Enter what you want to write:", "Write", null, null) as message, free_space, extra = 0, trim = 0)
-
+		sanitize()
+		var/t = tgui_input_text(usr, "Enter what you want to write:", "Write", null, free_space, TRUE, trim = FALSE)
 		if(!t)
 			return
 
@@ -468,11 +459,9 @@
 			return
 
 		var/last_fields_value = fields
-
 		t = parsepencode(t, I, usr, iscrayon, isfancy) // Encode everything from pencode to html
 
-
-		if(fields > MAX_FIELDS)
+		if(fields > MAX_PAPER_FIELDS)
 			to_chat(usr, SPAN_WARNING("Too many fields. Sorry, you can't do this."))
 			fields = last_fields_value
 			return
@@ -488,7 +477,6 @@
 		update_space(t)
 
 		show_content(usr, editable = TRUE)
-
 		playsound(src, pick('sounds/effects/pen1.ogg','sounds/effects/pen2.ogg'), 10)
 		update_icon()
 
@@ -602,7 +590,8 @@
 
 // Coarse - Cramples the paper
 // 1:1 - Returns random paper type
-/obj/item/paper/Conversion914(mode = MODE_ONE_TO_ONE, mob/user = usr)
+// Very Fine - Returns anomalous paper with various effects and blasts an EMP
+/obj/item/paper/Conversion914(mode = MODE_ONE_TO_ONE, mob/living/user = usr)
 	switch(mode)
 		if(MODE_COARSE)
 			if(icon_state == "scrap")
@@ -612,6 +601,18 @@
 			return src
 		if(MODE_ONE_TO_ONE)
 			return pick(typesof(/obj/item/paper))
+		if(MODE_VERY_FINE)
+			// You think you can just shove a shit-ton of paper in there? Fuck you, that's what you get
+			if(locate(/obj/item/paper/self_writing) in get_turf(src))
+				empulse(get_turf(src), 7, 14)
+				if(istype(user))
+					to_chat(user, SPAN_DANGER("You feel thousands of paper cuts appearing on your skin..."))
+					for(var/i = 1 to 10)
+						addtimer(CALLBACK(user, TYPE_PROC_REF(/mob/living, apply_damage), rand(3, 9), BRUTE, pick(BP_ALL_LIMBS), DAM_SHARP), i * (2 SECONDS))
+						addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(playsound), get_turf(user), 'sounds/weapons/bladeslice.ogg', rand(25, 50), TRUE), i * (2 SECONDS))
+				return null
+			empulse(get_turf(src), rand(0, 2), rand(2, 7))
+			return /obj/item/paper/self_writing
 	return ..()
 
 //For supply.
@@ -675,7 +676,6 @@
 /obj/item/paper/aromatherapy_disclaimer
 	name = "aromatherapy disclaimer"
 	info = "<I>The manufacturer and the retailer make no claims of the contained products' effacy.</I> <BR><BR><B>Use at your own risk.</B>"
-
 
 #undef PAPER_CAMERA_DISTANCE
 #undef PAPER_EYEBALL_DISTANCE

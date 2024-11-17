@@ -23,7 +23,7 @@ var/list/all_virtual_listeners = list()
 	if(!istype(host, host_type))
 		CRASH("Received an unexpected host type. Expected [host_type], was [log_info_line(host)].")
 	src.host = host
-	GLOB.moved_event.register(host, src, /atom/movable/proc/move_to_turf_or_null)
+	RegisterSignal(host, COMSIG_MOVED, TYPE_PROC_REF(/atom/movable, move_to_turf_or_null))
 
 	all_virtual_listeners += src
 
@@ -34,7 +34,7 @@ var/list/all_virtual_listeners = list()
 	STOP_PROCESSING(SSmobs, src)
 
 /mob/observer/virtual/Destroy()
-	GLOB.moved_event.unregister(host, src, /atom/movable/proc/move_to_turf_or_null)
+	UnregisterSignal(host, COMSIG_MOVED)
 	all_virtual_listeners -= src
 	host = null
 	return ..()
@@ -59,6 +59,9 @@ var/list/all_virtual_listeners = list()
 
 /atom/movable/Initialize()
 	. = ..()
+	if(!follow_repository.excluded_subtypes[type] && follow_repository.followed_subtypes[type])
+		follow_repository.add_subject(src)
+
 	if(shall_have_virtual_mob())
 		virtual_mob = new virtual_mob(get_turf(src), src)
 

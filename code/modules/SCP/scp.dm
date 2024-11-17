@@ -33,6 +33,9 @@
 	///Sounds that are considered memetic
 	var/list/memetic_sounds
 
+	/// If this SCP can still be examined as normal
+	var/regular_examine = FALSE
+
 /datum/scp/New(atom/creation, vName, vClass = SCP_SAFE, vDesg, vMetaFlags)
 	GLOB.SCP_list += creation
 
@@ -55,16 +58,14 @@
 		var/mob/pMob = parent
 		if(LAZYLEN(name))
 			pMob.fully_replace_character_name(name)
-
-		if(metaFlags & SCP_PLAYABLE)
-			pMob.status_flags += NO_ANTAG
+		pMob.status_flags += NO_ANTAG
 
 	if(metaFlags & SCP_DISABLED)
 		log_and_message_staff("Disabled SCP-[designation] spawned and subsequently deleted! Do not spawn disabled SCPs!", location = get_turf(parent))
 		qdel(parent)
 		return
 
-	RegisterSignal(parent, COMSIG_ATOM_EXAMINED, .proc/OnExamine)
+	RegisterSignal(parent, COMSIG_ATOM_EXAMINED, PROC_REF(OnExamine))
 	onGain()
 
 /datum/scp/Destroy()
@@ -103,9 +104,24 @@
 	if(job && (job.department_flag & (COM|SCI|SEC)))
 		to_chat(examinee, SPAN_CLASS("scp", "You know this is SCP-[designation]!"))
 
+/datum/scp/proc/has_minimum_players()
+	return length(GLOB.clients) >= min_playercount
+
 /datum/scp/proc/onGain()
 
 /datum/scp/proc/onLose()
 
 /atom/proc/canBeSCP(datum/scp/SCP_)
 	return SCP_.isCompatible(src)
+
+// Chat for SCP
+/client/verb/scp_say(message as text)
+	set category = "OOC"
+	set name = "SCP say"
+	if(src.mob in GLOB.SCP_list)
+		for(var/mob/A in GLOB.SCP_list)
+			if(A.client)
+				to_chat(A, SPAN_DANGER("<B><strong>[src.mob]:</strong></B> <span class='message linkify'>[message]</span>"))
+	else
+		to_chat(src, SPAN_WARNING("You must be SCP!"))
+		return

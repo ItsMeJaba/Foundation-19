@@ -99,6 +99,7 @@ var/list/admin_verbs_admin = list(
 	/client/proc/add_trader,
 	/client/proc/remove_trader,
 	/datum/admins/proc/sendFax,
+	/client/proc/open_offsite_panel,
 	/client/proc/check_fax_history,
 	/client/proc/cmd_admin_notarget
 )
@@ -135,8 +136,6 @@ var/list/admin_verbs_fun = list(
 var/list/admin_verbs_spawn = list(
 	/datum/admins/proc/spawn_fruit,
 	/datum/admins/proc/spawn_fluid_verb,
-	/datum/admins/proc/spawn_custom_item,
-	/datum/admins/proc/check_custom_items,
 	/datum/admins/proc/spawn_plant,
 	/datum/admins/proc/spawn_atom,		// allows us to spawn instances,
 	/datum/admins/proc/spawn_artifact,
@@ -305,6 +304,7 @@ var/list/admin_verbs_mod = list(
 	/client/proc/cmd_admin_direct_narrate,
 	/client/proc/aooc,
 	/datum/admins/proc/sendFax,
+	/client/proc/open_offsite_panel,
 	/client/proc/check_fax_history,
 	/datum/admins/proc/paralyze_mob, // right-click paralyze ,
 	/client/proc/cmd_admin_say,
@@ -512,7 +512,7 @@ var/list/admin_verbs_mentors = list(
 	return
 
 /client/proc/colorooc()
-	set category = "Fun"
+	set category = "OOC"
 	set name = "OOC Text Color"
 	if(!check_rights(R_ADMIN|R_MOD, FALSE))	return
 	var/response = alert(src, "Please choose a distinct color that is easy to read and doesn't mix with all the other chat and radio frequency colors.", "Change own OOC color", "Pick new color", "Reset to default", "Cancel")
@@ -568,8 +568,18 @@ var/list/admin_verbs_mentors = list(
 #undef MAX_WARNS
 #undef AUTOBANTIME
 
-/client/proc/drop_bomb() // Some admin dickery that can probably be done better -- TLE
+/client/proc/open_offsite_panel()
 	set category = "Special Verbs"
+	set name = "Offsite Panel"
+	set desc = "Opens the offsite management panel."
+
+	if(!length(SSoffsites.offsites) || !mob) return
+	if(!check_rights(R_ADMIN|R_MOD)) return
+
+	SSoffsites.tgui_interact(mob)
+
+/client/proc/drop_bomb() // Some admin dickery that can probably be done better -- TLE
+	set category = "Fun"
 	set name = "Drop Bomb"
 	set desc = "Cause an explosion of varying strength at your location."
 	if(!check_rights(R_FUN)) return
@@ -605,7 +615,7 @@ var/list/admin_verbs_mentors = list(
 
 /client/proc/togglebuildmodeself()
 	set name = "Toggle Build Mode Self"
-	set category = "Special Verbs"
+	set category = "Fun"
 
 	if(!check_rights(R_ADMIN))
 		return
@@ -615,7 +625,7 @@ var/list/admin_verbs_mentors = list(
 	SSstatistics.add_field_details("admin_verb","TBMS") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
 /client/proc/object_talk(msg as text) // -- TLE
-	set category = "Special Verbs"
+	set category = "Admin"
 	set name = "oSay"
 	set desc = "Display a message to everyone who can hear the target"
 	if(mob.control_object)
@@ -736,7 +746,7 @@ var/list/admin_verbs_mentors = list(
 /client/proc/change_security_level()
 	set name = "Set security level"
 	set desc = "Sets the security level"
-	set category = "Admin"
+	set category = "Fun"
 
 	if(!check_rights(R_ADMIN))	return
 
@@ -938,8 +948,9 @@ var/list/admin_verbs_mentors = list(
 
 	if(!check_rights(R_FUN)) return
 
-	var/datum/spell/S = input("Choose the spell to give to that guy", "ABRAKADABRA") as null|anything in spells
-	if(!S) return
+	var/datum/spell/S = input("Choose the spell to give to that guy", "ABRAKADABRA") as null|anything in GLOB.spells_by_categories
+	if(!S)
+		return
 	T.add_spell(new S)
 	SSstatistics.add_field_details("admin_verb","GS") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 	log_and_message_staff("gave [key_name(T)] the spell [S].")

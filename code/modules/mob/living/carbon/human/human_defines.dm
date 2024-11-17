@@ -89,7 +89,6 @@
 	var/equipment_darkness_modifier			// Darkvision modifier from equipped items
 	var/equipment_vision_flags				// Extra vision flags from equipped items
 	var/equipment_see_invis					// Max see invibility level granted by equipped items
-	var/equipment_prescription				// Eye prescription granted by equipped items
 	var/visual_insulation = V_INSL_NONE		// How much your eyes are insulated, I.E how blinded you are. Different from tint in that insulation does not always mean your view is physically obstructed.
 	var/audible_insulation = A_INSL_NONE	// How much your ears are insulated, I.E how deafened you are.
 	var/equipment_light_protection
@@ -100,9 +99,6 @@
 	var/sec_record = ""
 	var/gen_record = ""
 	var/exploit_record = ""
-
-	var/datum/mil_branch/char_branch = null
-	var/datum/mil_rank/char_rank = null
 
 	var/stance_damage = 0 //Whether this mob's ability to stand has been affected
 

@@ -4,6 +4,7 @@
 	extended_desc = "This program allows access to the crew's various records."
 	program_icon_state = "generic"
 	program_key_state = "generic_key"
+	program_menu_icon = "archive"
 	size = 14
 	requires_ntnet = TRUE
 	available_on_ntnet = TRUE
@@ -32,7 +33,7 @@
 			all_records.Add(list(list(
 				"name" = R.get_name(),
 				"rank" = R.get_job(),
-				"milrank" = R.get_rank(),
+				"class" = R.get_class(),
 				"id" = R.uid
 			)))
 		data["all_records"] = all_records

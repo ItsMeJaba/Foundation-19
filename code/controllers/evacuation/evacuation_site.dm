@@ -1,3 +1,4 @@
+/*
 #define EVAC_OPT_ABANDON_SITE "abandon_site"
 #define EVAC_OPT_END_SHIFT "end_shift"
 #define EVAC_OPT_CANCEL_ABANDON_SITE "cancel_abandon_site"
@@ -126,7 +127,7 @@
 	if (ticker && evacuation_controller && evacuation_controller.cancel_evacuation())
 		log_and_message_staff("[key_name(user)] has cancelled the shift change.")
 
-// /obj/screen/fullscreen/bluespace_overlay
+// /atom/movable/screen/fullscreen/bluespace_overlay
 // 	icon = 'icons/effects/effects.dmi'
 // 	icon_state = "mfoam"
 // 	screen_loc = "WEST,SOUTH to EAST,NORTH"
@@ -138,3 +139,4 @@
 #undef EVAC_OPT_END_SHIFT
 #undef EVAC_OPT_CANCEL_ABANDON_SITE
 #undef EVAC_OPT_CANCEL_END_SHIFT
+*/

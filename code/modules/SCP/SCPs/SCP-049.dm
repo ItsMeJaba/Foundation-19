@@ -3,7 +3,11 @@
 	desc = "A mysterious plague doctor."
 	icon = 'icons/SCP/scp-049.dmi'
 
-	status_flags = NO_ANTAG | SPECIES_FLAG_NO_EMBED
+	status_flags = NO_ANTAG | SPECIES_FLAG_NO_EMBED | SPECIES_FLAG_NEED_DIRECT_ABSORB
+
+	roundstart_traits = list(TRAIT_ADVANCED_TOOL_USER)
+
+	handcuffs_breakout_modifier = 0.2
 
 	//Config
 
@@ -53,7 +57,7 @@
 	)
 
 	SCP.min_time = 10 MINUTES
-	SCP.min_playercount = 20
+	SCP.min_playercount = 25 //mostly a RP scp, cant escape as soon as they spawn in
 
 	add_verb(src, list(
 		/mob/living/carbon/human/scp049/verb/Greetings,
@@ -194,7 +198,7 @@
 		return
 
 	if(istype(target, /obj/machinery/door))
-		setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+		setClickCooldown(CLICK_CD_ATTACK)
 		OpenDoor(target)
 		return
 
@@ -214,7 +218,7 @@
 		to_chat(src, SPAN_WARNING("This thing... it isnt normal... you cannot cure it."))
 		return
 
-	setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+	setClickCooldown(CLICK_CD_ATTACK)
 
 	switch(a_intent)
 		if(I_HELP)
@@ -276,9 +280,6 @@
 
 	return ..()
 
-/mob/living/carbon/human/scp049/can_break_cuffs()
-	return TRUE
-
 /mob/living/carbon/human/scp049/GetUnbuckleTime()
 	return 15 SECONDS
 
@@ -301,9 +302,6 @@
 
 //Util Overrides
 
-/mob/living/carbon/human/scp049/IsAdvancedToolUser()
-	return TRUE
-
 /mob/living/carbon/human/scp049/update_icons()
 	return
 
@@ -313,7 +311,7 @@
 /mob/living/carbon/human/scp049/handle_breath()
 	return 1
 
-/mob/living/carbon/human/scp049/movement_delay()
+/mob/living/carbon/human/scp049/movement_delay(decl/move_intent/using_intent = move_intent)
 	return 3.0 - round(anger_timer * 0.03, 0.1)
 
 // Override for footstep volume
@@ -434,12 +432,12 @@
 	target.visible_message(SPAN_DANGER(SPAN_BOLD("The lifeless corpse of [target] begins to convulse violently!")))
 	target.humanStageHandler.setStage("Pestilence", 0)
 
-	target.make_jittery(300)
+	target.adjust_jitter(30 SECONDS)
 	target.adjustBruteLoss(100)
 
-	addtimer(CALLBACK(src, .proc/FinishPlagueDoctorCure, target), 15 SECONDS)
+	addtimer(CALLBACK(src, PROC_REF(FinishPlagueDoctorCure), target), 15 SECONDS)
 
-/mob/living/carbon/human/proc/FinishPlagueDoctorCure(mob/living/carbon/human/target)
+/mob/living/carbon/human/scp049/proc/FinishPlagueDoctorCure(mob/living/carbon/human/target)
 	if(QDELETED(target))
 		return
 

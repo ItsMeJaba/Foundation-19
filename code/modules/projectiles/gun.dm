@@ -106,7 +106,7 @@
 	var/mob/autofiring_by
 	var/autofiring_timer
 
-	var/general_codex_key = "guns"	// for codex
+	var/codex_special_info = null	// special info shown in the codex entry
 
 /obj/item/gun/Initialize()
 	. = ..()
@@ -137,7 +137,7 @@
 		autofiring_at = fire_at
 		autofiring_by = fire_by
 		if(!autofiring_timer)
-			autofiring_timer = addtimer(CALLBACK(src, .proc/handle_autofire), burst_delay, (TIMER_STOPPABLE | TIMER_LOOP | TIMER_UNIQUE | TIMER_OVERRIDE))
+			autofiring_timer = addtimer(CALLBACK(src, PROC_REF(handle_autofire)), burst_delay, (TIMER_STOPPABLE | TIMER_LOOP | TIMER_UNIQUE | TIMER_OVERRIDE))
 	else
 		clear_autofire()
 
@@ -155,12 +155,15 @@
 		. = FALSE
 	else if(autofiring_by.get_active_hand() != src || autofiring_by.incapacitated())
 		. = FALSE
-	else if(!autofiring_by.client || !(autofiring_by in view(autofiring_by.client.view, autofiring_by)))
+	else if(!autofiring_by.client)
 		. = FALSE
+	else if(autofiring_by.client)
+		var/view_size = getviewsize(autofiring_by.client.view)
+		. = (autofiring_at in view(max(view_size[1], view_size[2]), autofiring_by))
 	if(!.)
 		clear_autofire()
 	else if(can_autofire())
-		autofiring_by.set_dir(get_dir(src, autofiring_at))
+		autofiring_by.setDir(get_dir(src, autofiring_at))
 		Fire(autofiring_at, autofiring_by, null, (get_dist(autofiring_at, autofiring_by) <= 1), FALSE, FALSE)
 
 /obj/item/gun/update_twohanding()
@@ -191,7 +194,7 @@
 
 	if(!istype(user, /mob/living))
 		return 0
-	if(!user.IsAdvancedToolUser())
+	if(!ISADVANCEDTOOLUSER(user))
 		return 0
 
 	var/mob/living/M = user
@@ -199,11 +202,11 @@
 		if(prob(30))
 			toggle_safety()
 			return 1
-	if(MUTATION_HULK in M.mutations)
+	if((MUTATION_HULK in M.mutations) || HAS_TRAIT(user, TRAIT_FATFINGERS))
 		balloon_alert(M, "fingers too big!")
 		to_chat(M, SPAN_DANGER("Your fingers are too big for the trigger guard!"))
 		return 0
-	if((MUTATION_CLUMSY in M.mutations) && prob(40)) //Clumsy handling
+	if(((MUTATION_CLUMSY in M.mutations) || (HAS_TRAIT(user, TRAIT_CLUMSY))) && prob(40)) //Clumsy handling
 		var/obj/P = consume_next_projectile()
 		if(P)
 			if(process_projectile(P, user, user, pick(BP_L_FOOT, BP_R_FOOT)))
@@ -266,6 +269,9 @@
 	if((!waterproof && submerged()) || !special_check(user))
 		return
 
+	if (HAS_TRAIT(user, TRAIT_PACIFISM))
+		return
+
 	if(safety())
 		if(user.a_intent == I_HURT && !user.skill_fail_prob(SKILL_WEAPONS, 100, SKILL_EXPERIENCED, 0.5)) //reflex un-safeying
 			toggle_safety(user)
@@ -315,7 +321,7 @@
 
 	//update timing
 	var/delay = max(burst_delay+1, fire_delay)
-	user.setClickCooldown(min(delay, DEFAULT_QUICK_COOLDOWN))
+	user.setClickCooldown(min(delay, CLICK_CD_QUICK))
 	user.SetMoveCooldown(move_delay)
 	next_fire_time = world.time + delay
 
@@ -552,8 +558,11 @@
 /obj/item/gun/proc/toggle_scope(mob/user, zoom_amount=2.0)
 	//looking through a scope limits your periphereal vision
 	//still, increase the view size by a tiny amount so that sniping isn't too restricted to NSEW
-	var/zoom_offset = round(world.view * zoom_amount)
-	var/view_size = round(world.view + zoom_amount)
+	var/default_view = getviewsize(config.default_view_square)
+	default_view = max(default_view[1], default_view[2])
+
+	var/zoom_offset = round(default_view * zoom_amount)
+	var/view_size = round(default_view + zoom_amount)
 
 	if(zoom)
 		unzoom(user)

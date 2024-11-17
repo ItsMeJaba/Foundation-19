@@ -6,6 +6,7 @@
 	var/list/followed_objects
 	var/list/followed_objects_assoc
 	var/list/followed_subtypes
+	var/list/followed_subtypes_tcache
 
 	var/list/excluded_subtypes = list(
 		/obj/machinery/atmospherics, // Atmos stuff calls initialize time and time again..,
@@ -17,10 +18,15 @@
 	followed_objects = list()
 	followed_objects_assoc = list()
 	followed_subtypes = list()
+	followed_subtypes_tcache = list()
 
 	for(var/fht in subtypesof(/datum/follow_holder))
 		var/datum/follow_holder/fh = fht
 		followed_subtypes[initial(fh.followed_type)] = fht
+		followed_subtypes_tcache += initial(fh.followed_type)
+
+	followed_subtypes_tcache = typecacheof(followed_subtypes)
+	excluded_subtypes = typecacheof(excluded_subtypes)
 
 /repository/follow/proc/add_subject(atom/movable/AM)
 	cache = null
@@ -31,7 +37,7 @@
 	followed_objects_assoc[AM] = follow_holder
 	followed_objects.Add(follow_holder)
 
-	GLOB.destroyed_event.register(AM, src, /repository/follow/proc/remove_subject)
+	RegisterSignal(AM, COMSIG_PARENT_QDELETING, TYPE_PROC_REF(/repository/follow, remove_subject))
 
 /repository/follow/proc/remove_subject(atom/movable/AM)
 	cache = null
@@ -41,7 +47,7 @@
 	followed_objects_assoc -= AM
 	followed_objects.Remove(follow_holder)
 
-	GLOB.destroyed_event.unregister(AM, src, /repository/follow/proc/remove_subject)
+	UnregisterSignal(AM, COMSIG_PARENT_QDELETING)
 
 	qdel(follow_holder)
 
@@ -68,21 +74,16 @@
 	for(var/followed_name in followed_by_name)
 		var/list/followed_things = followed_by_name[followed_name]
 		if(followed_things.len == 1)
-			ADD_SORTED(L, followed_things[1], /proc/cmp_follow_holder)
+			ADD_SORTED(L, followed_things[1], GLOBAL_PROC_REF(cmp_follow_holder))
 		else
 			for(var/i = 1 to followed_things.len)
 				var/datum/follow_holder/followed_thing = followed_things[i]
 				followed_thing.instance = i
 				followed_thing.get_name(TRUE)
-				ADD_SORTED(L, followed_thing, /proc/cmp_follow_holder)
+				ADD_SORTED(L, followed_thing, GLOBAL_PROC_REF(cmp_follow_holder))
 
 	cache.data = L
 	return L
-
-/atom/movable/Initialize()
-	. = ..()
-	if(!is_type_in_list(src, follow_repository.excluded_subtypes) && is_type_in_list(src, follow_repository.followed_subtypes))
-		follow_repository.add_subject(src)
 
 /******************
 * Follow Metadata *

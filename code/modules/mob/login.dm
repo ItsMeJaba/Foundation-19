@@ -58,10 +58,11 @@
 
 /mob/Login()
 	SEND_SIGNAL(src, COMSIG_MOB_LOGIN)
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_MOB_LOGIN, src)
 
 	// Add to player list if missing
 	if (!list_find(GLOB.player_list, src))
-		ADD_SORTED(GLOB.player_list, src, /proc/cmp_mob_key)
+		ADD_SORTED(GLOB.player_list, src, GLOBAL_PROC_REF(cmp_mob_key))
 
 	update_Login_details()
 	world.update_status()
@@ -92,11 +93,12 @@
 	l_general = new()
 	client.screen += l_plane
 	client.screen += l_general
+	update_lighting_size()
+
 	client.init_verbs()
 
 	refresh_client_images()
 	reload_fullscreen() // Reload any fullscreen overlays this mob has.
-	add_click_catcher()
 	update_action_buttons()
 	update_mouse_pointer()
 

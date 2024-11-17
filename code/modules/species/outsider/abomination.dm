@@ -68,6 +68,8 @@
 	sexybits_location = null
 	vision_flags = SEE_SELF | SEE_MOBS
 
+	reagent_tag = IS_ABOMINATION
+
 	has_organ = list(
 		BP_HEART =    /obj/item/organ/internal/heart/abomination,
 		BP_STOMACH =  /obj/item/organ/internal/stomach/abomination,
@@ -82,7 +84,7 @@
 
 	appearance_flags = HAS_HAIR_COLOR | HAS_SKIN_TONE_NORMAL | HAS_LIPS | HAS_UNDERWEAR | HAS_EYE_COLOR
 	species_flags = SPECIES_FLAG_NO_SCAN  | SPECIES_FLAG_NO_SLIP | SPECIES_FLAG_NO_MINOR_CUT | SPECIES_FLAG_NO_PAIN | SPECIES_FLAG_NEED_DIRECT_ABSORB | SPECIES_FLAG_NO_DISEASE
-	spawn_flags = SPECIES_IS_RESTRICTED | SPECIES_NO_FBP_CONSTRUCTION | SPECIES_NO_FBP_CHARGEN
+	spawn_flags = SPECIES_IS_RESTRICTED | SPECIES_NO_FBP_CONSTRUCTION | SPECIES_NO_FBP_CHARGEN | SPECIES_IS_WHITELISTED
 
 /datum/species/human/abomination/handle_post_spawn(mob/living/carbon/human/H)
 	H.faction = "abominable_infestation"

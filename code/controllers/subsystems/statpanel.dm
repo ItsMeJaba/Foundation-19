@@ -27,7 +27,7 @@ SUBSYSTEM_DEF(statpanels)
 			"Map: [GLOB.using_map?.station_name || "Loading..."]",
 			"Game ID: [game_id ? game_id : "NULL"]",
 			"Server Time: [time2text(world.timeofday, "YYYY-MM-DD hh:mm:ss")]",
-			"Round Time: [ROUND_TIME]",
+			"Round Time: [ROUND_TIME()]",
 			"Station Time: [station_time_timestamp()]",
 		)
 
@@ -125,7 +125,7 @@ SUBSYSTEM_DEF(statpanels)
 			var/turf_content_ref = REF(turf_content)
 			if(!(turf_content_ref in cached_images))
 				cached_images += turf_content_ref
-				GLOB.destroyed_event.register(turf_content, turf_content, /atom/.proc/remove_from_cache) // we reset cache if anything in it gets deleted
+				turf_content.RegisterSignal(turf_content, COMSIG_PARENT_QDELETING, TYPE_PROC_REF(/atom, remove_from_cache))
 
 				if(ismob(turf_content) || length(turf_content.overlays) > 2)
 					turfitems[++turfitems.len] = list("[turf_content.name]", turf_content_ref, costly_icon2html(turf_content, target, sourceonly=TRUE))

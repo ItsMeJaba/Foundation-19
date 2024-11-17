@@ -9,7 +9,7 @@
 		if (isturf(dest))
 			bound_overlay.forceMove(get_step(src, UP))
 			if (dir != bound_overlay.dir)
-				bound_overlay.set_dir(dir)
+				bound_overlay.setDir(dir)
 		else	// Not a turf, so we need to destroy immediately instead of waiting for the destruction timer to proc.
 			qdel(bound_overlay)
 
@@ -18,12 +18,12 @@
 	if (. && bound_overlay)
 		bound_overlay.forceMove(get_step(src, UP))
 		if (bound_overlay.dir != dir)
-			bound_overlay.set_dir(dir)
+			bound_overlay.setDir(dir)
 
-/atom/movable/set_dir(ndir)
+/atom/movable/setDir(ndir)
 	. = ..()
 	if (. && bound_overlay)
-		bound_overlay.set_dir(ndir)
+		bound_overlay.setDir(ndir)
 
 /atom/movable/update_above()
 	if (!bound_overlay || !isturf(loc))
@@ -179,12 +179,12 @@
 			deltimer(destruction_timer)
 			destruction_timer = null
 	else if (!destruction_timer)
-		destruction_timer = addtimer(CALLBACK(src, /datum/.proc/qdel_self), 10 SECONDS, TIMER_STOPPABLE)
+		destruction_timer = addtimer(CALLBACK(src, TYPE_PROC_REF(/datum, qdel_self)), 10 SECONDS, TIMER_STOPPABLE)
 
 // Called when the turf we're on is deleted/changed.
 /atom/movable/openspace/overlay/proc/owning_turf_changed()
 	if (!destruction_timer)
-		destruction_timer = addtimer(CALLBACK(src, /datum/.proc/qdel_self), 10 SECONDS, TIMER_STOPPABLE)
+		destruction_timer = addtimer(CALLBACK(src, TYPE_PROC_REF(/datum, qdel_self)), 10 SECONDS, TIMER_STOPPABLE)
 
 // -- TURF DELEGATE --
 

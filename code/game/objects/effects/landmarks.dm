@@ -76,6 +76,13 @@
 		if ("scp527")
 			new /mob/living/carbon/human/scp527 (loc)
 			delete_me = 1
+		if ("scp347")
+			new /mob/living/carbon/human/scp347 (loc)
+			delete_me = 1
+			return
+		if ("scp2020")
+			new /mob/living/carbon/human/scp2020 (loc)
+			delete_me = 1
 			return
 		if ("scp173")
 			new /mob/living/scp173 (loc)
@@ -93,16 +100,16 @@
 			new /mob/living/carbon/human/scp343 (loc)
 			delete_me = 1
 			return
+		if ("scp082")
+			new /mob/living/carbon/human/scp082 (loc)
+			delete_me = TRUE
+			return
 		if("JoinLateDclass")
 			GLOB.latejoin_dclass += loc
 			delete_me = 1
 			return
 		if("JoinLateComms")
 			GLOB.latejoin_comms += loc
-			delete_me = 1
-			return
-		if("JoinLatelcz")
-			GLOB.latejoin_lcz += loc
 			delete_me = 1
 			return
 		if("NewPlayer")

@@ -11,6 +11,7 @@
 	chem_volume = 200
 	smoketime = INFINITY
 	filling = list()
+	hidden_from_codex = TRUE
 
 	//Config
 
@@ -27,7 +28,7 @@
 	. = ..()
 	SCP = new /datum/scp(
 		src, // Ref to actual SCP atom
-		"<i>radical blunt</i>", //Name (Should not be the scp desg, more like what it can be described as to viewers)
+		"radical blunt", //Name (Should not be the scp desg, more like what it can be described as to viewers)
 		SCP_SAFE, //Obj Class
 		"420-J" //Numerical Designation
 	)

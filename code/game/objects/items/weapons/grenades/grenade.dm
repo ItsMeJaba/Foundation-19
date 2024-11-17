@@ -10,12 +10,12 @@
 	obj_flags = OBJ_FLAG_CONDUCTIBLE
 	slot_flags = SLOT_BELT
 	var/active = 0
-	var/det_time = 50
-	var/fail_det_time = 5 // If you are clumsy and fail, you get this time.
+	var/det_time = 5 SECONDS
+	var/fail_det_time = 0.5 SECONDS // If you are clumsy and fail, you get this time.
 	var/arm_sound = 'sounds/weapons/armbomb.ogg'
 
 /obj/item/grenade/proc/clown_check(mob/living/user)
-	if((MUTATION_CLUMSY in user.mutations) && prob(50))
+	if(((MUTATION_CLUMSY in user.mutations) || HAS_TRAIT(user, TRAIT_CLUMSY)) && prob(50))
 		to_chat(user, SPAN_WARNING("Huh? How does this thing work?"))
 		det_time = fail_det_time
 		activate(user)
@@ -53,7 +53,7 @@
 	icon_state = initial(icon_state) + "_active"
 	active = TRUE
 	playsound(loc, arm_sound, 75, 0, -3)
-	addtimer(CALLBACK(src, .proc/detonate, user), det_time)
+	addtimer(CALLBACK(src, PROC_REF(detonate), user), det_time)
 
 /obj/item/grenade/proc/detonate(mob/living/user)
 	var/turf/T = get_turf(src)

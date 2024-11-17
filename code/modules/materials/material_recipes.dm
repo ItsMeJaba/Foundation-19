@@ -112,7 +112,6 @@
 	. = ..()
 	if(reinforce_material)	//recipies below don't support composite materials
 		return
-	. += new/datum/stack_recipe/furniture/crate/plastic(src)
 	. += new/datum/stack_recipe/bag(src)
 	. += new/datum/stack_recipe/ivbag(src)
 	. += create_recipe_list(/datum/stack_recipe/tile/light)
@@ -136,6 +135,8 @@
 	. += new/datum/stack_recipe/stick(src)
 	. += new/datum/stack_recipe/noticeboard(src)
 	. += new/datum/stack_recipe/furniture/table_frame(src)
+	. += new/datum/stack_recipe/gavelblock(src)
+	. += new/datum/stack_recipe/gavelhammer(src)
 
 /material/wood/mahogany/generate_recipes(reinforce_material)
 	. = ..()

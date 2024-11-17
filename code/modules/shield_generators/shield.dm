@@ -206,7 +206,7 @@
 
 // Attacks with hand tools. Blocked by Hyperkinetic flag.
 /obj/effect/shield/attackby(obj/item/I as obj, mob/user as mob)
-	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
+	user.setClickCooldown(CLICK_CD_ATTACK)
 	user.do_attack_animation(src)
 
 	if(gen.check_flag(MODEFLAG_HYPERKINETIC))
@@ -316,7 +316,7 @@
 	affected_shields |= src
 	i--
 	if(i)
-		addtimer(CALLBACK(src, .proc/spread_impact_effect, i, affected_shields), 2)
+		addtimer(CALLBACK(src, PROC_REF(spread_impact_effect), i, affected_shields), 2)
 
 /obj/effect/shield/proc/spread_impact_effect(i, list/affected_shields = list())
 	for(var/direction in GLOB.cardinal)

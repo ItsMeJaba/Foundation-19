@@ -4,16 +4,14 @@
 	sprite_sheets = list(
 		SPECIES_VOX = 'icons/mob/species/vox/onmob_eyes_vox.dmi',
 		SPECIES_VOX_ARMALIS = 'icons/mob/species/vox/onmob_eyes_vox_armalis.dmi',
-		SPECIES_UNATHI = 'icons/mob/species/unathi/generated/onmob_eyes_unathi.dmi'
 		)
 	var/hud_type
-	var/prescription = FALSE
 	var/toggleable = FALSE
 	var/off_state = "degoggles"
 	var/active = TRUE
 	var/activation_sound = 'sounds/items/goggles_charge.ogg'
 	var/deactivation_sound // set this if you want a sound on deactivation
-	var/obj/screen/overlay = null
+	var/atom/movable/screen/fullscreen/overlay = null
 	var/obj/item/clothing/glasses/hud/hud = null	// Hud glasses, if any
 	var/electric = FALSE //if the glasses should be disrupted by EMP
 
@@ -82,14 +80,11 @@
 			if(M.glasses != src)
 				to_chat(M, SPAN_DANGER("\The [name] malfunction[gender != PLURAL ? "s":""], releasing a small spark."))
 			else
-				M.eye_blind = 2
-				M.eye_blurry = 4
+				M.adjust_temp_blindness(2 SECONDS)
+				M.adjust_eye_blur(4 SECONDS)
 				to_chat(M, SPAN_DANGER("\The [name] malfunction[gender != PLURAL ? "s":""], blinding you!"))
-				// Don't cure being nearsighted
-				if(!(M.disabilities & NEARSIGHTED))
-					M.disabilities |= NEARSIGHTED
-					spawn(100)
-						M.disabilities &= ~NEARSIGHTED
+
+				M.set_temp_nearsightedness_if_lower(10 SECONDS)
 			if(toggleable)
 				deactivate(M, FALSE)
 
@@ -99,14 +94,6 @@
 			deactivate(user)
 		else
 			activate(user)
-
-/obj/item/clothing/glasses/inherit_custom_item_data(datum/custom_item/citem)
-	. = ..()
-	if(toggleable)
-		if(citem.additional_data["icon_on"])
-			set_icon_state(citem.additional_data["icon_on"])
-		if(citem.additional_data["icon_off"])
-			off_state = citem.additional_data["icon_off"]
 
 /obj/item/clothing/glasses/meson
 	name = "optical meson scanner"
@@ -121,15 +108,13 @@
 	see_invisible = SEE_INVISIBLE_NOLIGHTING
 	electric = TRUE
 	species_restricted = list("exclude", SPECIES_DIONA)
-
-/obj/item/clothing/glasses/meson/Initialize()
-	. = ..()
-	overlay = GLOB.global_hud.meson
+	hidden_from_codex = FALSE
+	overlay = /atom/movable/screen/fullscreen/hud/meson
 
 /obj/item/clothing/glasses/meson/prescription
 	name = "prescription mesons"
 	desc = "Optical meson scanner with prescription lenses."
-	prescription = 6
+	clothing_traits = list(TRAIT_NEARSIGHTED_CORRECTED)
 
 /obj/item/clothing/glasses/science
 	name = "science goggles"
@@ -140,15 +125,13 @@
 	toggleable = TRUE
 	action_button_name = "Toggle Goggles"
 	electric = TRUE
+	hidden_from_codex = FALSE
+	overlay = /atom/movable/screen/fullscreen/hud/science
 
 /obj/item/clothing/glasses/science/prescription
 	name = "prescription science goggles"
 	desc = "Science goggles with prescription lenses."
-	prescription = 6
-
-/obj/item/clothing/glasses/science/Initialize()
-	. = ..()
-	overlay = GLOB.global_hud.science
+	clothing_traits = list(TRAIT_NEARSIGHTED_CORRECTED)
 
 /obj/item/clothing/glasses/night
 	name = "night vision goggles"
@@ -163,10 +146,8 @@
 	off_state = "denight"
 	electric = TRUE
 	species_restricted = list("exclude", SPECIES_DIONA)
-
-/obj/item/clothing/glasses/night/Initialize()
-	. = ..()
-	overlay = GLOB.global_hud.nvg
+	hidden_from_codex = FALSE
+	overlay = /atom/movable/screen/fullscreen/hud/nvg
 
 /obj/item/clothing/glasses/tacgoggles
 	name = "tactical goggles"
@@ -180,6 +161,7 @@
 	siemens_coefficient = 0.6
 	electric = TRUE
 	species_restricted = list("exclude", SPECIES_DIONA)
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/monocle
 	name = "monocle"
@@ -187,6 +169,7 @@
 	icon_state = "monocle"
 	item_state = "headset" // lol
 	body_parts_covered = 0
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/material
 	name = "optical material scanner"
@@ -199,6 +182,7 @@
 	toggleable = TRUE
 	vision_flags = SEE_OBJS
 	electric = TRUE
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/threedglasses
 	name = "3D glasses"
@@ -206,6 +190,7 @@
 	icon_state = "3d"
 	item_state = "3d"
 	body_parts_covered = 0
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/welding
 	name = "welding goggles"
@@ -218,6 +203,7 @@
 	var/up = FALSE
 	flash_protection = FLASH_PROTECTION_MAJOR
 	tint = TINT_HEAVY
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/welding/attack_self()
 	toggle()
@@ -264,6 +250,7 @@
 	use_alt_layer = TRUE
 	flash_protection = FLASH_PROTECTION_MAJOR
 	tint = TINT_HEAVY
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/augment_binoculars
 	name = "adaptive binoculars"
@@ -275,6 +262,7 @@
 	zoomdevicename = "lenses"
 	electric = TRUE
 	acid_resistance = -1
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/glasses/augment_binoculars/attack_self(mob/user)
 	if(zoom)

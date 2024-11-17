@@ -1,74 +1,118 @@
-//Some helpers because so much copypasta for pods
-/datum/shuttle/autodock/ferry/escape_pod/torchpod
-	category = /datum/shuttle/autodock/ferry/escape_pod/torchpod
-	shuttle_area = list(/area/shuttle/escape_pod)
-	sound_takeoff = 'sounds/effects/rocket.ogg'
-	sound_landing = 'sounds/effects/rocket_backwards.ogg'
-	name = "Escape Pod"
-	dock_target = "escape_pod"
-	arming_controller = "escape_pod"
-	waypoint_station = "escape_pod_start"
-	landmark_transition = "escape_pod_internim"
-	waypoint_offsite = "escape_pod_out"
-
-/obj/effect/shuttle_landmark/escape_pod/start
-	name = "Docked"
-	landmark_tag = "escape_pod_start"
-
-/obj/effect/shuttle_landmark/escape_pod/transit
-	name = "In transit"
-	landmark_tag = "escape_pod_internim"
-
-/obj/effect/shuttle_landmark/escape_pod/out
-	name = "Escaped"
-	landmark_tag = "escape_pod_out"
-
-//Pod
-
-/obj/effect/shuttle_landmark/escape_pod/start
-
-/obj/effect/shuttle_landmark/escape_pod/out
-
-/obj/effect/shuttle_landmark/escape_pod/transit
-
-
 /datum/shuttle/autodock/ferry/heli
-	name = "MTF Helicopter"
+	name = "Mobile Task Force Helicopter"
 	sound_takeoff = 'sounds/effects/helicopter.ogg'
 	warmup_time = 14
 	shuttle_area = list(/area/site53/tram/mtf)
 	waypoint_station = "nav_mtf_start"
-	//landmark_transition = "nav_mtf_transition"
+	landmark_transition = "nav_mtf_transition"
 	waypoint_offsite = "nav_mtf_out"
-	//move_time = 39
+	move_time = 15
 
 /obj/effect/shuttle_landmark/heli/start
-	name = "MTF Base"
+	name = "Mobile Task Force Base"
 	landmark_tag = "nav_mtf_start"
-	base_turf = /turf/unsimulated/floor/reinforced
-	base_area = /area/site53/surface/surface
+	base_turf = /turf/simulated/floor/reinforced
+	base_area = /area/site53/surface/surface/west // Where the helicopter goes, not where it starts - Terrytehtryhard
 
 /obj/effect/shuttle_landmark/heli/out
 	name = "Site 53"
 	landmark_tag = "nav_mtf_out"
 	base_turf = /turf/simulated/floor/reinforced
-	base_area = /area/site53/surface/surface
+	base_area = /area/site53/surface/surface/west
 
-/* commented out because fuck you it no work
-/obj/effect/shuttle_landmark/heli/transit
+/obj/effect/shuttle_landmark/transit/helitransit
 	name = "In transit"
 	landmark_tag = "nav_mtf_transition"
 	base_turf = /turf/unsimulated/floor/plating
 	base_area = /area/space
-*/
 
-/datum/shuttle/autodock/ferry/chaos1
-	name = "Chaos Car 1"
-	warmup_time = 20
-	shuttle_area = list(/area/site53/tram/car1)
-	waypoint_station = "car1_start"
-	waypoint_offsite = "car1_out"
+/datum/shuttle/autodock/ferry/ci_heli
+	name = "Chaos Insurgency Helicopter"
+	sound_takeoff = 'sounds/effects/helicopter.ogg'
+	warmup_time = 14
+	shuttle_area = list(/area/site53/tram/ci)
+	waypoint_station = "nav_ci_start"
+	landmark_transition = "nav_ci_transition"
+	waypoint_offsite = "nav_ci_out"
+	move_time = 15
 
+/obj/effect/shuttle_landmark/ci_heli/start
+	name = "Chaos Insurgency Base"
+	landmark_tag = "nav_ci_start"
+	base_turf = /turf/simulated/floor/reinforced
+	base_area = /area/site53/surface/surface/east
+
+/obj/effect/shuttle_landmark/ci_heli/out
+	name = "Site 53"
+	landmark_tag = "nav_ci_out"
+	base_turf = /turf/simulated/floor/exoplanet/snow
+	base_area = /area/site53/surface/surface/east
+
+/obj/effect/shuttle_landmark/transit/ci_helitransit
+	name = "In transit"
+	landmark_tag = "nav_ci_transition"
+	base_turf = /turf/unsimulated/floor/plating
+	base_area = /area/space
+
+/datum/shuttle/autodock/ferry/goc_heli
+	name = "Global Occult Coalition Helicopter"
+	sound_takeoff = 'sounds/effects/helicopter.ogg'
+	warmup_time = 14
+	shuttle_area = list(/area/site53/tram/goc2)
+	waypoint_station = "nav_goc_start"
+	landmark_transition = "nav_goc_transition"
+	waypoint_offsite = "nav_goc_out"
+	move_time = 15
+
+/obj/effect/shuttle_landmark/goc_heli/start
+	name = "Global Occult Coalition Headquarters"
+	landmark_tag = "nav_goc_start"
+	base_turf = /turf/simulated/floor/reinforced
+	base_area = /area/site53/surface/surface/west
+
+/obj/effect/shuttle_landmark/goc_heli/out
+	name = "Site 53"
+	landmark_tag = "nav_goc_out"
+	base_turf = /turf/simulated/floor/exoplanet/snow
+	base_area = /area/site53/surface/surface/west
+
+/obj/effect/shuttle_landmark/transit/goc_helitransit
+	name = "In transit"
+	landmark_tag = "nav_goc_transition"
+	base_turf = /turf/unsimulated/floor/plating
+	base_area = /area/space
+
+/datum/shuttle/autodock/ferry/emergency/train //The transfer/escape train
+	name = "Foundation Main Train"
+	sound_takeoff = 'sounds/effects/TrainLeavingSite.ogg'
+	warmup_time = 10 //Low while I test it back and forth
+	location = 1 //At area offsite
+	shuttle_area = list(/area/site53/tram/maintrain)
+	waypoint_station = "nav_train_onsite"
+	landmark_transition = "nav_train_transition"
+	waypoint_offsite = "nav_train_central"
+	sound_landing = 'sounds/effects/TrainLeavingSite.ogg'
+	landing_message = "A train whistle is heard in the distance. Clear the tunnel!"
+	takeoff_message = "A train whistle is heard as the trains pistons kick into motion."
+
+
+/obj/effect/shuttle_landmark/train/central
+	name = "Central Command"
+	landmark_tag = "nav_train_central"
+	base_turf = /turf/simulated/floor
+	base_area = /area/site53/lowertrams/escape
+
+/obj/effect/shuttle_landmark/transit/trainsition
+	name = "Train Tunnel"
+	landmark_tag = "nav_train_transition"
+	base_turf = /turf/unsimulated/floor/reinforced_animated
+	base_area = /area/site53/tram/maintrain/Tunnel
+
+/obj/effect/shuttle_landmark/train/onsite
+	name = "Site-53"
+	landmark_tag = "nav_train_onsite"
+	base_turf = /turf/simulated/floor/reinforced
+	base_area = /area/site53/lowertrams/escape
 
 /obj/effect/shuttle_landmark/chaos1/start
 	name = "Chaos Base"
@@ -83,7 +127,7 @@
 	base_area = /area/site53/surface/surface
 
 /datum/shuttle/autodock/ferry/goc1
-	name = "GOC Car 1"
+	name = "Global Occult Coalition Truck"
 	warmup_time = 20
 	shuttle_area = list(/area/site53/tram/goc1)
 	waypoint_station = "goc1_start"
@@ -94,13 +138,13 @@
 	name = "GOC Base"
 	landmark_tag = "goc1_start"
 	base_turf = /turf/simulated/floor/exoplanet/snow
-	base_area = /area/site53/surface/surface
+	base_area = /area/site53/surface/surface/east
 
 /obj/effect/shuttle_landmark/goc1/out
 	name = "Site 53"
 	landmark_tag = "goc1_out"
-	base_turf = /turf/simulated/floor/exoplanet/snow
-	base_area = /area/site53/surface/surface
+	base_turf = /turf/simulated/floor/exoplanet/concrete/reinforced/road
+	base_area = /area/site53/surface/surface/east
 /*
 /datum/shuttle/autodock/multi/antag/rescue
 	name = "Rescue"
@@ -192,7 +236,7 @@
 //
 
 /datum/shuttle/autodock/ferry/supply/drone
-	name = "Supply Drone"
+	name = "Supply Truck"
 	location = 1
 	warmup_time = 10
 	shuttle_area = /area/supply/dock

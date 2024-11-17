@@ -417,7 +417,7 @@ var/list/airlock_overlays = list()
 /obj/machinery/door/airlock/phoron/proc/PhoronBurn(temperature)
 	for(var/turf/simulated/floor/target_tile in range(2,loc))
 		target_tile.assume_gas(GAS_PHORON, 35, 400+T0C)
-		addtimer(CALLBACK(target_tile, /turf/proc/hotspot_expose, 400), 0)
+		addtimer(CALLBACK(target_tile, TYPE_PROC_REF(/turf, hotspot_expose), 400), 0)
 	for(var/turf/simulated/wall/W in range(3,src))
 		W.burn((temperature/4))//Added so that you can't set off a massive chain reaction with a small flame
 	for(var/obj/machinery/door/airlock/phoron/D in range(3,src))
@@ -445,7 +445,7 @@ About the new airlock wires panel:
 			if(!src.justzap)
 				if(src.shock(user, 100))
 					src.justzap = TRUE
-					addtimer(CALLBACK(src, .proc/set_justzap, FALSE), 1 SECOND)
+					addtimer(CALLBACK(src, PROC_REF(set_justzap), FALSE), 1 SECOND)
 					return
 			else
 				return
@@ -618,11 +618,11 @@ About the new airlock wires panel:
 /obj/machinery/door/airlock/on_update_icon(state=0, override=0)
 	if(connections in list(NORTH, SOUTH, NORTH|SOUTH))
 		if(connections in list(WEST, EAST, EAST|WEST))
-			set_dir(SOUTH)
+			setDir(SOUTH)
 		else
-			set_dir(EAST)
+			setDir(EAST)
 	else
-		set_dir(SOUTH)
+		setDir(SOUTH)
 
 	switch(state)
 		if(0)
@@ -749,7 +749,6 @@ About the new airlock wires panel:
 	add_overlay(lights_overlay)
 	add_overlay(sparks_overlay)
 	add_overlay(damage_overlay)
-	compile_overlays()
 
 /obj/machinery/door/airlock/do_animate(animation)
 
@@ -1182,7 +1181,7 @@ About the new airlock wires panel:
 /obj/machinery/door/airlock/deconstruct(mob/user, moved = FALSE)
 	var/obj/structure/door_assembly/da = new assembly_type(src.loc)
 	if (istype(da, /obj/structure/door_assembly/multi_tile))
-		da.set_dir(src.dir)
+		da.setDir(src.dir)
 	if(mineral)
 		da.glass = mineral
 	//else if(glass)
@@ -1372,7 +1371,7 @@ About the new airlock wires panel:
 			SetName("[istext(assembly.glass) ? "[assembly.glass] airlock" : assembly.base_name]")
 
 		//get the dir from the assembly
-		set_dir(assembly.dir)
+		setDir(assembly.dir)
 
 		if(assembly)
 			paintable = assembly.paintable
@@ -1498,7 +1497,7 @@ About the new airlock wires panel:
 /decl/public_access/public_method/airlock_toggle_bolts
 	name = "toggle bolts"
 	desc = "Toggles whether the airlock is bolted or not, if possible."
-	call_proc = /obj/machinery/door/airlock/proc/toggle_lock
+	call_proc = TYPE_PROC_REF(/obj/machinery/door/airlock, toggle_lock)
 
 /decl/stock_part_preset/radio/receiver/airlock
 	frequency = AIRLOCK_FREQ

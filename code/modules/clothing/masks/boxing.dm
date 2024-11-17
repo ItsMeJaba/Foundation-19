@@ -11,8 +11,8 @@
 	pull_mask = 1
 	w_class = ITEM_SIZE_SMALL
 	sprite_sheets = list(
-		SPECIES_UNATHI = 'icons/mob/species/unathi/onmob_mask_unathi.dmi',
 		)
+	hidden_from_codex = FALSE
 
 /obj/item/clothing/mask/balaclava/tactical
 	name = "green balaclava"

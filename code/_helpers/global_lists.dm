@@ -13,7 +13,7 @@ var/global/list/mechas_list = list()				//list of all mechs. Used by hostile mob
 var/global/list/all_species[0]
 var/global/list/datum/language/all_languages = list()
 var/global/list/language_keys[0]					// Table of say codes for all languages
-var/global/list/playable_species = list(SPECIES_HUMAN)    // A list of ALL playable species, whitelisted, latejoin or otherwise.
+var/global/list/playable_species = list()    // A list of ALL playable species, whitelisted, latejoin or otherwise.
 
 var/list/mannequins_
 
@@ -142,7 +142,7 @@ var/global/list/string_slot_flags = list(
 		S.race_key = rkey //Used in mob icon caching.
 		all_species[S.name] = S
 		if(!(S.spawn_flags & SPECIES_IS_RESTRICTED))
-			playable_species += S.name
+			playable_species |= S.name
 
 	//Grabs
 	paths = typesof(/datum/grab) - /datum/grab
@@ -164,8 +164,8 @@ var/global/list/string_slot_flags = list(
 //*** params cache
 var/global/list/paramslist_cache = list()
 
-#define cached_key_number_decode(key_number_data) cached_params_decode(key_number_data, /proc/key_number_decode)
-#define cached_number_list_decode(number_list_data) cached_params_decode(number_list_data, /proc/number_list_decode)
+#define cached_key_number_decode(key_number_data) cached_params_decode(key_number_data, GLOBAL_PROC_REF(key_number_decode))
+#define cached_number_list_decode(number_list_data) cached_params_decode(number_list_data, GLOBAL_PROC_REF(number_list_decode))
 
 /proc/cached_params_decode(params_data, decode_proc)
 	. = paramslist_cache[params_data]

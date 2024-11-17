@@ -46,15 +46,15 @@
 	icon = 'maps/torch/icons/obj/solgov-decals.dmi'
 	icon_state = "solgovseal"
 
-/obj/structure/sign/double/solgovflag
-	name = "Sol Central Government Flag"
-	desc = "The flag of the Sol Central Government, a symbol of many things to many people."
+/obj/structure/sign/double/gocflag
+	name = "United Nations Flag"
+	desc = "The flag of the United Nations, a symbol of many things to many people."
 	icon = 'maps/torch/icons/obj/solgov-decals.dmi'
 
-/obj/structure/sign/double/solgovflag/left
+/obj/structure/sign/double/gocflag/left
 	icon_state = "solgovflag-left"
 
-/obj/structure/sign/double/solgovflag/right
+/obj/structure/sign/double/gocflag/right
 	icon_state = "solgovflag-right"
 
 /* Foundation 19 Edits for Reshuffling of files*/
@@ -155,6 +155,46 @@
 /obj/effect/landmark/corpse/classd
 	name = "Class D"
 	corpse_outfits = list(/decl/hierarchy/outfit/job/civ/classd)
+
+/obj/effect/landmark/corpse/goc
+	name = "GOC Trooper"
+	corpse_outfits = list(/decl/hierarchy/outfit/goc/trooper/corpse)
+	icon_state = "goccorpse"
+
+/obj/effect/landmark/corpse/goc/machinegunner
+	name = "GOC Machinegunner"
+	corpse_outfits = list(/decl/hierarchy/outfit/goc/machinegunner/corpse)
+	icon_state = "gocheavycorpse"
+
+/obj/effect/landmark/corpse/goc/grenadier
+	name = "GOC Grenadier"
+	corpse_outfits = list(/decl/hierarchy/outfit/goc/grenadier/corpse)
+	icon_state = "gocgrenadecorpse"
+
+/obj/effect/landmark/corpse/goc/leader
+	name = "GOC Leader"
+	corpse_outfits = list(/decl/hierarchy/outfit/goc/leader/corpse)
+	icon_state = "gocleadcorpse"
+
+/obj/effect/landmark/corpse/chaos
+	name = "Chaos Insurgent Trooper"
+	corpse_outfits = list(/decl/hierarchy/outfit/chaos/soldier/corpse)
+	icon_state = "cicorpse"
+
+/obj/effect/landmark/corpse/chaos/heavy
+	name = "Chaos Insurgent Heavy Trooper"
+	corpse_outfits = list(/decl/hierarchy/outfit/chaos/heavy_soldier/corpse)
+	icon_state = "ciheavycorpse"
+
+/obj/effect/landmark/corpse/chaos/officer
+	name = "Chaos Insurgent Officer"
+	corpse_outfits = list(/decl/hierarchy/outfit/chaos/leader/corpse)
+	icon_state = "ciofficercorpse"
+
+/obj/effect/landmark/corpse/chaos/pilot
+	name = "CI Pilot"
+	corpse_outfits = list(/decl/hierarchy/outfit/chaos/pilot)
+	icon_state = "cipilotcorpse"
 
 /obj/effect/landmark/corpse/classdescaped
 	name = "Class D"

@@ -10,7 +10,7 @@
 	var/skipface = 0
 
 	//Skips this for humanoid SCPS
-	if(SCP)
+	if(SCP && !SCP.regular_examine)
 		to_chat(user, "[icon2html(src, user)] That's \a [src] [suffix]")
 		to_chat(user, desc)
 		return
@@ -52,7 +52,7 @@
 			species_name += "[species.cyborg_noun] [species.get_bodytype(src)]"
 		else
 			species_name += "[species.name]"
-		msg += ", <b><font color='[species.get_flesh_colour(src)]'>\a [species_name]!</font></b>[(user.can_use_codex() && SScodex.get_codex_entry(get_codex_value())) ?  SPAN_NOTICE(" \[<a href='?src=\ref[SScodex];show_examined_info=\ref[src];show_to=\ref[user]'>?</a>\]") : ""]"
+		msg += ", <b><font color='[species.get_flesh_colour(src)]'>\a [species_name]!</font></b>[SScodex.get_codex_entry(get_codex_value()) ?  SPAN_NOTICE(" \[<a href='?src=\ref[SScodex];show_examined_info=\ref[src];show_to=\ref[user]'>?</a>\]") : ""]"
 
 	msg += "<br>"
 
@@ -117,7 +117,8 @@
 
 	//ID
 	if(wear_id)
-		msg += "[p_they(TRUE)] [p_are()] wearing [wear_id.get_examine_line(user)].\n"
+		var/obj/item/card/id/id = GetIdCard()
+		msg += "[p_they(TRUE)] [p_are()] wearing [wear_id.get_examine_line(user)]. Job: [id.assignment]. CLASS: [id.class].\n "
 
 	//handcuffed?
 	if(handcuffed)
@@ -129,16 +130,6 @@
 	//buckled
 	if(buckled)
 		msg += "<span class='warning'>[p_they(TRUE)] [p_are()] [icon2html(buckled, user)] buckled to [buckled]!</span>\n"
-
-	//Jitters
-	if(is_jittery)
-		if(jitteriness >= 300)
-			msg += "<span class='warning'><B>[p_they(TRUE)] [p_are()] convulsing violently!</B></span>\n"
-		else if(jitteriness >= 200)
-			msg += "<span class='warning'>[p_they(TRUE)] [p_are()] extremely jittery.</span>\n"
-		else if(jitteriness >= 100)
-			msg += "<span class='warning'>[p_they(TRUE)] [p_are()] twitching ever so slightly.</span>\n"
-
 
 	//Disfigured face
 	if(!skipface) //Disfigurement only matters for the head currently.
@@ -300,6 +291,9 @@
 			msg += "<span class = 'deptradio'>Criminal status:</span> <a href='?src=\ref[src];criminal=1'>\[[criminal]\]</a>\n"
 			msg += "<span class = 'deptradio'>Security records:</span> <a href='?src=\ref[src];secrecord=`'>\[View\]</a>\n"
 
+			if(GLOB.informants.is_antagonist(mind))	// hacky, but functional
+				msg += "<span class = 'deptradio'>Special information:</span> This D-class is listed as an INFORMANT. Protect him, but do not blow his cover."
+
 	if(hasHUD(user, HUD_MEDICAL))
 		var/perpname = "wot"
 		var/medical = "None"
@@ -331,6 +325,14 @@
 	var/show_descs = show_descriptors_to(user)
 	if(show_descs)
 		msg += SPAN_NOTICE("[jointext(show_descs, "<br>")]")
+
+	for(var/datum/status_effect/effect as anything in status_effects)
+		var/effect_text = effect.get_examine_text()
+		if(!effect_text)
+			continue
+
+		msg += effect_text
+
 	to_chat(user, jointext(msg, null))
 
 //Helper procedure. Called by /mob/living/carbon/human/examine() and /mob/living/carbon/human/Topic() to determine HUD access to security and medical records.

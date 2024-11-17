@@ -292,7 +292,7 @@ SUBSYSTEM_DEF(zcopy)
 
 		// Actually update the overlay.
 		if (OO.dir != OO.associated_atom.dir)
-			OO.set_dir(OO.associated_atom.dir)
+			OO.setDir(OO.associated_atom.dir)
 
 		OO.appearance = OO.associated_atom
 		OO.plane = OPENTURF_MAX_PLANE - OO.depth
@@ -338,7 +338,7 @@ SUBSYSTEM_DEF(zcopy)
 	for (var/atom/movable/openspace/O in T)
 		found_oo += O
 
-	sortTim(found_oo, /proc/cmp_planelayer)
+	sortTim(found_oo, GLOBAL_PROC_REF(cmp_planelayer))
 
 	var/list/atoms_list_list = list()
 	for (var/thing in found_oo)

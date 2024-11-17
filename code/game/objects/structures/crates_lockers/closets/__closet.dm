@@ -1,7 +1,7 @@
 /obj/structure/closet
 	name = "closet"
 	desc = "It's a basic storage unit."
-	icon = 'icons/obj/closet.dmi'
+	icon = 'icons/obj/closet_new.dmi'
 	icon_state = "closed"
 	density = TRUE
 	w_class = ITEM_SIZE_NO_CONTAINER
@@ -280,7 +280,7 @@
 								 SPAN_NOTICE("You hear rustling of clothes."))
 			return
 
-		if(usr.drop_item())
+		if(usr.drop_active_hand())
 			W.forceMove(loc)
 			W.pixel_x = 0
 			W.pixel_y = 0
@@ -321,7 +321,7 @@
 	qdel(src)
 
 /obj/structure/closet/MouseDrop_T(atom/movable/O as mob|obj, mob/user as mob)
-	if(istype(O, /obj/screen))	//fix for HUD elements making their way into the world	-Pete
+	if(istype(O, /atom/movable/screen))	//fix for HUD elements making their way into the world	-Pete
 		return
 	if(O.loc == user)
 		return
@@ -480,7 +480,7 @@
 /obj/structure/closet/proc/togglelock(mob/user, obj/item/card/id/id_card)
 	if(!(setup & CLOSET_HAS_LOCK))
 		return FALSE
-	if(!CanPhysicallyInteract(user))
+	if(!CanInteract(user, GLOB.physical_no_access_state))
 		return FALSE
 	if(src.opened)
 		to_chat(user, SPAN_NOTICE("Close \the [src] first."))
@@ -497,7 +497,7 @@
 	if(!id_card)
 		id_card = user.GetIdCard()
 
-	if(!user.IsAdvancedToolUser())
+	if(!ISADVANCEDTOOLUSER(user))
 		to_chat(user, FEEDBACK_YOU_LACK_DEXTERITY)
 		return FALSE
 

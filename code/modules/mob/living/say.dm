@@ -116,14 +116,6 @@ var/list/channel_to_radio_key = new
 		verb = pick("yells","roars","hollers")
 		message_data[3] = 0
 		. = 1
-	else if(slurring)
-		message = slur(message)
-		verb = pick("slobbers","slurs")
-		. = 1
-	else if(stuttering)
-		message = NewStutter(message)
-		verb = pick("stammers","stutters")
-		. = 1
 	else if(has_chem_effect(CE_SQUEAKY, 1))
 		message = "<font face = 'Comic Sans MS'>[message]</font>"
 		verb = "squeaks"
@@ -181,6 +173,9 @@ var/list/channel_to_radio_key = new
 	if(prefix == get_prefix_key(/decl/prefix/visible_emote))
 		return custom_emote(1, copytext(message,2))
 
+	if(HAS_TRAIT(src, TRAIT_MUTE))
+		return FALSE
+
 	//parse the language code and consume it
 	if(!speaking)
 		speaking = parse_language(message)
@@ -188,6 +183,11 @@ var/list/channel_to_radio_key = new
 			message = copytext(message,2+length(speaking.key))
 		else
 			speaking = get_default_language()
+
+	if (speaking)
+		if (speaking.flags & SIGNLANG && HAS_TRAIT(src, TRAIT_HANDS_BLOCKED))
+			to_chat(src, SPAN_WARNING("You can't use your hands to sign!"))
+			return
 
 	//parse the radio code and consume it
 	var/message_mode = parse_message_mode(message, "headset")
@@ -219,6 +219,9 @@ var/list/channel_to_radio_key = new
 	message = handle_autohiss(message, speaking)
 	message = format_say_message(message)
 	message = process_chat_markup(message)
+
+	//TODO: move hardcoded checks to this signal
+	SEND_SIGNAL(src, COMSIG_LIVING_TREAT_MESSAGE, args, speaking)
 
 	if(speaking && !speaking.can_be_spoken_properly_by(src))
 		message = speaking.muddle(message)
@@ -291,6 +294,8 @@ var/list/channel_to_radio_key = new
 	speech_bubble.layer = layer
 	speech_bubble.plane = plane
 	speech_bubble.alpha = 0
+	speech_bubble.pixel_x = speech_bubble_pixel_x_offset
+	speech_bubble.pixel_y = speech_bubble_pixel_y_offset
 	// VOREStation Port - Attempt Multi-Z Talking
 	// for (var/atom/movable/AM in get_above_oo())
 	// 	var/turf/ST = get_turf(AM)
@@ -336,7 +341,7 @@ var/list/channel_to_radio_key = new
 			spawn(0)
 				if(O) //It's possible that it could be deleted in the meantime.
 					O.hear_talk(src, stars(message), verb, speaking)
-	INVOKE_ASYNC(src, /atom/movable/proc/animate_chat, message, speaking, italics, speech_bubble_recipients, whispering, unique)
+	INVOKE_ASYNC(src, TYPE_PROC_REF(/atom/movable, animate_chat), message, speaking, italics, speech_bubble_recipients, whispering, unique)
 
 	if(LAZYLEN(speech_bubble_recipients) && !whispering)
 		show_sound_effect(src.loc, src, soundicon = SFX_ICON_SMALL)
@@ -347,9 +352,9 @@ var/list/channel_to_radio_key = new
 		log_say("[name]/[key] : [message]")
 
 	flick_overlay(speech_bubble, speech_bubble_recipients, 50)
-	animate(speech_bubble, alpha = 255, time = 10, easing = CIRCULAR_EASING)
-	animate(time = 20)
-	animate(alpha = 0, pixel_y = 12, time = 20, easing = CIRCULAR_EASING)
+	animate(speech_bubble, alpha = 255, time = 1 SECOND, easing = CIRCULAR_EASING)
+	animate(time = 2 SECONDS)
+	animate(alpha = 0, pixel_y = speech_bubble.pixel_y + 12, time = 2 SECONDS, easing = CIRCULAR_EASING)
 
 	return 1
 

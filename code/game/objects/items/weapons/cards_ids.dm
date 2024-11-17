@@ -96,9 +96,15 @@
 	. = ..()
 	set_extension(src,/datum/extension/chameleon/emag)
 
-/obj/item/card/emag/get_antag_info()
-	. = ..()
-	. += "You can use this cryptographic sequencer in order to subvert electronics or forcefully open doors you don't have access to. These actions are irreversible and the card only has a limited number of charges!"
+// Fine - Sets uses to random amount between 5 and 15.
+/obj/item/card/emag/Conversion914(mode = MODE_ONE_TO_ONE, mob/user = usr)
+	switch(mode)
+		if(MODE_FINE)
+			uses = rand(5, 15)
+			visible_message(SPAN_NOTICE("Electricity runs through \the [src] briefly."))
+			playsound(src, 'sounds/effects/sparks3.ogg', 50, TRUE)
+			return src
+	return ..()
 
 /obj/item/card/emag/broken
 	uses = 0
@@ -111,7 +117,8 @@
 	slot_flags = SLOT_ID
 
 	var/list/access = list()
-	var/registered_name = "Unknown" // The name registered_name on the card
+	/// The name registered on the card
+	var/registered_name = "Unknown"
 	var/associated_account_number = 0
 	var/list/associated_email_login = list("login" = "", "password" = "")
 
@@ -124,14 +131,19 @@
 	var/icon/side
 
 	//alt titles are handled a bit weirdly in order to unobtrusively integrate into existing ID system
-	var/assignment = null	//can be alt title or the actual job
-	var/rank = null			//actual job
-	var/dorm = 0			// determines if this ID has claimed a dorm already
+	// Alt-title if applicable, otherwise actual job name.
+	var/assignment = null
+	/// Actual job name, ignoring the alt-title
+	var/rank = null
 
-	var/job_access_type     // Job type to acquire access rights from, if any
+	/// determines if this ID has claimed a dorm already // TODO: delete this
+	var/dorm = 0
 
-	var/datum/mil_branch/military_branch = null //Vars for tracking branches and ranks on multi-crewtype maps
-	var/datum/mil_rank/military_rank = null
+	/// Job type to acquire access rights from, if any
+	var/job_access_type
+
+	/// What class this ID card represents.
+	var/class = CLASS_C
 
 	var/formal_name_prefix
 	var/formal_name_suffix
@@ -146,6 +158,7 @@
 		if(j)
 			rank = j.title
 			assignment = rank
+			class = j.class
 			access |= j.get_access()
 			if(!detail_color)
 				detail_color = j.selection_color
@@ -178,6 +191,70 @@
 	if(distance <= 1)
 		show(user)
 
+/// List of ID cards that can be used in 914 conversion effect
+GLOBAL_LIST_INIT(valid_conversion_cards, \
+	subtypesof(/obj/item/card/id) - typesof(/obj/item/card/id/syndicate) - /obj/item/card/id/centcom)
+
+/// Associative list of card = list of cards that it can upgrade into
+GLOBAL_LIST_EMPTY(conversion_cards)
+
+// 1:1 - Returns random ID card type and copies ALL of our access to it. Nothing gained, nothing lost, just new sprite.
+// Fine - Returns an "upgrade" type of our card, but may turn into useless stuff.
+// Very Fine - ???
+/obj/item/card/id/Conversion914(mode = MODE_ONE_TO_ONE, mob/user = usr)
+	switch(mode)
+		if(MODE_ONE_TO_ONE)
+			var/type_path = pick(GLOB.valid_conversion_cards)
+			var/obj/item/card/id/new_id = new type_path(get_turf(src))
+			new_id.access = access.Copy()
+			CopyInfoToCard(new_id)
+			return new_id
+		if(MODE_FINE)
+			if(prob(7))
+				return pick(/obj/item/card/data, /obj/item/deck/cards, /obj/item/deck/tarot)
+			if(!LAZYLEN(GLOB.conversion_cards))
+				for(var/type_path in GLOB.valid_conversion_cards)
+					GLOB.conversion_cards[type_path] = list()
+					var/obj/item/card/id/id = new type_path(src)
+					var/must_match = max(1, round(length(id.access) * 0.5))
+					for(var/type_path_again in GLOB.valid_conversion_cards - type_path)
+						var/obj/item/card/id/new_id = new type_path(id)
+						// Returns a list of accesses that were in both lists
+						var/list/matches = id.access & new_id.access
+						if(length(matches) >= must_match && length(id.access) > length(access))
+							GLOB.conversion_cards[type_path] |= type_path_again
+						QDEL_NULL(new_id)
+					QDEL_NULL(id)
+			// Let's give it some random shit!
+			if(!LAZYLEN(GLOB.conversion_cards[type]) || prob(15))
+				var/list/valid_access = get_all_site_access() - access
+				if(LAZYLEN(valid_access))
+					var/new_access = pick(valid_access)
+					access |= new_access
+					visible_message(SPAN_NOTICE("\The [src] glows for a moment, as if something passed into it."))
+				return src
+			var/new_type = pick(GLOB.valid_conversion_cards[type])
+			var/obj/item/card/id/new_id = new new_type(get_turf(src))
+			return new_id
+	return ..()
+
+// Copies most of the info (such as owner and their job) to another card
+/obj/item/card/id/proc/CopyInfoToCard(obj/item/card/id/new_id)
+	if(!istype(new_id))
+		return
+
+	new_id.assignment = assignment
+	new_id.age = age
+	new_id.front = front
+	new_id.side = side
+	new_id.formal_name_prefix = formal_name_prefix
+	new_id.formal_name_suffix = formal_name_suffix
+	new_id.registered_name = registered_name
+	new_id.sex = sex
+	new_id.blood_type = blood_type
+	new_id.dna_hash = dna_hash
+	new_id.fingerprint_hash = fingerprint_hash
+
 /obj/item/card/id/proc/prevent_tracking()
 	return 0
 
@@ -192,11 +269,9 @@
 	return
 
 /obj/item/card/id/proc/get_display_name()
-	. = registered_name
-	if(military_rank && military_rank.name_short)
-		. ="[military_rank.name_short] [.][formal_name_suffix]"
-	else if(formal_name_prefix || formal_name_suffix)
-		. = "[formal_name_prefix][.][formal_name_suffix]"
+	. = "[formal_name_prefix][registered_name][formal_name_suffix]"
+	if(class)
+		. ="[class] [.]"
 	if(assignment)
 		. += ", [assignment]"
 
@@ -231,22 +306,13 @@
 /mob/living/carbon/human/set_id_info(obj/item/card/id/id_card)
 	..()
 	id_card.age = age
-	if(GLOB.using_map.flags & MAP_HAS_BRANCH)
-		id_card.military_branch = char_branch
-	if(GLOB.using_map.flags & MAP_HAS_RANK)
-		id_card.military_rank = char_rank
 
 /obj/item/card/id/proc/dat()
 	var/list/dat = list("<table><tr><td>")
 	dat += text("Name: []</A><BR>", "[formal_name_prefix][registered_name][formal_name_suffix]")
 	dat += text("Sex: []</A><BR>\n", sex)
 	dat += text("Age: []</A><BR>\n", age)
-
-	if(GLOB.using_map.flags & MAP_HAS_BRANCH)
-		dat += text("Branch: []</A><BR>\n", military_branch ? military_branch.name : "\[UNSET\]")
-	if(GLOB.using_map.flags & MAP_HAS_RANK)
-		dat += text("Rank: []</A><BR>\n", military_rank ? military_rank.name : "\[UNSET\]")
-
+	dat += text("Class: []</A><BR>\n", class)
 	dat += text("Assignment: []</A><BR>\n", assignment)
 	dat += text("Fingerprint: []</A><BR>\n", fingerprint_hash)
 	dat += text("Blood Type: []<BR>\n", blood_type)
@@ -279,61 +345,6 @@
 	to_chat(usr, "The DNA hash on the card is [dna_hash].")
 	to_chat(usr, "The fingerprint hash on the card is [fingerprint_hash].")
 	return
-
-/decl/vv_set_handler/id_card_military_branch
-	handled_type = /obj/item/card/id
-	handled_vars = list("military_branch")
-
-/decl/vv_set_handler/id_card_military_branch/handle_set_var(obj/item/card/id/id, variable, var_value, client)
-	if(!var_value)
-		id.military_branch = null
-		id.military_rank = null
-		return
-
-	if(istype(var_value, /datum/mil_branch))
-		if(var_value != id.military_branch)
-			id.military_branch = var_value
-			id.military_rank = null
-		return
-
-	if(ispath(var_value, /datum/mil_branch) || istext(var_value))
-		var/datum/mil_branch/new_branch = mil_branches.get_branch(var_value)
-		if(new_branch)
-			if(new_branch != id.military_branch)
-				id.military_branch = new_branch
-				id.military_rank = null
-			return
-
-	to_chat(client, SPAN_WARNING("Input, must be an existing branch - [var_value] is invalid"))
-
-/decl/vv_set_handler/id_card_military_rank
-	handled_type = /obj/item/card/id
-	handled_vars = list("military_rank")
-
-/decl/vv_set_handler/id_card_military_rank/handle_set_var(obj/item/card/id/id, variable, var_value, client)
-	if(!var_value)
-		id.military_rank = null
-		return
-
-	if(!id.military_branch)
-		to_chat(client, SPAN_WARNING("military_branch not set - No valid ranks available"))
-		return
-
-	if(ispath(var_value, /datum/mil_rank))
-		var/datum/mil_rank/rank = var_value
-		var_value = initial(rank.name)
-
-	if(istype(var_value, /datum/mil_rank))
-		var/datum/mil_rank/rank = var_value
-		var_value = rank.name
-
-	if(istext(var_value))
-		var/new_rank = mil_branches.get_rank(id.military_branch.name, var_value)
-		if(new_rank)
-			id.military_rank = new_rank
-			return
-
-	to_chat(client, SPAN_WARNING("Input must be an existing rank belonging to military_branch - [var_value] is invalid"))
 
 /obj/item/card/id/captains_spare
 	name = "captain's spare ID"
@@ -481,6 +492,7 @@
 	icon_state = "securitylvl5"
 	item_state = "Sec_ID5"
 	job_access_type = /datum/job/chief_engineer
+	class = CLASS_A
 
 /obj/item/card/id/seclvl3it_tech
 	name = "security ID"
@@ -491,11 +503,34 @@
 
 // JUNIOR GUARD ID'S
 
-/obj/item/card/id/junseclvl2lcz
+/obj/item/card/id/junseclvl1lcz
 	name = "security ID"
 	desc = "A light blue card. Seems almost as unimportant as the person itself."
 	icon_state = "securitylvl1"
 	item_state = "Sec_ID1"
+	job_access_type = /datum/job/guardlcz
+
+/obj/item/card/id/junseclvl1ez
+	name = "security ID"
+	desc = "A light blue card. Seems almost as unimportant as the person itself."
+	icon_state = "securitylvl1"
+	item_state = "Sec_ID1"
+	job_access_type = /datum/job/guardez
+
+/obj/item/card/id/junseclvl2hcz
+	name = "security ID"
+	desc = "A dark purple ID. Looks important. The person wearing it, not at all."
+	icon_state = "securitylvl2"
+	item_state = "Sec_ID2"
+	job_access_type = /datum/job/guardhcz
+
+// GUARD ID'S
+
+/obj/item/card/id/junseclvl2lcz
+	name = "security ID"
+	desc = "A dark purple ID. Looks important. The person wearing it, not at all."
+	icon_state = "securitylvl2"
+	item_state = "Sec_ID2"
 	job_access_type = /datum/job/enlistedofficerlcz
 
 /obj/item/card/id/junseclvl2ez
@@ -516,8 +551,8 @@
 /obj/item/card/id/seclvl3lcz
 	name = "security ID"
 	desc = "A dark purple ID. Looks important. The person wearing it, not at all."
-	icon_state = "securitylvl2"
-	item_state = "Sec_ID2"
+	icon_state = "securitylvl3"
+	item_state = "Sec_ID3"
 	job_access_type = /datum/job/ncoofficerlcz
 
 /obj/item/card/id/seclvl3ez
@@ -534,6 +569,108 @@
 	item_state = "Sec_ID3"
 	job_access_type = /datum/job/raisa
 
+/obj/item/card/id/seclvl2lczdivision
+	name = "security ID"
+	desc = "A light blue card. Seems almost as unimportant as the person itself."
+	icon_state = "securitylvl2"
+	item_state = "Sec_ID2"
+	access = list(
+		ACCESS_SEC_COMMS,
+		ACCESS_SECURITY_LVL1,
+		ACCESS_SECURITY_LVL2,
+		ACCESS_SCIENCE_LVL1,
+		ACCESS_SCIENCE_LVL2,
+		ACCESS_MEDICAL_LVL1,
+		ACCESS_DCLASS_KITCHEN,
+		ACCESS_DCLASS_BOTANY,
+		ACCESS_DCLASS_MINING,
+		ACCESS_DCLASS_JANITORIAL,
+		ACCESS_DCLASS_MEDICAL,
+		ACCESS_DCLASS_LUXURY
+	)
+
+// Riot Control Unit Sergeant
+/obj/item/card/id/seclvl2lczdivision2
+	name = "security ID"
+	desc = "A light blue card. Seems almost as unimportant as the person itself."
+	icon_state = "securitylvl2"
+	item_state = "Sec_ID2"
+	access = list(
+		ACCESS_SEC_COMMS,
+		ACCESS_SECURITY_LVL1,
+		ACCESS_SECURITY_LVL2,
+		ACCESS_SCIENCE_LVL1,
+		ACCESS_SCIENCE_LVL2,
+		ACCESS_ARMORY,
+		ACCESS_DCLASS_KITCHEN,
+		ACCESS_DCLASS_BOTANY,
+		ACCESS_DCLASS_MINING,
+		ACCESS_DCLASS_JANITORIAL,
+		ACCESS_DCLASS_MEDICAL,
+		ACCESS_DCLASS_LUXURY
+	)
+
+// Riot Control Unit Guard
+/obj/item/card/id/seclvl1lczdivision2
+	name = "security ID"
+	desc = "A light blue card. Seems almost as unimportant as the person itself."
+	icon_state = "securitylvl2"
+	item_state = "Sec_ID2"
+	access = list(
+		ACCESS_SEC_COMMS,
+		ACCESS_SECURITY_LVL1,
+		ACCESS_SECURITY_LVL2,
+		ACCESS_SCIENCE_LVL1,
+		ACCESS_SCIENCE_LVL2,
+		ACCESS_ARMORY,
+		ACCESS_DCLASS_KITCHEN,
+		ACCESS_DCLASS_BOTANY,
+		ACCESS_DCLASS_MINING,
+		ACCESS_DCLASS_JANITORIAL,
+		ACCESS_DCLASS_MEDICAL,
+		ACCESS_DCLASS_LUXURY
+	)
+
+/obj/item/card/id/seclvl3lczdivision3
+	name = "security ID"
+	desc = "A dark blue ID. Looks important. The person wearing it not so much."
+	icon_state = "securitylvl3"
+	item_state = "Sec_ID3"
+	access = list(
+		ACCESS_SEC_COMMS,
+		ACCESS_SECURITY_LVL1,
+		ACCESS_SECURITY_LVL2,
+		ACCESS_SCIENCE_LVL1,
+		ACCESS_SCIENCE_LVL2,
+		ACCESS_BRIG,
+		ACCESS_DCLASS_KITCHEN,
+		ACCESS_DCLASS_BOTANY,
+		ACCESS_DCLASS_MINING,
+		ACCESS_DCLASS_JANITORIAL,
+		ACCESS_DCLASS_MEDICAL,
+		ACCESS_DCLASS_LUXURY
+	)
+
+/obj/item/card/id/seclvl2lczdivision3
+	name = "security ID"
+	desc = "A light blue card. Seems almost as unimportant as the person itself."
+	icon_state = "securitylvl2"
+	item_state = "Sec_ID2"
+	access = list(
+		ACCESS_SEC_COMMS,
+		ACCESS_SECURITY_LVL1,
+		ACCESS_SECURITY_LVL2,
+		ACCESS_SCIENCE_LVL1,
+		ACCESS_SCIENCE_LVL2,
+		ACCESS_BRIG,
+		ACCESS_DCLASS_KITCHEN,
+		ACCESS_DCLASS_BOTANY,
+		ACCESS_DCLASS_MINING,
+		ACCESS_DCLASS_JANITORIAL,
+		ACCESS_DCLASS_MEDICAL,
+		ACCESS_DCLASS_LUXURY
+	)
+
 /obj/item/card/id/seclvl3hcz
 	name = "security ID"
 	desc = "A dark blue ID. Looks important. The person wearing it not so much."
@@ -545,17 +682,19 @@
 
 /obj/item/card/id/zcseclvl4hcz
 	name = "security ID"
-	desc = "A teal ID. Looks cool."
+	desc = "A dark blue ID. Looks important. The person wearing it not so much."
 	icon_state = "securitylvl4"
 	item_state = "Sec_ID4"
 	job_access_type = /datum/job/ltofficerhcz
+	class = CLASS_B
 
-/obj/item/card/id/zcseclvl3lcz
+/obj/item/card/id/zcseclvl4lcz
 	name = "security ID"
-	desc = "A teal ID. A dark blue ID. Looks important. The person wearing it not so much."
-	icon_state = "securitylvl3"
-	item_state = "Sec_ID3"
+	desc = "A dark blue ID. Looks important. The person wearing it not so much."
+	icon_state = "securitylvl4"
+	item_state = "Sec_ID4"
 	job_access_type = /datum/job/ltofficerlcz
+	class = CLASS_B
 
 /obj/item/card/id/zcseclvl4ez
 	name = "security ID"
@@ -563,6 +702,7 @@
 	icon_state = "securitylvl4"
 	item_state = "Sec_ID4"
 	job_access_type = /datum/job/ltofficerez
+	class = CLASS_B
 
 // GC ID.
 
@@ -572,6 +712,7 @@
 	icon_state = "securitylvl5"
 	item_state = "Sec_ID5"
 	job_access_type = /datum/job/hos
+	class = CLASS_A
 
 // SCIENCE
 
@@ -594,14 +735,42 @@
 	desc = "A dark yellow ID. Looks cool, the person wearing it, not so much."
 	icon_state = "sciencelvl3"
 	item_state = "Science_ID3"
-	job_access_type = /datum/job/scientist
+	job_access_type = /datum/job/seniorscientist
+
+/obj/item/card/id/sciencelvl2robo
+	name = "science ID"
+	desc = "A bright yellow ID. Looks ordinary?"
+	icon_state = "sciencelvl2"
+	item_state = "Science_ID2"
+	job_access_type = /datum/job/roboticist
+
+/obj/item/card/id/sciencelvl3robo
+	name = "science ID"
+	desc = "An orange ID. Looks important."
+	icon_state = "sciencelvl4"
+	item_state = "Science_ID4"
+	job_access_type = /datum/job/seniorroboticist
 
 /obj/item/card/id/sciencelvl4
 	name = "science ID"
 	desc = "An orange ID. Looks important."
 	icon_state = "sciencelvl4"
 	item_state = "Science_ID4"
-	job_access_type = /datum/job/seniorscientist
+	job_access_type = /datum/job/ard
+
+/obj/item/card/id/sciencelvlp
+	name = "science ID"
+	desc = "An orange ID. Looks important."
+	icon_state = "sciencelvl3"
+	item_state = "Science_ID3"
+	job_access_type = /datum/job/mentalist
+
+/obj/item/card/id/sciencelvlps
+	name = "science ID"
+	desc = "An orange ID. Looks important."
+	icon_state = "sciencelvl4"
+	item_state = "Science_ID4"
+	job_access_type = /datum/job/seniormentalist
 
 /obj/item/card/id/sciencelvl5
 	name = "science ID"
@@ -609,6 +778,7 @@
 	icon_state = "sciencelvl5"
 	item_state = "Science_ID5"
 	job_access_type = /datum/job/rd
+	class = CLASS_B
 
 // ADMIN
 /obj/item/card/id/adminlvl1
@@ -631,6 +801,7 @@
 	icon_state = "adminlvl3"
 	item_state = "Admin_ID"
 	job_access_type = /datum/job/goirep
+	class = CLASS_A
 
 /obj/item/card/id/adminlvl4
 	name = "administration ID"
@@ -638,6 +809,7 @@
 	icon_state = "adminlvl4"
 	item_state = "Admin_ID"
 	job_access_type = /datum/job/hop
+	class = CLASS_A
 
 /obj/item/card/id/adminlvl5
 	name = "administration ID"
@@ -645,6 +817,7 @@
 	icon_state = "adminlvl5"
 	item_state = "Admin_ID"
 	job_access_type = /datum/job/captain
+	class = CLASS_A
 
 // ERT CARDS
 
@@ -653,11 +826,23 @@
 	desc = "A black ID. Looks like the person wearing this won't give it up easy."
 	icon_state = "adminlvl5"
 	item_state = "Admin_ID"
+	class = CLASS_A
 
 /obj/item/card/id/mtf/ninetail
 	name = "mobile task force ID"
 	desc = "A black ID. Looks like the person wearing this won't give it up easy."
 	assignment = "Epsilon-11 Task Force Operative"
+
+
+/obj/item/card/id/mtf/ninetaillead
+	name = "mobile task force ID"
+	desc = "A black ID. Looks like the person wearing this won't give it up easy."
+	assignment = "Epsilon-11 Task Force Leader"
+
+/obj/item/card/id/mtf/epsilon
+	name = "mobile task force ID"
+	desc = "A black ID. Looks like the person wearing this won't give it up easy."
+	assignment = "Epsilon-9 Task Force Operative"
 
 /obj/item/card/id/mtf/nu_7
 	name = "mobile task force ID"
@@ -667,7 +852,7 @@
 /obj/item/card/id/mtf/beta_7
 	name = "mobile task force ID"
 	desc = "A black ID. Looks like the person wearing this won't give it up easy."
-	assignment = "beta_7 Task Force Operative"
+	assignment = "Beta-7 Task Force Operative"
 
 /obj/item/card/id/mtf/alpha
 	name = "mobile task force ID"
@@ -679,11 +864,25 @@
 	desc = "A black ID. Looks like the person wearing this won't give it up easy."
 	assignment = "Omega-1 Task Force Operative"
 
+/obj/item/card/id/mtf/isd
+	name = "internal security operations ID"
+	desc = "A black ID. Looks like the person wearing this won't give it up easy."
+	assignment = "Internal Security Agent"
+
+/obj/item/card/id/mtf/o5rep
+	name = "central council command ID"
+	desc = "A black ID. Looks like the person wearing this won't give it up easy."
+	assignment = "O5 Representative"
+
 /obj/item/card/id/mtf/Initialize()
 	. = ..()
 	rank = "Mobile Task Force Operative"
 	access |= get_all_site_access()
 
+/obj/item/card/id/mtf/ninetaillead/Initialize()
+	. = ..()
+	rank = "Mobile Task Force Leader"
+	access |= get_all_site_access()
 
 /obj/item/card/id/physics
 	name = "military ID"
@@ -711,8 +910,16 @@
 	job_access_type = /datum/job/commsofficer
 	icon_state = "adminlvl4"
 	item_state = "Admin_ID"
+	class = CLASS_B
 
 // MEDICAL CARDS
+
+/obj/item/card/id/medicintern
+	name = "security ID"
+	desc = "A light blue card. Seems almost as unimportant as the person itself."
+	icon_state = "securitylvl1"
+	item_state = "Sec_ID1"
+	job_access_type = /datum/job/medicaldoctor
 
 /obj/item/card/id/emt
 	name = "security ID"
@@ -741,6 +948,15 @@
 	icon_state = "securitylvl5"
 	item_state = "Sec_ID5"
 	job_access_type = /datum/job/cmo
+	class = CLASS_A
+
+/obj/item/card/id/assistantmedicalofficer
+	name = "security ID"
+	desc = "A purple ID. Seems important."
+	icon_state = "securitylvl4"
+	item_state = "Sec_ID4"
+	job_access_type = /datum/job/acmo
+	class = CLASS_A
 
 /obj/item/card/id/psychiatrist
 	name = "administration ID"
@@ -757,6 +973,15 @@
 	icon_state = "sciencelvl5"
 	item_state = "Science_ID5"
 	job_access_type = /datum/job/rd
+	class = CLASS_A
+
+/obj/item/card/id/rd
+	name = "science ID"
+	desc = "A red ID. Looks like the person wearing this won't give it up easy."
+	icon_state = "sciencelvl4"
+	item_state = "Science_ID4"
+	job_access_type = /datum/job/rd
+	class = CLASS_A
 
 // MISC
 
@@ -787,46 +1012,68 @@
 	icon_state = "classd"
 	item_state = "Admin_ID"
 	job_access_type = /datum/job/classd
+	class = CLASS_D
 
 // LOGISTICS
 
 /obj/item/card/id/logoff
-	name = "security ID"
-	desc = "A dark blue ID. Looks important. The person wearing it not so much."
-	icon_state = "securitylvl3"
-	item_state = "Sec_ID3"
+	name = "science ID"
+	desc = "A dark yellow ID. Looks cool, the person wearing it, not so much."
+	icon_state = "sciencelvl3"
+	item_state = "Science_ID3"
 	job_access_type = /datum/job/qm
+	class = CLASS_B
 
 
 /obj/item/card/id/logspec
-	name = "security ID"
-	desc = "A dark blue ID. Looks important. The person wearing it not so much."
-	icon_state = "securitylvl3"
-	item_state = "Sec_ID3"
+	name = "science ID"
+	desc = "A bright yellow ID. Looks ordinary?"
+	icon_state = "sciencelvl2"
+	item_state = "Science_ID2"
 	job_access_type = /datum/job/cargo_tech
 
 // CD ASSIGNMENT CARDS
 
 /obj/item/card/id/dassignment
 	desc = "A plain ID Card, used for granting access to D-Class personnel so they're able to perform their duties."
+	class = null
 
 /obj/item/card/id/dassignment/dmining
 	name = "mining assignment card"
-	access = ACCESS_DCLASS_MINING
+	access = list(ACCESS_DCLASS_MINING)
 
 /obj/item/card/id/dassignment/dbotany
 	name = "botany assignment card"
-	access = ACCESS_DCLASS_BOTANY
+	access = list(ACCESS_DCLASS_BOTANY)
 
 /obj/item/card/id/dassignment/dkitchen
 	name = "kitchen assignment card"
-	access = ACCESS_DCLASS_KITCHEN
+	access = list(ACCESS_DCLASS_KITCHEN)
 
 /obj/item/card/id/dassignment/djanitorial
 	name = "janitorial assignment card"
-	access = ACCESS_DCLASS_JANITORIAL
+	access = list(ACCESS_DCLASS_JANITORIAL)
 
 /obj/item/card/id/dassignment/dmedical
 	name = "medical assignment card"
-	access = ACCESS_DCLASS_MEDICAL
+	access = list(ACCESS_DCLASS_MEDICAL)
 
+/obj/item/card/id/dassignment/dluxury
+	name = "luxury reward card"
+	access = list(ACCESS_DCLASS_LUXURY)
+
+/obj/item/card/id/chaos
+	name = "stolen ID"
+	desc = "A green ID card, it's drawn on with black ink saying \"C.I.\", it's also got a crudely painted Chaos Insurgency logo over the SCP Logo, and an X marked over the SCP slogan, whoever's wearing this must be scary."
+	icon_state = "ci"
+	item_state = "ci"
+	class = CLASS_CI
+	access = list(ACCESS_ENGINEERING_LVL1, ACCESS_SYNDICATE)
+
+/obj/item/card/id/chaos/lead
+	name = "stolen administrative ID"
+	desc = "A golden ID card mostly used by administrative staff, it's drawn on professionally with white ink saying \"C.I.\", it's also got a crudely painted Chaos Insurgency logo over the SCP Logo, and an aggressively red X marked over the SCP slogan, whoever's wearing this must be scary."
+	icon_state = "cilead"
+	item_state = "cilead"
+	class = CLASS_CI
+	access = list(ACCESS_ENGINEERING_LVL1, ACCESS_ADMIN_LVL1, ACCESS_SYNDICATE)

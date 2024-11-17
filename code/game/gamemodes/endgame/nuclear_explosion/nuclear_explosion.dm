@@ -3,14 +3,16 @@ var/global/universe_has_ended = 0
 /datum/universal_state/nuclear_explosion
 	name = "Nuclear Demolition Warhead"
 	var/atom/explosion_source
-	var/obj/screen/cinematic
+	var/atom/movable/screen/cinematic
 
 /datum/universal_state/nuclear_explosion/New(atom/nuke)
 	explosion_source = nuke
 
 	//create the cinematic screen obj
 	cinematic = new
-	cinematic.icon = 'icons/effects/station_explosion.dmi'
+	// [CELADON-EDIT] - Больше никаких взрывов космических кораблей. [icons/effects/station_explosion.dmi]
+	cinematic.icon = 'mod_celadon/_components/icons/station_explosion.dmi'
+	// [/CELADON-EDIT]
 	cinematic.icon_state = "station_intact"
 	cinematic.plane = HUD_PLANE
 	cinematic.layer = HUD_ABOVE_ITEM_LAYER

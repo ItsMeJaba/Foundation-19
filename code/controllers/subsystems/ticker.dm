@@ -44,6 +44,9 @@ SUBSYSTEM_DEF(ticker)
 	if(start_ASAP)
 		to_world(SPAN_INFO("<B>The game will start as soon as possible due to configuration!</B>"))
 	else
+		// [CELADON-ADD] Добавляем оповещение о начале раунда в бот чат с пингом плашки SCP.
+		send2chat("<@&1202576280835457076>, запущен новый раунд на сервере: **SCP**!", "scp-round-pings")
+		// [/CELADON-ADD]
 		to_world(SPAN_INFO("<B>Welcome to the pre-game lobby!</B>"))
 		to_world("Please, setup your character and select ready. Game will start in [round(pregame_timeleft/10)] seconds.")
 	round_start_time = world.time
@@ -135,7 +138,7 @@ SUBSYSTEM_DEF(ticker)
 	if(mode_finished && game_finished())
 		Master.SetRunLevel(RUNLEVEL_POSTGAME)
 		end_game_state = END_GAME_READY_TO_END
-		INVOKE_ASYNC(src, .proc/declare_completion)
+		INVOKE_ASYNC(src, PROC_REF(declare_completion))
 
 	else if(mode_finished && (end_game_state <= END_GAME_NOT_OVER))
 		end_game_state = END_GAME_MODE_FINISH_DONE
@@ -342,7 +345,6 @@ Helpers
 				captainless=0
 			if(!player_is_antag(player.mind, only_offstation_roles = 1))
 				SSjobs.equip_rank(player, player.mind.assigned_role, 0)
-				SScustomitems.equip_custom_items(player)
 	if(captainless)
 		for(var/mob/M in GLOB.player_list)
 			if(!istype(M,/mob/new_player))

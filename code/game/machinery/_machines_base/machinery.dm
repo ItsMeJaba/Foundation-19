@@ -123,7 +123,7 @@ Class Procs:
 /obj/machinery/Initialize(mapload, d=0, populate_parts = TRUE)
 	. = ..()
 	if(d)
-		set_dir(d)
+		setDir(d)
 	if (init_flags & INIT_MACHINERY_PROCESS_ALL)
 		START_PROCESSING_MACHINE(src, init_flags & INIT_MACHINERY_PROCESS_ALL)
 	SSmachines.machinery += src // All machines should remain in this list, always.
@@ -163,7 +163,7 @@ Class Procs:
 		pulse2.icon_state = "empdisable"
 		pulse2.SetName("emp sparks")
 		pulse2.anchored = TRUE
-		pulse2.set_dir(pick(GLOB.cardinal))
+		pulse2.setDir(pick(GLOB.cardinal))
 
 		spawn(10)
 			qdel(pulse2)
@@ -299,12 +299,12 @@ Class Procs:
 	if((. = ..())) // Buckling, climbers; unlikely to return true.
 		return
 	if(MUTATION_FERAL in user.mutations)
-		user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN*2)
+		user.setClickCooldown(CLICK_CD_ATTACK*2)
 		attack_generic(user, 10, "smashes")
 		return TRUE
 	if(!CanPhysicallyInteract(user))
 		return FALSE // The interactions below all assume physical access to the machine. If this is not the case, we let the machine take further action.
-	if(!user.IsAdvancedToolUser())
+	if(!ISADVANCEDTOOLUSER(user))
 		to_chat(user, SPAN_WARNING("You don't have the dexterity to do this!"))
 		return TRUE
 	if(ishuman(user))
@@ -463,14 +463,13 @@ Class Procs:
 	if(battery)
 		return battery.get_cell()
 
-// Coarse - dismantles the machine
-// Fine - randomly upgrades components of the machine via same proc
-// Very fine - same as above, but has a chance to start small explosion
+// Coarse - Dismantles the machine
+// Fine - Randomly upgrades components of the machine via same proc
 /obj/machinery/Conversion914(mode = MODE_ONE_TO_ONE, mob/user = usr)
 	switch(mode)
 		if(MODE_COARSE)
 			dismantle()
-			return src // Gets deleted in dismantle() anyway
+			return null
 		if(MODE_FINE)
 			for(var/obj/item/stock_parts/S in component_parts)
 				if(istype(S, /obj/item/stock_parts/circuitboard))
@@ -479,17 +478,5 @@ Class Procs:
 					continue
 				S.Conversion914(mode, user)
 			playsound(src, 'sounds/items/rped.ogg', 50, TRUE)
-			return src
-		if(MODE_VERY_FINE)
-			for(var/obj/item/stock_parts/S in component_parts)
-				if(istype(S, /obj/item/stock_parts/circuitboard))
-					continue
-				if(prob(10))
-					continue
-				if(prob(3)) // The more parts you got - the more likely it is to explode
-					explosion(get_turf(src), -1, prob(33), 5, 7, FALSE)
-					return src
-				S.Conversion914(mode, user)
-			playsound(src, 'sounds/items/rped.ogg', 75, TRUE, 3)
 			return src
 	return ..()

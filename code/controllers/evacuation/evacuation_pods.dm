@@ -1,3 +1,5 @@
+/* We're not using this code -15.03.24 #1536
+
 #define EVAC_OPT_ABANDON_SHIP "abandon_ship"
 #define EVAC_OPT_BLUESPACE_JUMP "bluespace_jump"
 #define EVAC_OPT_CANCEL_ABANDON_SHIP "cancel_abandon_ship"
@@ -131,7 +133,7 @@
 	if (evacuation_controller && evacuation_controller.cancel_evacuation())
 		log_and_message_staff("[key_name(user)] has cancelled the bluespace jump.")
 
-/obj/screen/fullscreen/bluespace_overlay
+/atom/movable/screen/fullscreen/bluespace_overlay
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "mfoam"
 	screen_loc = "WEST,SOUTH to EAST,NORTH"
@@ -143,3 +145,4 @@
 #undef EVAC_OPT_BLUESPACE_JUMP
 #undef EVAC_OPT_CANCEL_ABANDON_SHIP
 #undef EVAC_OPT_CANCEL_BLUESPACE_JUMP
+*/

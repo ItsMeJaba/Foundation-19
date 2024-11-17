@@ -28,6 +28,26 @@
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
 	flags_inv = 0
 
+/obj/item/clothing/suit/armor/director_coat
+	name = "Site Director's coat"
+	desc = "A heavy, black long coat with synthetic fur on it. It isn't very distinguishable except for the initials on the collar's tag, S.D."
+	icon_state = "director_coat"
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+
+/obj/item/clothing/suit/armor/overseer
+	name = "Overwatch Command's coat"
+	desc = "A heavy, black long coat with golden markings along the wrists, as well as real genuine bear fur on it. It's woven from the finest cotton, and alloyed with durathread, to make the user comfortable, but durable to many kinds of damage."
+	icon_state = "o5_coat"
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	armor = list(melee = ARMOR_MELEE_SHIELDED, bullet = ARMOR_BALLISTIC_AP, laser = ARMOR_LASER_HEAVY, energy = ARMOR_ENERGY_SHIELDED, bomb = ARMOR_BOMB_SHIELDED, bio = ARMOR_BIO_RESISTANT, rad = ARMOR_RAD_RESISTANT)
+
+/obj/item/clothing/suit/armor/itd
+	name = "Internal Tribunal Officer's coat"
+	desc = "A heavy, black long coat with silver markings along the wrists, as well as real genuine polar bear fur on it. It's woven from the finest cotton."
+	icon_state = "itd_coat"
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	armor = list(melee = ARMOR_MELEE_SMALL, bullet = ARMOR_BALLISTIC_MINOR, laser = ARMOR_LASER_MINOR, energy = ARMOR_ENERGY_MINOR, bomb = ARMOR_BOMB_MINOR, bio = ARMOR_BIO_MINOR, rad = ARMOR_RAD_MINOR)
+
 //Chaplain
 /obj/item/clothing/suit/chaplain_hoodie
 	name = "chaplain hoodie"
@@ -97,11 +117,15 @@
 		energy = ARMOR_ENERGY_MINOR
 		)
 
-/obj/item/clothing/suit/storage/det_trench/ft/
+/obj/item/clothing/suit/storage/det_trench/ft
 	desc = "A rugged canvas trenchcoat, designed and created by TX Fabrication Corp. This one wouldn't block much of anything."
 	armor = null
 
 /obj/item/clothing/suit/storage/det_trench/grey
+	name = "grey trenchcoat"
+	icon_state = "detective2"
+
+/obj/item/clothing/suit/storage/det_trench/ft/grey
 	name = "grey trenchcoat"
 	icon_state = "detective2"
 

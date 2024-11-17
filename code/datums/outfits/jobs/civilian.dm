@@ -7,12 +7,27 @@
 	l_pocket = /obj/item/paper/dclass_orientation
 	id_type = /obj/item/card/id/classd
 	pda_type = null
+	back = null
 
 /decl/hierarchy/outfit/job/civ/classd/post_equip(mob/living/carbon/human/H)
 	..()
 	if(prob(15))
 		var/path = pick( /obj/item/wrench, /obj/item/screwdriver)
 		H.equip_to_slot_or_store_or_drop(new path (H), slot_l_store)
+
+/decl/hierarchy/outfit/job/civ/classd/high
+	name = OUTFIT_JOB_NAME("High-Security Class D")
+	uniform = /obj/item/clothing/under/scp/hdclass
+	l_pocket = /obj/item/paper/dclass_orientation
+	id_type = /obj/item/card/id/classd
+
+/decl/hierarchy/outfit/job/civ/classd/janitor
+	name = OUTFIT_JOB_NAME("Class D Janitor")
+	uniform = /obj/item/clothing/under/scp/dclass/janitor
+	head = /obj/item/clothing/head/soft/dclass
+	glasses = /obj/item/clothing/glasses/hud/janitor
+	shoes = /obj/item/clothing/shoes/galoshes
+	l_pocket = /obj/item/paper/dclass_orientation
 
 /decl/hierarchy/outfit/job/civ/janitor
 	name = OUTFIT_JOB_NAME("Janitor")
@@ -40,12 +55,13 @@
 
 /decl/hierarchy/outfit/job/civ/gocrep
 	name = OUTFIT_JOB_NAME("Global Occult Coalition Representative")
-	uniform = /obj/item/clothing/under/rank/head_of_security/navyblue
-	suit = /obj/item/clothing/suit/security/navyhos
-	head = /obj/item/clothing/head/beret/scp/goc
+	uniform = /obj/item/clothing/under/rank/civilian/goc
+	suit = /obj/item/clothing/suit/gocjacket
+	head = /obj/item/clothing/head/beret/goc
 	shoes = /obj/item/clothing/shoes/combat
 	glasses = /obj/item/clothing/glasses/sunglasses
 	gloves = /obj/item/clothing/gloves/thick/combat
+	l_hand = /obj/item/stamp/gocrep
 	l_pocket = /obj/item/device/radio
 	id_type = /obj/item/card/id/adminlvl3
 	l_ear = /obj/item/device/radio/headset/heads/goc
@@ -54,25 +70,16 @@
 
 /decl/hierarchy/outfit/job/civ/uiu
 	name = OUTFIT_JOB_NAME("Unusual Incidents Unit Relations Agent")
-	uniform = /obj/item/clothing/under/suit_jacket/charcoal
+	uniform = /obj/item/clothing/under/rank/civilian/uiu/formal
+	suit = /obj/item/clothing/suit/uiucoat
 	shoes = /obj/item/clothing/shoes/dress
 	glasses = /obj/item/clothing/glasses/sunglasses
-	gloves = /obj/item/clothing/gloves/thick/combat
+	gloves = /obj/item/clothing/gloves/tactical/scp
 	l_pocket = /obj/item/device/radio
 	id_type = /obj/item/card/id/adminlvl3
 	l_ear = /obj/item/device/radio/headset/heads/uiu
-	backpack_contents = list(/obj/item/ammo_magazine/scp/m1911 = 1)
-	belt = /obj/item/gun/projectile/pistol/m1911
-
-/decl/hierarchy/outfit/job/civ/thirep
-	name = OUTFIT_JOB_NAME("thirep")
-	uniform = /obj/item/clothing/under/rank/chaplain
-	l_hand = /obj/item/storage/bible
-	id_type = /obj/item/card/id/adminlvl3
-	pda_type = /obj/item/modular_computer/pda/medical
-	l_ear = /obj/item/device/radio/headset/heads/thi
-	belt = /obj/item/gun/projectile/pistol/m1911
-	backpack_contents = list(/obj/item/ammo_magazine/scp/m1911 = 1)
+	backpack_contents = list(/obj/item/ammo_magazine/scp/mk9 = 1)
+	belt = /obj/item/gun/projectile/pistol/glock
 
 /decl/hierarchy/outfit/job/civ/MCDRep
 	name = OUTFIT_JOB_NAME("Marshall, Carter, and Dark Corporate Liaison")
@@ -87,25 +94,37 @@
 	backpack_contents = list(/obj/item/ammo_magazine/c45m = 1)
 	belt = /obj/item/gun/projectile/silenced
 
-/decl/hierarchy/outfit/job/civ/o5rep
-	name = OUTFIT_JOB_NAME("O5 Representative")
+/decl/hierarchy/outfit/job/civ/grcl
+	name = OUTFIT_JOB_NAME("Goldbaker-Reinz Corporate Liaison")
+	uniform = /obj/item/clothing/under/scp/suittie
+	shoes = /obj/item/clothing/shoes/laceup
+	l_pocket = /obj/item/device/radio
+	id_type = /obj/item/card/id/adminlvl3
+	r_hand = /obj/item/storage/secure/briefcase/money
+	l_ear = /obj/item/device/radio/headset/heads/grcl
+	backpack_contents = list(/obj/item/ammo_magazine/scp/m1911 = 1)
+	belt = /obj/item/gun/projectile/pistol/m1911
+
+/decl/hierarchy/outfit/job/civ/ethics
+	name = OUTFIT_JOB_NAME("Ethics Committee Liasion")
 	uniform = /obj/item/clothing/under/suit_jacket/really_black
 	shoes = /obj/item/clothing/shoes/laceup
 	l_pocket = /obj/item/device/radio
 	id_type = /obj/item/card/id/adminlvl5
 	l_ear = /obj/item/device/radio/headset/heads/hop
 	backpack_contents = list(/obj/item/ammo_magazine/scp/m1911 = 1)
-	belt = /obj/item/gun/projectile/pistol/m1911
+	belt = /obj/item/gun/projectile/pistol/m1911/gold
 
 /decl/hierarchy/outfit/job/civ/tribunal
 	name = OUTFIT_JOB_NAME("Tribunal Officer")
-	uniform = /obj/item/clothing/under/lawyer/black
+	uniform = /obj/item/clothing/under/itd
+	suit = /obj/item/clothing/suit/armor/itd
 	shoes = /obj/item/clothing/shoes/laceup
 	l_pocket = /obj/item/device/radio
 	id_type = /obj/item/card/id/adminlvl5
 	l_ear = /obj/item/device/radio/headset/heads/hop
 	backpack_contents = list(/obj/item/ammo_magazine/scp/m1911 = 1)
-	belt = /obj/item/gun/projectile/pistol/m1911
+	belt = /obj/item/gun/projectile/pistol/m1911/gold
 
 /decl/hierarchy/outfit/job/chaplain
 	name = OUTFIT_JOB_NAME("Chaplain")
@@ -126,3 +145,21 @@
 	r_pocket = /obj/item/folder
 	l_hand = null
 	r_hand = null
+
+/decl/hierarchy/outfit/job/civ/clown
+	name = OUTFIT_JOB_NAME("Clown")
+	uniform = /obj/item/clothing/under/rank/clown
+	backpack_contents = list(
+		/obj/item/stamp/clown = 1,
+		/obj/item/reagent_containers/spray/waterflower = 1,
+		/obj/item/bananapeel = 1,
+		/obj/item/reagent_containers/food/snacks/bananapie,
+		/obj/item/bikehorn/airhorn = 1,
+		)
+	l_ear = /obj/item/device/radio/headset/headset_service
+	shoes = /obj/item/clothing/shoes/clown_shoes
+	mask = /obj/item/clothing/mask/gas/clown_hat
+	l_pocket = /obj/item/bikehorn
+	back = /obj/item/storage/backpack/clown
+
+	flags = OUTFIT_RESET_EQUIPMENT

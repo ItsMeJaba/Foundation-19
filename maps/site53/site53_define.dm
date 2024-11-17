@@ -6,30 +6,28 @@
 	station_levels = list(1,2,3,4)
 	contact_levels = list(1,2,3,4)
 	player_levels = list(1,2,3,4)
-	admin_levels = list(5,6,7)
-	empty_levels = list()
-	accessible_z_levels = list("1"=1,"2"=1,"3"=1,"4"=1)
+	sealed_levels = list(1,2,3,4)
 	base_turf_by_z = list(
 		"1" = /turf/simulated/floor/exoplanet/desert,
 		"2" = /turf/simulated/floor/exoplanet/desert,
 		"3" = /turf/simulated/floor/exoplanet/snow,
+		"4" = /turf/simulated/floor/exoplanet/snow,
 	)
 	overmap_size = 35
 	overmap_event_areas = 0
 	usable_email_tlds = list("site53.foundation", "security.site53.foundation", "science.site53.foundation", "utility.site53.foundation")
+	config_path = "config/site53_config.txt"
 
-	allowed_spawns = list("Cryogenic Storage", "D-Cells", "Light Containment Zone")
+	allowed_spawns = list("Cryogenic Storage", "D-Cells")
 	default_spawn = "Cryogenic Storage"
 
 	station_name  = "Foundation Site 53"
 	station_short = "Site 53"
-	dock_name     = "TBD"
-	boss_name     = "O5 Foundation Council"
-	boss_short    = "O5 Council"
+	dock_name     = "Emergency Site-91"
+	boss_name     = "Foundation North American Command"
+	boss_short    = "Regional Command"
 	company_name  = "SCP Foundation"
 	company_short = "Foundation"
-
-	map_admin_faxes = list("Foundation Central Office", "UIU Central Office", "GOC Central Office", "Horizon Initiative Central Office ", "Marshall, Carter, and Dark Central Office")
 
 	//These should probably be moved into the evac controller...
 	shuttle_docked_message = "The outbound train is now boarding at the Train Station. It will depart in approximately %ETD%."
@@ -41,7 +39,7 @@
 	emergency_shuttle_called_message = "An emergency evacuation has been ordered for this facility. All authorized evacuees must proceed to the outbound Train Station within %ETA%."
 	emergency_shuttle_recall_message = "The emergency evacuation has been cancelled. Return to your post."
 
-//	evac_controller_type = /datum/evacuation_controller/site
+	evac_controller_type = /datum/evacuation_controller/shuttle //The evacuation controller that the map uses, this MUST be defined else the train will not function.
 
 	default_law_type = /datum/ai_laws/foundation
 	use_overmap = 0
@@ -54,17 +52,21 @@
 		/area/site53/surface = NO_APC,
 		/area/turbolift/site53/surface = NO_APC,
 		/area/turbolift/site53/basement = NO_APC,
-		/area/turbolift/site53/logistics = NO_APC,
-		/area/turbolift/site53/logisticstorage = NO_APC,
 		/area/turbolift/site53/scp106obs = NO_APC,
 		/area/turbolift/site53/scp106obs = NO_APC,
 		/area/turbolift/site53/uhcz = NO_APC,
 		/area/turbolift/site53/lhcz = NO_APC,
-		/area/shuttle/escape_pod = NO_APC,
 		/area/site53/tram/scpcar = NO_APC,
 		/area/turbolift/site53/commstower = NO_APC,
 		/area/turbolift/site53/scp106cont = NO_APC,
+		/area/turbolift/site53/robotlwr = NO_APC,
+		/area/turbolift/site53/robotupr = NO_APC,
+		/area/turbolift/site53/gatea = NO_APC,
+		/area/turbolift/site53/hub = NO_APC,
 		/area/centcom/goc = NO_APC,
+		/area/turbolift/site53/up082 = NO_APC,
+		/area/turbolift/site53/low82 = NO_APC
+
 	)
 
 	away_site_budget = 3
@@ -76,7 +78,22 @@
 		/decl/audio/track/perdition,
 		/decl/audio/track/ajoura,
 		/decl/audio/track/days,
-		/decl/audio/track/hie
+		/decl/audio/track/hie,
+		/decl/audio/track/chaos,
+		/decl/audio/track/bookburners,
+		/decl/audio/track/dread,
+		/decl/audio/track/animosity,
+		/decl/audio/track/animosity_v2,
+		/decl/audio/track/main_astowo,
+		/decl/audio/track/final_flash,
+		/decl/audio/track/duplicity_and_disillusion,
+		/decl/audio/track/battle_for_ganzir,
+		/decl/audio/track/purge_protocol,
+		/decl/audio/track/uiu_spawn_theme,
+		/decl/audio/track/surface_area,
+		/decl/audio/track/goc_spawn_theme2,
+		/decl/audio/track/fall_of_ganzir,
+		/decl/audio/track/the_bookburners_v2
 	)
 
 	available_cultural_info = list(
@@ -118,33 +135,4 @@
 	..()
 	system_name = generate_system_name()
 	minor_announcement = new(new_sound = sound('sounds/AI/torch/commandreport.ogg', volume = 45))
-
-/datum/map/torch/send_welcome()
-	var/welcome_text = "<center><img src = sollogo.png /><br /><font size = 3><b>SEV Torch</b> Sensor Readings:</font><hr />"
-	welcome_text += "Report generated on [stationdate2text()] at [station_time_timestamp("hh:mm")]</center><br /><br />"
-	welcome_text += "Current system:<br /><b>[system_name()]</b><br />"
-	welcome_text += "Next system targeted for jump:<br /><b>[generate_system_name()]</b><br />"
-	welcome_text += "Travel time to Sol:<br /><b>[rand(15,45)] days</b><br />"
-	welcome_text += "Time since last port visit:<br /><b>[rand(60,180)] days</b><br />"
-	welcome_text += "Scan results show the following points of interest:<br />"
-	var/list/space_things = list()
-	var/obj/effect/overmap/torch = map_sectors["1"]
-	for(var/zlevel in map_sectors)
-		var/obj/effect/overmap/O = map_sectors[zlevel]
-		if(O.name == torch.name)
-			continue
-		space_things |= O
-
-	for(var/obj/effect/overmap/O in space_things)
-		var/location_desc = " at present co-ordinates."
-		if (O.loc != torch.loc)
-			var/bearing = round(90 - Atan2(O.x - torch.x, O.y - torch.y),5) //fucking triangles how do they work
-			if(bearing < 0)
-				bearing += 360
-			location_desc = ", bearing [bearing]."
-		welcome_text += "<li>\A <b>[O.name]</b>[location_desc]</li>"
-	welcome_text += "<br>No distress calls logged.<br />"
-
-	post_comm_message("SEV Torch Sensor Readings", welcome_text)
-	minor_announcement.Announce(message = "New [GLOB.using_map.company_name] Update available at all communication consoles.")
 */

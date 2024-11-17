@@ -14,10 +14,10 @@
 		/obj/item/borg/upgrade/rcd
 	)
 	sprites = list(
-		"Basic" = "Engineering",
-		"Antique" = "engineerrobot",
 		"Landmate" = "landmate",
-		"Landmate - Treaded" = "engiborg+tread"
+		"Landmate - Treaded" = "engiborg+tread",
+		"Android - Engineer" = "engineerrobot",
+		"Android - Comms Tech" = "commstechrobot"
 	)
 	no_slip = 1
 	equipment = list(
@@ -93,21 +93,21 @@
 		 /obj/item/stack/material/cyborg/glass/reinforced
 		))
 		var/obj/item/stack/stack = locate(thing) in equipment
-		LAZYDISTINCTADD(stack.synths, metal)
+		LAZYOR(stack.synths, metal)
 
 	for(var/thing in list(
 		 /obj/item/stack/material/cyborg/glass/reinforced,
 		 /obj/item/stack/material/cyborg/glass
 		))
 		var/obj/item/stack/stack = locate(thing) in equipment
-		LAZYDISTINCTADD(stack.synths, glass)
+		LAZYOR(stack.synths, glass)
 
 	for(var/thing in list(
 		 /obj/item/stack/tile/wood/cyborg,
 		 /obj/item/stack/material/cyborg/wood
 		))
 		var/obj/item/stack/stack = locate(thing) in equipment
-		LAZYDISTINCTADD(stack.synths, wood)
+		LAZYOR(stack.synths, wood)
 
 	var/obj/item/stack/cable_coil/cyborg/C = locate() in equipment
 	C.synths = list(wire)
@@ -118,4 +118,6 @@
 /obj/item/robot_module/engineering/respawn_consumable(mob/living/silicon/robot/R, amount)
 	var/obj/item/device/lightreplacer/LR = locate() in equipment
 	LR.Charge(R, amount)
+	var/obj/item/reagent_containers/spray/cleaner/drone/SC = locate() in equipment
+	SC.reagents.add_reagent(/datum/reagent/hydroxylsan, 8 * amount)
 	..()

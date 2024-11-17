@@ -38,7 +38,8 @@
 
 	///Blacklisted reagents DO NOT USE THIS UNLESS ABSOLUTLEY NECCESARY, I DISLIKE PEOPLE IDIOT PROOFING SCPS - Dark
 	var/list/blacklist = list(
-		/datum/reagent/scp008
+		/datum/reagent/scp008,
+		/datum/reagent/scp500
 	)
 
 /obj/machinery/scp294/Initialize()
@@ -112,13 +113,12 @@
 			break
 
 	if(!chosen_reagent)
-		for(var/possible in GLOB.chemical_reagents_list)
-			if(is_abstract(possible))
+		for(var/datum/reagent/possible as anything in subtypesof(/datum/reagent))
+			if(is_abstract(possible) || !initial(possible.name))
 				continue
-			var/datum/reagent/possible_reagent = possible
-			var/chem_name = initial(possible_reagent.name) //It dosent work if we dont do this black magic
+			var/chem_name = initial(possible.name) //It dosent work if we dont do this black magic
 			if(findtext(chosen_reagen_text, chem_name))
-				chosen_reagent = possible_reagent
+				chosen_reagent = possible
 				break
 
 	if(!chosen_reagent || (chosen_reagent in blacklist))

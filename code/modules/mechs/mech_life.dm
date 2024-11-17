@@ -13,13 +13,11 @@
 		update_pilots()
 
 	if(radio)
-		radio.on = (head && head.radio && head.radio.is_functional() && get_cell())
+		radio.on = (head && head.radio && head.radio.is_functional() && get_cell(FALSE, ME_ANY_POWER))
 
 	body.update_air(hatch_closed && use_air)
 
-	var/powered = FALSE
-	if(get_cell())
-		powered = get_cell().drain_power(0, 0, calc_power_draw()) > 0
+	var/powered = get_cell(FALSE, ME_ANY_POWER)?.drain_power(0, 0, calc_power_draw()) > 0
 
 	if(!powered)
 		//Shut down all systems
@@ -30,7 +28,11 @@
 			var/obj/item/mech_equipment/M = hardpoints[hardpoint]
 			if(istype(M) && M.active && M.passive_power_use)
 				M.deactivate()
-
+	else
+		if(hardpoints[HARDPOINT_BACKUP_POWER])
+			var/obj/item/mech_equipment/power_auxiliary/hungry = hardpoints[HARDPOINT_BACKUP_POWER]
+			if((hungry.internal_cell.maxcharge - hungry.internal_cell.charge) > 10)
+				hungry.internal_cell?.give(get_cell(FALSE, ME_ENGINE_POWERED | ME_CELL_POWERED)?.drain_power(0,0, 5 KILOWATTS))
 
 	updatehealth()
 	if(health <= 0 && stat != DEAD)
@@ -42,14 +44,25 @@
 	..() //Handles stuff like environment
 
 	handle_hud_icons()
+	update_hud_alerts()
 
 	lying = FALSE // Fuck off, carp.
 	handle_vision(powered)
 
-/mob/living/exosuit/get_cell(force)
+/mob/living/exosuit/get_cell(force, power_flags)
 	RETURN_TYPE(/obj/item/cell)
 	if(power == MECH_POWER_ON || force) //For most intents we can assume that a powered off exosuit acts as if it lacked a cell
-		return body ? body.cell : null
+		if((power_flags & ME_CELL_POWERED && mech_flags & MF_CELL_POWERED) || force == 2)
+			var/obj/item/mech_equipment/power_cell/provider = hardpoints[HARDPOINT_POWER]
+			if(provider)
+				return provider.internal_cell
+		if((power_flags & ME_ENGINE_POWERED && mech_flags & MF_ENGINE_POWERED) || force == 2)
+			var/obj/item/mech_equipment/engine/provider = hardpoints[HARDPOINT_POWER]
+			if(provider)
+				return provider.internal_cell
+		if(power_flags & ME_AUXILIARY_POWERED && mech_flags & MF_AUXILIARY_POWERED)
+			var/obj/item/mech_equipment/power_auxiliary/provider = hardpoints[HARDPOINT_BACKUP_POWER]
+			return provider.internal_cell
 	return null
 
 /mob/living/exosuit/proc/calc_power_draw()
@@ -153,3 +166,49 @@
 
 /mob/living/exosuit/additional_see_invisible()
 	return see_invisible
+
+/mob/living/exosuit/proc/update_hud_alerts()
+	for(var/mob/pilot as anything in pilots)
+
+		var/obj/item/cell/cell = get_cell(TRUE, ME_ANY_POWER)
+
+		if(cell)
+			var/cellcharge = cell.charge/cell.maxcharge
+			switch(cellcharge)
+				if(0.75 to INFINITY)
+					pilot.clear_alert(ALERT_CHARGE)
+				if(0.5 to 0.75)
+					pilot.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/lowcell/mech, 1)
+				if(0.25 to 0.5)
+					pilot.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/lowcell/mech, 2)
+				if(0.01 to 0.25)
+					pilot.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/lowcell/mech, 3)
+				else
+					pilot.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/emptycell/mech)
+		else
+			pilot.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/nocell/mech)
+
+		var/integrity = health/maxHealth
+		switch(integrity)
+			if(0.30 to 0.45)
+				pilot.throw_alert(ALERT_MECH_DAMAGE, /atom/movable/screen/alert/low_mech_integrity, 1)
+			if(0.15 to 0.35)
+				pilot.throw_alert(ALERT_MECH_DAMAGE, /atom/movable/screen/alert/low_mech_integrity, 2)
+			if(-INFINITY to 0.15)
+				pilot.throw_alert(ALERT_MECH_DAMAGE, /atom/movable/screen/alert/low_mech_integrity, 3)
+			else
+				pilot.clear_alert(ALERT_MECH_DAMAGE)
+
+		var/atom/checking = pilot.loc
+		// recursive check to handle all cases regarding very nested occupants,
+		// such as brainmob inside brainitem inside MMI inside mecha
+		while(!isnull(checking))
+			if(isturf(checking))
+				// hit a turf before hitting the mecha, seems like they have been moved out
+				pilot.clear_alert(ALERT_CHARGE)
+				pilot.clear_alert(ALERT_MECH_DAMAGE)
+				pilot = null
+				break
+			else if (checking == src)
+				break  // all good
+			checking = checking.loc

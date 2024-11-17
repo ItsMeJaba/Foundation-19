@@ -6,7 +6,7 @@
 	icon_state = null
 	see_invisible = SEE_INVISIBLE_NOLIGHTING
 	see_in_dark = 7
-	status_flags = NO_ANTAG | SPECIES_FLAG_NO_EMBED
+	status_flags = NO_ANTAG | SPECIES_FLAG_NO_EMBED | SPECIES_FLAG_NEED_DIRECT_ABSORB
 
 	//Config
 
@@ -45,6 +45,8 @@
 	///sound cooldown track
 	var/sound_cooldown
 
+	roundstart_traits = list()
+
 /mob/living/carbon/human/scp106/Initialize(mapload, new_species = "SCP-106")
 	. = ..()
 	SCP = new /datum/scp(
@@ -56,7 +58,7 @@
 	)
 
 	SCP.min_time = 40 MINUTES
-	SCP.min_playercount = 20
+	SCP.min_playercount = 25
 
 	spawn_turf = get_turf(src)
 	spawn_area = get_area(src)
@@ -79,6 +81,8 @@
 	WallEye = new(src)
 	WallEye.visualnet.add_source(src)
 	WallEye.visualnet.add_source(WallEye)
+
+	ADD_TRAIT(src, TRAIT_DISCOORDINATED_TOOL_USER, ROUNDSTART_TRAIT)
 
 /mob/living/carbon/human/scp106/Destroy()
 	QDEL_NULL(WallEye)
@@ -170,7 +174,7 @@
 	WarpMob(L)
 
 /mob/living/carbon/human/scp106/proc/WarpMob(mob/living/L)
-	var/turf/T = pick_area_turf(pocket_dimension_area_type, list(/proc/not_turf_contains_dense_objects))
+	var/turf/T = pick_area_turf(pocket_dimension_area_type, list(GLOBAL_PROC_REF(not_turf_contains_dense_objects)))
 	if(!istype(T)) // Fail-safe
 		T = get_turf(T)
 	visible_message(SPAN_DANGER("[L] is warped away!"))
@@ -187,16 +191,13 @@
 
 //Util Overrides
 
-/mob/living/carbon/human/scp106/IsAdvancedToolUser()
-	return FALSE
-
 /mob/living/carbon/human/scp106/get_pressure_weakness()
 	return 0
 
 /mob/living/carbon/human/scp106/handle_breath()
 	return TRUE
 
-/mob/living/carbon/human/scp106/movement_delay()
+/mob/living/carbon/human/scp106/movement_delay(decl/move_intent/using_intent = move_intent)
 	return 4.0
 
 /* Abilities */
@@ -227,7 +228,7 @@
 		pocket_dimension_cooldown = world.time + 50
 		if(!do_after(src, 4 SECONDS, my_turf, bonus_percentage = 25))
 			return FALSE
-	var/turf/T = pick_area_turf(pocket_dimension_area_type, list(/proc/not_turf_contains_dense_objects))
+	var/turf/T = pick_area_turf(pocket_dimension_area_type, list(GLOBAL_PROC_REF(not_turf_contains_dense_objects)))
 	if(!istype(T))
 		return FALSE
 	pocket_dimension_cooldown = world.time + pocket_dimension_cooldown_time
@@ -455,7 +456,7 @@
 		return
 	// 15% chance of getting back to the station
 	if(prob(15))
-		var/turf/T = pick_subarea_turf(/area, list(/proc/is_station_turf, /proc/not_turf_contains_dense_objects))
+		var/turf/T = pick_subarea_turf(/area, list(GLOBAL_PROC_REF(is_station_turf), GLOBAL_PROC_REF(not_turf_contains_dense_objects)))
 		if(!istype(T))
 			return
 
@@ -466,7 +467,7 @@
 		return
 	// 70% chance of going somewhere in the PD
 	if(prob(70))
-		var/turf/T = pick_area_turf(/area/pocketdimension, list(/proc/not_turf_contains_dense_objects))
+		var/turf/T = pick_area_turf(/area/pocketdimension, list(GLOBAL_PROC_REF(not_turf_contains_dense_objects)))
 		if(!istype(T))
 			return
 
@@ -524,7 +525,7 @@ GLOBAL_LIST_EMPTY(femur_breakers)
 	target.pixel_y = target.default_pixel_y
 	target.buckled = src
 	target.facing_dir = null
-	target.set_dir(buckle_dir ? buckle_dir : dir)
+	target.setDir(buckle_dir ? buckle_dir : dir)
 	target.UpdateLyingBuckledAndVerbStatus()
 	target.update_floating()
 	buckled_mob = target
