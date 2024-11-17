@@ -142,12 +142,12 @@ TURF_DECAL_COLOR_HELPER(transparent/bottlegreen, "#57967f", 140)
 // trimline
 
 /obj/effect/floor_decal/trimline
-	icon = 'icons/turf/flooring/decals.dmi'
+	icon = 'mod_celadon/decals/icon/decals.dmi'
 	icon_state = "trimline_box"
 
 /obj/effect/floor_decal/road
 	name = "road decal"
-	icon = 'icons/turf/flooring/decals.dmi'
+	icon = 'mod_celadon/decals/icon/decals.dmi'
 	icon_state = "road"
 	alpha = 180
 
