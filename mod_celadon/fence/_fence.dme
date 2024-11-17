@@ -4,6 +4,4 @@
 #include "_fence.dm"
 
 #include "code/fence.dm"
-#include "icon/fence.dm"
-
 #endif

@@ -3,6 +3,6 @@
 
 #include "_rand_loot.dm"
 
-#include "code/game/objects/random/scp_random.dm.dm"
+#include "code/game/objects/random/scp_random.dm"
 
 #endif

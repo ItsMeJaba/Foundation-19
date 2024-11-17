@@ -24,7 +24,11 @@
 #include "orbit_fix/_orbit_fix.dme"
 
 // --- OBJECTS --- //
+#include "decals\_floor_decals_and_colors.dme"
+#include "fence/_fence.dme"
+#include "loot_randomizer/_rand_loot.dme"
 #include "objects/_objects.dme"
+
 // #include "SCP096/_SCP096.dme" - Вероятно оффы пофиксили у себя. Проверить актуальность.
 #include "new_ungoc_sprites/_new_ungoc_sprites.dme"
 #include "sign_update/_sign_update.dme"
@@ -34,6 +38,7 @@
 
 // --- MAPS --- //
 #include "__maps/_maps.dme"
+#include "maps_celadon_ed/_celadon_ed_map.dme"
 
 
 // --- UNUSED MODS --- //

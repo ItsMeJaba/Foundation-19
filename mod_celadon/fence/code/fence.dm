@@ -16,7 +16,7 @@
 	density = TRUE
 	anchored = TRUE
 
-	icon = 'icons/obj/fence.dmi'
+	icon = 'mod_celadon/fence/icon/fence.dmi'
 	icon_state = "straight"
 
 	var/cuttable = TRUE

@@ -1,0 +1,10 @@
+#ifndef MODPACK_CELADON_MAP
+#define MODPACK_CELADON_MAP
+
+#include "_celadon_ed_map.dm"
+
+#include "maps/core_map.dmm"
+#include "maps/tech/assets.dmm"
+#include "maps/tech/tech.dmm"
+
+#endif
